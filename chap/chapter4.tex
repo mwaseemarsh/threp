@@ -1,0 +1,142 @@
+\chapter{Latency Reduction\label{chap4}}
+
+Previous chapter demonstrated virtual interrupt latency for real-time guest is significantly larger than in native setup.
+Recent extensions to x86 hardware-assisted virtualization support virtualization of local interrupt controller (APIC-v) 
+that enables hypervisor to minimize its involvement. Furthermore, it allows direct interrupt injection to the guest for
+devices that are owned by guests. It also enables virtualization of translation lookaside buffers (TLBs) by supporting virtual
+process identifiers (VPIDs). Hypervisor can use VPIDs to isolate address translation information of different guests from each other and from hypervisor.
+Intel Cache Allocation Technology addresses contention of shared LLC that enables hypervisor to partition shared cache
+between the guests to avoid cache pollution.
+This chapter presents results of using these hardware mechanisms to reduce interrupt latencies for real-time guest.
+Following sections provide details of using each mechanism separately and records improvements in the interrupt latency.
+
+
+\section{Direct Interrupt Injection}
+Direct interrupt injection (DII) mechanism allows guest operating system to receive interrupts from 
+external devices without hypervisor involvement.
+APIC virtualization allows hypervisor to deliver virtual interrupts directly to the guest code without causing a trap. 
+The details of this feature has already been covered in section \ref{sec:dii}.
+A brief summary of the mechanism is as follows.
+Hypervisor can marks a virtual interrupt as a posted interrupt (PI) in posted interrupt-descriptor (PID). 
+PID is a data structure allocated by hypervisor.
+It allows hypervisor inform interrupt controller that an interrupt is owned by guest and has to be delivered to guest without hypervisor involvement. 
+Posted interrupt mechanism only works when hypervisor uses APIC virtualization to manage guest interrupts. 
+Figure \ref{fig-posted-interrupts} demonstrates delivery of a guest interrupt does not require hypervisor involvement if it is marked as PI.
+Succeeding sections describe performance evaluation of the real-time guest interrupt when DII is used.
+
+\input{./figures/fig-posted-interrupts}
+
+
+\subsection{Methodology}
+Performance evaluation setup for direct interrupt injection mechanism includes PREEMPT\_RT patched Linux as real-time guest (rt-guest)
+and Linux as general-purpose guest (gp-guest). Each guest is assigned to a separate core and has access to 256MB of RAM. The setup is 
+similar to the one described in section \ref{sec:methodology}, rt-guest has direct access to PCIe gpio card capable to generate interrupts. 
+Measurement setup is same as described in section \ref{sec:measurement-setup}.
+Phidias hypervisor was extended to use direct interrupt mechanism for rt-guest GPIO interrupt.
+PID data structure has an outstanding notification (ON) bit that enables DII logic. 
+The ON bit is cleared by hardware after injecting a posted interrupt directly to the guest. 
+The hypervisor is responsible to set the bit again before arrival of posted interrupt, if it fails the interrupt is delivered to hypervisor.
+Since external gpio interrupts events are generated at rate of about 1ms, hypervisor was informed by causing an intentional exit from interrupt handler to
+set ON bit again. The approach is similar to the one used in section \ref{sec:context-switch-overhead}.
+The latency reduction is evaluated by measuring worst-case interrupt latency with and without direct interrupt mechainsm.
+It involves generating ten thousand GPIO interrupts and recording latency of each event.
+
+\subsection{Latency Reduction}
+\input{./figures/plot-dii}
+
+The latency measurement experiment was repeated for different load conditions on real-time guest and no load on gp-guest. 
+Figure \ref{plot-dii} plots comparison of worst-case and average-case interrupt latencies with and without DII. 
+It is clear that direct interrupt injection reduces both worst-case and average-case interrupt latency. 
+The best results are produced when guest is loaded with \mcachepressure{} benchmark. 
+Interrupt latency reduced approximately by $33us$ with $25\%$ improvement.
+%%All experiement resutls revealed that direct interrupt injection always reduces interrupt latencies.
+
+%%\input{./figures/fig-pii-worstcase}
+
+
+\section{Portioning Last Level Cache}
+Intel Cache Allocation Technology enables portioning of LLC (L3 cache).
+The details of this feature has already been covered in section \ref{sec:cat}.
+In short a set of registers called bitmasks allow hypervisor to configure isolated or shared cache regions.
+A bit in the bitmask register can correspond to a way in set-associative cache.
+A separate register is used to assign portion of the cache to an application based on an identifier called class of service (CLOS).
+The Xeon E5-2600v4 processor used to conduct experiments has 15MB 20-way set associative cache bitmask registers has length of 20bits. 
+It supports up to 15 CLOS identifiers.
+Succeeding sections describe the methodology and records results of using cache allocation technique.
+
+
+\subsection{Methodology}
+The latency reduction is evaluated by measuring worst-case interrupt latency with and without LLC partitioning between the two guests.
+The setup includes PREEMPT\_RT patched Linux as real-time guest (rt-guest)
+and Linux as general-purpose guest (gp-guest). 
+Each guest is assigned to a separate core and has access to 256MB of RAM.
+The setup is similar to the one described in section \ref{sec:methodology}, rt-guest has direct access to PCIe gpio card capable to generate interrupts. 
+Measurement setup is same as described in section \ref{sec:measurement-setup}.
+Phidias hypervisor is extended to support portioning of L3 cache. 
+The cache was divided equally between the two guests.
+The gpio interrupt latency was measured while high memory demands were generate by gp-guest. 
+The experiments were repeated with and without cache allocation to measure improvement in latency.
+A synthetic application was used to generate high memory demands from gp-guest.
+
+\subsection{Latency Reduction}
+\input{./figures/plot-cat}
+The latency measurement experiment was repeated for different load conditions on rt-guest when gp-guest was executed application large amounts of memory. 
+Figure \ref{plot-cat} plots comparison of worst-case and average-case interrupt latencies when LLC is shared and when it is partitioned. 
+It is clear that separating real-time guest cache from the other guest improves both worst-case and average-case interrupt response times.
+The best results are observed when guest is loaded with \mforkops{} benchmark. 
+Interrupt latency reduced approximately by $21us$ with $16\%$ improvement.
+
+%\section{Isolating TLB Traffic}
+\section{TLB Virtualization} \label{sec:vtlb-latency-red}
+Translation lookaside buffers (TLBs) are used by the processor to cache virtual to physical address translations.
+Modern architectures have  separate TLBs for instruction and data known as iTLB and dTLB respectively. 
+In a virtual environment hypervisor and guest operating system access different virtual address spaces.
+Caching translations of both address spaces at same TLB can result in thrashing translations of each other on context switch. 
+Furthermore when a guest flushes TLB entries, it also flushes cached information for hypervisor address space.
+Hypervisor can use TLB virtualization through VPIDs to isolate traffic of its own address space from the guests running in virtual machines.
+This section evaluates performance improvement for interrupt response time by using VPIDs.
+
+\subsection{Methodology}
+Two guest setup from the previous section is used again, however this time hypervisor is extended to use VPID mechanism.
+Hypervisor assigns a unique process identifier to each guest and emulates TLB flush instructions for the guest 
+based on VPIDs. The guest is oblivious to VPID mechanism.
+Note that performance evaluation is focused on isolating guest translations from hypervisor as both execute on the same core.
+Since Phidias hypervisor uses multikernel approach the shared resources are at least used by hypervisor and the guest.
+
+The latency reduction is evaluated by measuring worst-case interrupt latency with and without TLB virtualization.
+The setup includes PREEMPT\_RT patched Linux as real-time guest (rt-guest)
+and Linux as general-purpose guest (gp-guest). 
+The setup is similar to the one described in section \ref{sec:methodology}, rt-guest has direct access to PCIe gpio card capable to generate interrupts. 
+Measurement setup is same as described in section \ref{sec:measurement-setup}.
+Hypervisor was extended to support TLB virtualization. 
+It assigns a unique process identifier to each guest and emulates TLB flush instructions for the guest based on VPIDs.
+
+\subsection{Latency Reduction}
+
+\input{./figures/plot-vpid}
+
+The latency measurement experiment was repeated for different load conditions on real-time guest and no load on gp-guest. 
+Figure \ref{plot-vpid} plots comparison of worst-case and average-case interrupt latencies with shared and isolated TLBs for rt-guest and hypervisor. 
+Results show that separating guest TLB using VPID mechanism has improved both the worst-case and average-case interrupt latencies.
+The average-case interrupt latency has decreased by at least $1.1us$. The worst-case latency has slightly increased with no load condition,
+however it has always decreased with load conditions. 
+The best results are produced when guest is loaded with \mthreadops{} benchmark. 
+Interrupt latency reduced by approximately $20us$ with $12\%$ improvement.
+
+\section{Putting it Altogether}
+This section records improvement in real-time interrupt latency when all latency reduction techniques are combined.
+Figure \ref{plot-allopt} plots comparison of average and worst-case interrupt latencies between virtualization overhead recorded in later 
+chapter and latency reduction techniques presented in this chapter.
+\input{./figures/plot-allopt}
+
+The interrupt response time has improved approximately $30\%$ when latency reduction techniques are deployed.
+The overall improvement with all optimization enabled look very similar to results for direct interrupt mechanism, however there is slight improvement in average-case and worst-case.
+
+Figure \ref{plot-cdf-native-virtual-optimiz} plots CDF of gpio interrupt latency for three different setups: native, virtual with no optimization and virtual with latency reduction techniques. The interrupt latency is plotted for three different loads, same as in Figure \ref{plot-cdf-native-vs-virtual}.
+The comparison of CDFs reveals improved average-case response time and reduced spread compared with virtualization overhead recorded in previous chapter.
+
+\input{./figures/plot-cdf-native-virtual-optimiz}
+
+
+
+

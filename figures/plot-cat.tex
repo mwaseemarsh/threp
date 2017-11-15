@@ -1,0 +1,114 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture} % [scale = 1.2]
+
+\begin{axis} [name=plot1, height=7cm,  width=14cm, ybar=2pt, enlarge y limits={upper,value=0.3}, %%enlargelimits=0.3, 
+			ymin=0,
+			legend pos=north east, legend columns=-1,
+                       %legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1}, 
+                       ylabel={worst-case latency(us)},
+		       bar width= 24pt,
+       		       %%enlarge x limits={abs=0.8cm},
+ 		       %%postaction={pattern=north east lines},
+                       %symbolic x coords={L3 shared, L3 partitioned},
+		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
+		\addplot [fill=black!50] coordinates {
+                                        (no load,141.3) 
+					(cache pressure,132)	
+					(forkops,129.9)
+					(fileops,123.7)
+					(threadops,146.1)
+			      };
+
+		\addplot [postaction={pattern=north east lines}] coordinates {
+                                        (no load,120.4) 
+					(cache pressure,112.2)	
+					(forkops,108.4)
+					(fileops,106.8)
+					(threadops,116.9)
+			      };
+\legend{LLC shared, LLC partitioned}
+\end{axis}
+
+%%%%%%%%%%%%%%%%%%for defense presentation%%%%%%%%%%%%%%%%%%%%
+\ifdefense
+\end{tikzpicture}
+\end{center}
+\label{plot-cat1}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
+	\begin{axis} [name=plot2, height=7cm,  width=14cm, ybar=2pt, enlarge y limits={upper,value=0.2}, %%enlargelimits=0.3, 
+			ymin=0,
+			legend pos=north east, legend columns=-1,                       
+			%legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1}, 
+                       ylabel={average-case latency (us)}, 
+		       bar width= 24pt,
+       		       %%enlarge x limits={abs=0.8cm},
+ 		       %%postaction={pattern=north east lines},
+                       %%symbolic x coords={L3 shared, L3 partitioned},
+			symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
+		\addplot [fill=black!50] coordinates {
+                                        (no load,19.1) 
+					(cache pressure,28.5)	
+					(forkops,13.1)
+					(fileops,13.8)
+					(threadops,19.6)			
+			      };
+		\addplot [postaction={pattern=north east lines}] coordinates {
+                                        (no load,15.7) 
+					(cache pressure,15.2)	
+					(forkops,9.9)
+					(fileops,10)
+					(threadops,12.4)			
+			      };
+	\legend{LLC shared, LLC partitioned}
+	\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\label{plot-cat2}
+\end{figure}
+
+\else
+		\begin{axis} [name=plot2, at={($(plot1.west)+(0,-9cm)$)}, height=7cm,  width=14cm, ybar=2pt, enlarge y limits={upper,value=0.2}, %%enlargelimits=0.3, 
+			ymin=0,
+			legend pos=north east, legend columns=-1,                       
+			%legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1}, 
+                       ylabel={average-case latency (us)}, 
+		       bar width= 24pt,
+       		       %%enlarge x limits={abs=0.8cm},
+ 		       %%postaction={pattern=north east lines},
+                       %%symbolic x coords={L3 shared, L3 partitioned},
+			symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
+		\addplot [fill=black!50] coordinates {
+                                        (no load,19.1) 
+					(cache pressure,28.5)	
+					(forkops,13.1)
+					(fileops,13.8)
+					(threadops,19.6)			
+			      };
+		\addplot [postaction={pattern=north east lines}] coordinates {
+                                        (no load,15.7) 
+					(cache pressure,15.2)	
+					(forkops,9.9)
+					(fileops,10)
+					(threadops,12.4)			
+			      };
+	\legend{LLC shared, LLC partitioned}
+	\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\ifreport
+\caption{Interrupt latency comparison with shared LLC and partitioned LLC}
+\fi
+\label{plot-cat}
+\end{figure}
+
+\fi

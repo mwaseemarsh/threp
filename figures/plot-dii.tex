@@ -1,0 +1,223 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture} %[scale = 1.2]
+
+	%%%%%%% worst case %%%%%%%%%%%%%%
+	\begin{axis} [ name=plot1, height=8cm, width=14cm, enlarge y limits={upper,value=0.3},  enlarge x limits=0.12,
+			   ymin=0,
+               axis y line*=left,
+			   ybar=5pt,  
+			   x=2.3cm,
+		       bar width= 15pt, %ybar interval = .1cm,
+   			   ylabel={worst-case  latency(us)},
+ 		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+               xtick=data,                 
+                %nodes near coords, 
+				%nodes near coords align={vertical}, 
+				x tick label style={rotate=0, anchor=north}, 
+				xticklabel style={rotate=0,anchor=north},
+                xtick align=inside,
+                xticklabel pos=left,
+   			    legend pos=north west, legend columns=-1,
+				]     
+               
+	%% absolute values
+	\addplot [fill=black!30, xshift=-0.3cm] coordinates {
+                    (no load,133.9) 
+					(cache pressure,135.8)	
+					(forkops,127.1)
+					(fileops,127.6)
+					(threadops,131.7)
+			      };
+
+	\addplot [fill=blue!40, xshift=-0.3cm, postaction={pattern=north east lines}] coordinates {
+                    (no load,101.5) 
+					(cache pressure,101.2)	
+					(forkops,101.9)
+					(fileops,101.1)
+					(threadops,99.9)
+			      };
+	\legend{virtual interrupt, direct interrupt}
+	\end{axis}
+
+	%%improvement%%
+	\begin{axis} [ name=plot1, height=8cm, width=14cm, ybar,  enlarge y limits={upper,value=0.3},  enlarge x limits=0.12, 					
+				   ymin=0, ymax=80,
+		           axis y line*=right,
+				   ybar=5pt,  
+				   x=2.3cm,             
+				   bar width= 15pt, %ybar interval = .1cm,
+	   			   ylabel={improvement \%},
+	 		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+		           xtick=data,                 
+		            nodes near coords, 
+					nodes near coords align={vertical}, 
+					x tick label style={rotate=0, anchor=north}, 
+					xticklabel style={rotate=0,anchor=north},
+		            xtick align=inside,
+		            xticklabel pos=left,
+	   			    legend pos=north east, legend columns=-1,
+		         ]  
+	\addplot [fill=OliveGreen!50, xshift=0.7cm, postaction={pattern=crosshatch dots}] coordinates {
+                    (no load,24.2) 
+					(cache pressure,24.8)	
+					(forkops,19.8)
+					(fileops,20.7)
+					(threadops,24.1)
+			      };
+	\legend{improvement}
+	\end{axis}
+
+	%%%%%%% average case %%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%for defense presentation%%%%%%%%%%%%%%%%%%%%
+\ifdefense
+
+\end{tikzpicture}
+\end{center}
+\label{plot-dii1}
+\end{figure}
+	
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
+
+\begin{axis} [ name=plot2, height=8cm, width=14cm, enlarge y limits={upper,value=0.3},  enlarge x limits=0.12,
+			   ymin=0,
+               axis y line*=left,
+			   ybar=5pt,
+			   x=2.3cm,
+		       bar width= 15pt, %ybar interval = .1cm,
+   			   ylabel={average-case latency (us)},
+ 		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+               xtick=data,                 
+                %nodes near coords, 
+				%nodes near coords align={vertical}, 
+				x tick label style={rotate=0, anchor=north}, 
+				xticklabel style={rotate=0,anchor=north},
+                xtick align=inside,
+                xticklabel pos=left,
+   			    legend pos=north west, legend columns=-1,
+			]                    
+	\addplot [fill=black!30, xshift=-0.3cm] coordinates {
+                    (no load,19.6) 
+					(cache pressure,19.4)	
+					(forkops,14)
+					(fileops,15.1)
+					(threadops,11.9)			
+			      };
+	\addplot [fill=blue!40, xshift=-0.3cm, postaction={pattern=north east lines}] coordinates {
+                    (no load,11) 
+					(cache pressure,11.4)	
+					(forkops,8)
+					(fileops,8)
+					(threadops,11.3)			
+			      };
+	\legend{virtual interrupt, direct interrupt}
+	\end{axis}
+
+	%%improvement%%
+	\begin{axis} [ name=plot2, height=8cm, width=14cm, ybar,  enlarge y limits={upper,value=0.3},  enlarge x limits=0.12,
+					ymin=0, ymax=80,
+		           axis y line*=right,
+				   ybar=5pt,  
+				   x=2.3cm,             
+				   bar width= 15pt, %ybar interval = .1cm,
+	   			   ylabel={improvement \%},
+	 		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+		           xtick=data,                 
+		            nodes near coords, 
+					nodes near coords align={vertical}, 
+					x tick label style={rotate=0, anchor=north}, 
+					xticklabel style={rotate=0,anchor=north},
+		            xtick align=inside,
+		            xticklabel pos=left,
+	   			    legend pos=north east, legend columns=-1,
+		         ]  
+	\addplot [fill=OliveGreen!50, xshift=0.7cm, postaction={pattern=crosshatch dots}] coordinates {
+                    (no load,43.8) 
+					(cache pressure,41.2)	
+					(forkops,42.9)
+					(fileops,47)
+					(threadops,5)
+			      };
+	\legend{improvement}
+	\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\label{plot-dii2}
+\end{figure}
+
+\else
+	\begin{axis} [ name=plot2, at={($(plot1.west)+(0,-10.5cm)$)}, height=8cm, width=14cm, enlarge y limits={upper,value=0.3},  enlarge x limits=0.12,
+			   ymin=0,
+               axis y line*=left,
+			   ybar=5pt,
+			   x=2.3cm,
+		       bar width= 15pt, %ybar interval = .1cm,
+   			   ylabel={average-case latency (us)},
+ 		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+               xtick=data,                 
+                %nodes near coords, 
+				%nodes near coords align={vertical}, 
+				x tick label style={rotate=0, anchor=north}, 
+				xticklabel style={rotate=0,anchor=north},
+                xtick align=inside,
+                xticklabel pos=left,
+   			    legend pos=north west, legend columns=-1,
+			]                    
+	\addplot [fill=black!30, xshift=-0.3cm] coordinates {
+                    (no load,19.6) 
+					(cache pressure,19.4)	
+					(forkops,14)
+					(fileops,15.1)
+					(threadops,11.9)			
+			      };
+	\addplot [fill=blue!40, xshift=-0.3cm, postaction={pattern=north east lines}] coordinates {
+                    (no load,11) 
+					(cache pressure,11.4)	
+					(forkops,8)
+					(fileops,8)
+					(threadops,11.3)			
+			      };
+	\legend{virtual interrupt, direct interrupt}
+	\end{axis}
+
+	%%improvement%%
+	\begin{axis} [ name=plot2, at={($(plot1.west)+(0,-10.5cm)$)}, height=8cm, width=14cm, ybar,  enlarge y limits={upper,value=0.3},  enlarge x limits=0.12, 					   ymin=0, ymax=80,
+		           axis y line*=right,
+				   ybar=5pt,  
+				   x=2.3cm,             
+				   bar width= 15pt, %ybar interval = .1cm,
+	   			   ylabel={improvement \%},
+	 		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+		           xtick=data,                 
+		            nodes near coords, 
+					nodes near coords align={vertical}, 
+					x tick label style={rotate=0, anchor=north}, 
+					xticklabel style={rotate=0,anchor=north},
+		            xtick align=inside,
+		            xticklabel pos=left,
+	   			    legend pos=north east, legend columns=-1,
+		         ]  
+	\addplot [fill=OliveGreen!50, xshift=0.7cm, postaction={pattern=crosshatch dots}] coordinates {
+                    (no load,43.8) 
+					(cache pressure,41.2)	
+					(forkops,42.9)
+					(fileops,47)
+					(threadops,5)
+			      };
+	\legend{improvement}
+	\end{axis}
+
+
+
+\end{tikzpicture}
+\end{center}
+\ifreport
+\caption{Interrupt Latency comparison for virtual and direct interrupt injection}
+\fi
+\label{plot-dii}
+\end{figure}
+
+\fi

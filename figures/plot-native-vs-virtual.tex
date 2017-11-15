@@ -1,0 +1,80 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
+
+
+\begin{axis} [name=plot1, height=8cm, width=15cm, ybar=2pt, enlarge y limits={upper,value=0.3},  %enlargelimits=0.3, 
+			ymin=0,
+			legend pos=north east, legend columns=-1,
+                       %legend style={at={(0.5,-0.1)}, anchor=north, legend columns=-1}, 
+                       ylabel={worst-case latency(us)}, %title=no pollution from gp-guest, 
+		       bar width= 16pt,
+			%symbolic x coords={without VPID, with VPID},
+                       symbolic x coords={no load, cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops, all benchmarks},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=45,anchor=east}, ]                    
+	\addplot [postaction={pattern=north east lines}] coordinates {
+				(no load, 67.6)				
+				(cache pressure, 73.7)
+				(forkops, 25.9)
+				(fileops, 24.7)
+				(hackbench, 9.3)
+				(mmapops, 23.4)
+				(stdout, 25.8)
+				(threadops, 12.4)
+				(all benchmarks, 19.8)
+			      };
+
+	\addplot [fill=black!50] coordinates {
+				(no load, 130.8)				
+				(cache pressure, 141.7)
+				(forkops, 119.5)
+				(fileops, 146.4)
+				(hackbench, 106.7)
+				(mmapops, 106.6)
+				(stdout, 142.7)
+				(threadops, 169.1)
+				(all benchmarks, 114.1)
+			      };
+\legend{native setup, virtual setup}
+\end{axis}
+
+
+\begin{axis} [name=plot2, at={($(plot1.west)+(0,-12cm)$)}, height=8cm,  width=15cm, ybar=2pt, enlarge y limits={upper,value=0.2},  %enlargelimits=0.3, 
+			ymin=0,
+                       legend pos=north east, legend columns=-1,
+			%legend style={at={(0.5,-0.1)}, anchor=north, legend columns=-1}, 
+                       ylabel={average-case latency (us)}, %title=no pollution from gp-guest, 
+		       bar width= 16pt,
+                       %symbolic x coords={without VPID, with VPID},
+			symbolic x coords={no load, cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops, all benchmarks},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=45,anchor=east}, ]                    
+	\addplot [postaction={pattern=north east lines}] coordinates {
+				(no load, 44.2)				
+				(cache pressure, 43.1)
+				(forkops, 6.1)
+				(fileops, 6.1)
+				(hackbench, 4.5)
+				(mmapops, 4.4)
+				(stdout, 6.1)
+				(threadops, 5)
+				(all benchmarks, 4.9)
+			      };
+	\addplot [fill=black!50] coordinates {
+				(no load, 18.2)				
+				(cache pressure, 26.6)
+				(forkops, 12.6)
+				(fileops, 14.3)
+				(hackbench, 10)
+				(mmapops, 8.1)
+				(stdout, 14.9)
+				(threadops, 16.4)
+				(all benchmarks, 10.2)
+			      };
+\legend{native setup, virtual setup}
+\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\caption{Camparison of worst-case and average-case latency in native and virtual setup}
+\label{plot-native-vs-virtual}
+\end{figure}

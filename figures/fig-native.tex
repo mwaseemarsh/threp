@@ -1,0 +1,28 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
+
+
+
+\node at (0,3.325) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 3cm, minimum width = 6cm, anchor=south west] (rtguest) {};
+
+%\node[inner sep=0pt, text width=2cm] (rtgtext) at (1.5, 5) {PREEMPT\_RT guest};
+\node[below right, inner sep=5pt, text width=2cm] at (rtguest.north west) {PREEMPT\_RT\\ Linux\\ (rt-guest)};
+\node[above right, inner sep=5pt] (tux) at (rtguest.south)  {\includegraphics[width=2cm]{figures/tux.jpg}};
+%\node[inner sep=0pt] (tux) at (4.5, 5)  {\includegraphics[width=2cm]{figures/tux.jpg}};
+
+\node at (0,2.250) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 1cm, minimum width = 6cm, anchor=south west] (core0) {Core0};
+
+\node at (0,1.125) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 1cm, minimum width = 2.875cm, anchor=south west] (lapic) {LAPIC};
+\node at (3,1.125) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 1cm, minimum width = 3cm, anchor=south west] (ioapic) {IOAPIC};
+\node at (0,0) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 1cm, minimum width = 2.875cm, anchor=south west] (device) {PCIe Dev.};
+\node at (3,0) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 1cm, minimum width = 3cm, anchor=south west] (uart) {UART};
+
+
+\end{tikzpicture}
+\end{center}
+\ifreport
+\caption{Native Setup used to measure baseline interrupt latency}
+\fi
+\label{fig-native}
+\end{figure}

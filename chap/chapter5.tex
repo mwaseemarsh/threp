@@ -1,0 +1,69 @@
+\chapter{Related Work\label{chap5}}
+
+%\section{Related Work}
+
+This chapter will cover a brief introduction of related research work that has focused on virtualization solutions
+for real-time applications by developing new or bringing real-time capabilities to existing virtualization
+solutions. Furthermore, it presents some of research efforts made to improve real-time responsiveness of real-time guests.
+
+
+%This chapter will cover the work related from the domain of embedded virtual setups and mechanisms used to lower interrupt latency.
+%% Schild et al. evaluated performance of hardware-assisted virtualization extensions... does not comply with our setup
+%% Aichouch et al. has observed RTOS latenices in virtualized setup for Litmus-RT... they noticed increased wcet for RTOS
+
+\section{KVM-based solutions}
+Kernel-based Virtual Machine (KVM) is an open source type-2 hypervisor extensively used as virtualization solution in enterprise domain.
+KVM uses existing Linux kernel mechanisms like scheduling policies etc. for virtual machines. 
+Kiszka \cite{kiszka2009towards} has proposed real-time improvements that includes using PREEMPT\_RT patch to add real-time capabilities to host Linux kernel.
+Zhang et al. presented a real-time virtualization solution using KVM hypervisor on x86 platform \cite{zuo2010performance}.
+Their solution consisted of an RTOS and a GPOS running in separate virtual machines. 
+They applied two performance improvement mechanisms on host Linux kernel: CPU shielding and interrupt prioritization.
+The performance tunings significantly improved worst-case interrupt response time of the RTOS guest.
+Furthermore, they showed worst-case Process Dispatch Latency Time (PDLT) of PREEMPT\_RT patched Linux guest improved after using the performance tunings.
+
+\section{Xen-based solutions}
+Xen is a widely used open source type-1 hypervisor \cite{Barham:2003:XAV:1165389.945462}. 
+Many research projects has been conducted so far to make Xen appropriate for real-time virtualization.
+The split driver model for IO devices makes it challenging to use for real-time workloads \cite{Yoo:2011:TUI:2103799.2103816}.
+Masrur et al. \cite{masrur2010vm} evaluated real-time performance of Xen SEDF scheduler and proposed PSEDF scheduler to separate
+real-time domains from others. The showed that separating real-time domain from others can lower interrupt latencies and jitters.
+Xi et al. has developed RT-Xen framework to support real-time scheduling policies in Xen \cite{Xi:2011:RTR:2038642.2038651}.
+RT-Xen project extends Xen by appending new scheduling widely used in real-time domain.
+
+\section{Microkernel-Based Solutions}
+Schild et al. \cite{schild2009faithful} used x86 virtualization extensions to run unmodified guest OS on L4/Fiasco microkernel.
+They observed increased interrupt response times for real-time guest interrupts and showed that in certain cases the interrupt latency
+can increase significantly.
+Bruns et al. investigated real-time performance of L4/Fiasco microkernel \cite{bruns2010evaluation}.
+The measured interrupt latencies and context-switch times of real-time guest and used FreeRTOS as reference.
+The experiments showed that average execution times and interrupt latencies for real-time guest are significantly larger than real-time kernel.
+They observed cache contention as the main contributor to the virtualization overhead.
+
+
+\section{Other solutions}
+XtratuM is type-1 non-preemptive hypervisor that is designed specifically for real-time safety critical applications \cite{Carrascosa:2014:XHR:2668138.2668142}.
+XtratuM deploys para-virtualization to achieve minimality. It provides minimalistic set of hypercalls to guests for hardware interfacing.
+It achieves deterministic performance by using static partitioning of resources allocated to each virtual machine.
+The approach is very close to the one used by Phidias hypervisor.
+
+Quest-V is an open source separation kernel that uses hardware assisted-virtualization to isolate guest in time and space \cite{West:2016:VSK:2966277.2935748}.
+It supports applications of mixed-criticality by sandboxing a real-time guest partition on multicore processor.
+Quest-V uses static partitioning of hardware resources across guests to avoid traditional virtualization overheads.
+It allows real-time guest OS to receive IO interrupts without hypervisor intervention and tries to avoid vmexits as much as possible.
+
+Gordon et al. proposed exit-less interrupt (ELI) delivery mechanism to remove vmexits in situations where hypervisor intervention is not required \cite{Gordon:2012:EBP:2150976.2151020}.
+Their solution is software-only where a shadow-IDT is maintained by the host to inject virtual interrupts to the unmodified guest.
+They have showed ELI approach improves throughput of IO intensive workloads.
+
+
+%%Bruns et. al evaluated mickro-kernel based virtualization solutions. They observed 30% to 50% increase in execution times of the tasks.
+%% they pointed cache contentions as the main reason of this overhead and predicted jitter might be more in processors with bigger caches
+
+%% IDEA measure cache hit and miss penalties for given parameters of xeon processor using online tool!!!
+
+%%Yoo et al. developed MobiVMM, a hypervisor for mobile phones [REF].
+%%XtratuM is a type-1 hypervisor which is designed for safety critical avionics embedded systems. It runss on LEON3 SPARC V8 processor.
+%%Kim et al. proposed two cache management techniques for real-time worloads: virtual LLC and virtual coloring [REF].
+%%The techiqnue allow temporal isolation of real-time tasks running in a virtual machine. 
+%%They implemented proposed scheme on KVM for x86 and ARM and proved significant utilization benifit.
+

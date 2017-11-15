@@ -1,0 +1,54 @@
+\begin{figure}[!htb]
+\begin{center}
+
+\begin{tikzpicture}
+
+
+\begin{axis}[name=plot1, height=6cm, width=7cm, ymin=0, ymax=100, minor y tick num = 5, xmin=0, 
+		area style, 
+		xlabel=latency(us), 
+		ylabel=frequency, 
+		%ymajorgrids=true, grid style = very thin,
+		title=cache\_pressure (native),
+		]
+	\addplot+ [ybar interval, fill] table[x=Latency,y=Frequency] {./figures/native_cachepressure_10k_freq.dat};	
+\end{axis}
+
+
+\begin{axis}[name=plot2, at={($(plot1.south east)+(2cm,0)$)},height=6cm, width=7cm, ymin=0, ymax=100, minor y tick num = 5, xmin=0, 
+		area style, 
+		xlabel=latency(us), 
+		ylabel=frequency, 
+		%ymajorgrids=true, grid style = very thin,
+		title=cache\_pressure (virtual),
+		]
+	\addplot+ [ybar interval, fill] table[x=Latency,y=Frequency] {./figures/virt_cachepressure_10k_freq.dat};
+\end{axis}
+
+
+\begin{axis}[name=plot3, at={($(plot1.south west)+(0,-7cm)$)}, height=6cm, width=7cm, ymin=0, ymax=100, minor y tick num = 5, xmin=0, 
+		area style, 
+		xlabel=latency(us), 
+		ylabel=frequency, 
+		%ymajorgrids=true, grid style = very thin,
+		title=threadops (native),
+		]
+	\addplot+ [ybar interval, fill] table[x=Latency,y=Frequency] {./figures/native_threadops_freq.dat};	
+\end{axis}
+
+
+\begin{axis}[name=plot4, at={($(plot3.south east)+(2cm,0)$)},height=6cm, width=7cm, ymin=0, ymax=100, minor y tick num = 5, xmin=0, 
+		area style, 
+		xlabel=latency(us), 
+		ylabel=frequency, 
+		%ymajorgrids=true, grid style = very thin,
+		title=threadops (virtual),
+		]
+	\addplot+ [ybar interval, fill] table[x=Latency,y=Frequency] {./figures/virt_threadops_10k_freq.dat};
+\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\caption{Interrupt latency histograms, native on the left and virtual on the right}
+\label{plot-histo-native-vs-virtual}
+\end{figure}

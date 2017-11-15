@@ -1,0 +1,33 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture} [scale=1.5]
+
+\begin{axis} [ ybar=0.5cm, enlargelimits=0.1, 
+                       %%legend style={at={(0.5,-0.4)}, anchor=north, legend columns=-1}, 
+                       ylabel={Worst-case event handling latency}, %title=vmexits after bootup, 
+		       bar width=0.5cm,
+       		       %%enlarge x limits={abs=0.8cm},
+ 		       postaction={pattern=north east lines},
+                       symbolic x coords={cache\_pressure,forkops, fileops, hackbench, memmapops, stdout, threadops, no\_load, all},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=45,anchor=east}, ]                    
+	\addplot [fill=white] coordinates {
+				(cache\_pressure, 10)
+				(forkops, 11.1)
+				(fileops, 7.5)
+				(hackbench, 10)
+				(memmapops, 9.4)
+				(stdout, 7.2)
+				(threadops, 10)
+				(no\_load, 69.0)
+				(all, 9.6)				
+			    };
+%\legend{real-time guest}
+\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\ifreport
+\caption{Latency Baseline figure}
+\fi
+\label{fig-baseline}
+\end{figure}

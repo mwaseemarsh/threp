@@ -1,0 +1,74 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture} %[scale = 1.2]
+
+\begin{axis} [name=plot1, height=7cm, width=14cm, ybar=2pt, enlarge y limits={upper,value=0.3},  %enlargelimits=0.3, 
+			ymin=0,
+			legend pos=north east, legend columns=-1,
+                       %legend style={at={(0.5,-0.1)}, anchor=north, legend columns=-1}, 
+                       ylabel={worst-case latency(us)}, %title=no pollution from gp-guest, 
+		       bar width= 24pt,
+			%symbolic x coords={without VPID, with VPID},
+                       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
+	\addplot [fill=black!50] coordinates {
+                    (no load,130.8) 
+					(cache pressure,141.7)	
+					(forkops,119.5)
+					(fileops,146.4)
+					(threadops,169.1)
+			      };
+
+	\addplot [postaction={pattern=north east lines}] coordinates {
+                    (no load,97.7) 
+					(cache pressure,102.2)	
+					(forkops,93.6)
+					(fileops,100.7)
+					(threadops,96.8)
+			      };
+\legend{without optimization, latency reduction techniques}
+\end{axis}
+
+
+\begin{axis} [name=plot2, at={($(plot1.west)+(0,-9cm)$)}, height=7cm,  width=14cm, ybar=2pt, enlarge y limits={upper,value=0.3},  %enlargelimits=0.3, 
+			ymin=0,
+                       legend pos=north east, legend columns=-1,
+			%legend style={at={(0.5,-0.1)}, anchor=north, legend columns=-1}, 
+                       ylabel={average-case latency (us)}, %title=no pollution from gp-guest, 
+		       bar width= 24pt,
+                       %symbolic x coords={without VPID, with VPID},
+			symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
+	\addplot [fill=black!50] coordinates {
+                    (no load,18.2) 
+					(cache pressure,26.6)	
+					(forkops,12.6)
+					(fileops,14.3)
+					(threadops,16.4)			
+			      };
+	\addplot [postaction={pattern=north east lines}] 				
+				coordinates {
+                    (no load,11) 
+					(cache pressure,10.9)	
+					(forkops,7.6)
+					(fileops,7.7)
+					(threadops,9.6)			
+			      };
+\legend{without optimization, latency reduction techniques}
+\end{axis}
+
+\end{tikzpicture}
+
+%\begin{tabular}{c c c c c}
+%\multicolumn{5}{c}{Percentage Improvement}
+%no load & cache pressure & forkops & fileops & threadops \\
+%25.3 & 27.9 & 21.7 & 31.2 & 42.8 \\
+%\end{tabular}
+
+\end{center}
+\ifreport
+\caption{Comparison of interrupt latency when no optimization is deployed versus latency reduction techniques (direct interrupt, cache allocation, isolated TLB cache)}
+\fi
+\label{plot-allopt}
+\end{figure}
+

@@ -1,0 +1,97 @@
+\chapter{Phidias Runtime}  \label{app:b}
+
+%\begin{table}[h]
+%\centering
+%\begin{longtable}{|p{.20\textwidth} | p{.70\textwidth}|}
+%\begin{longtable}{|c|c|c|c|c|c|c|c|c|c|}  
+%\hline
+%\small{exit reason} & \small{external} & \small{cupid} & \small{crX} 
+%& \small{io} & \small{rdmsr} & \small{wrmsr} & \small{eoi} & \small{ept} & \small{apic} \\
+%\small{benchmark} & \small{interrupt} & \small{} & \small{access} 
+%& \small{access} & \small{} & \small{} & \small{exit} & \small{violation} & \small{write} \\ \hline 
+%\hline
+%after bootup & 7075 & 323 & 11254 & 122577 & 4 & 7292 & 3 & 584 & 13 \\ \hline
+%cache pressure & 5229 & 11572 & 4766 & 135 & 0 & 28555 & 9997 & 0 & 0 \\ \hline
+%forkops & 143650 & 20 & 545662 & 35 & 0 & 681097 & 9994 & 0 & 0 \\ \hline
+%fileops & 274394 & 19 & 6 & 35 & 0 & 681097 & 9994 & 0 & 0 \\ \hline
+%hackbench & 40926 & 0 & 2018287 & 0 & 0 & 2064207 & 9990 & 0 & 0   \\ \hline
+%mmapops & 47258 & 0 & 19758 & 0 & 0 & 123174 & 9990 & 0 & 0 \\ \hline
+%stdout & 195436 & 19 & 6 & 154 & 0 & 770222 & 9990 & 0 & 0 \\ \hline
+%threadops  & 158602 & 19 & 6 & 459 & 0 & 407221 & 9989 & 0 & 0 \\ \hline
+%\caption{Phidias intervension during test} 
+%\label{Phidias exit frequency}
+%\end{longtable}
+%\end{table}
+
+\begin{longtable}{|r|c|c|c|c|c|}
+%	\centering
+	%\hline
+	%\textbf{exit}	& \textbf{exit}	 & \textbf{min.} 	& \textbf{max.} & \textbf{avg.} & \textbf{instr.}  \\
+	%\textbf{reason}	& \textbf{freq.} & \textbf{time} (cc)	& \textbf{time} (cc)	& \textbf{time} (cc)	& \textbf{retired}  \\ \hline
+
+	 \hline
+	\textbf{exit}	& \textbf{exit}	 & \textbf{min.} 	& \textbf{max.} & \textbf{avg.} & \textbf{instr.}  \\
+	\textbf{reason}	& \textbf{freq.} & \textbf{time} (cc)	& \textbf{time} (cc)	& \textbf{time} (cc)	& \textbf{retired}  \\ \hline
+	 \hline
+	\endfirsthead
+
+	 \hline
+	\textbf{exit}	& \textbf{exit}	 & \textbf{min.} 	& \textbf{max.} & \textbf{avg.} & \textbf{instr.}  \\
+	\textbf{reason}	& \textbf{freq.} & \textbf{time} (cc)	& \textbf{time} (cc)	& \textbf{time} (cc)	& \textbf{retired}  \\ \hline
+	 \hline
+	\endhead
+
+	\multicolumn{6}{|c|}{\textbf{\mcachepressure{}}} \\ \hline
+       ext\_interrupt	& 3429	& 680	& 7021	& 1725	& 779  \\
+               cpuid	& 7638	& 573	& 1008	& 697	& 517  \\
+          crx\_access	& 3158	& 358	& 30332	& 1014	& 551  \\
+           io\_access	& 135	& 401	& 178716 & 16548 & 2322  \\
+               wrmsr	& 25142	& 287	& 30575	& 834	& 779   \\ 
+            eoi\_exit	& 9986	& 276	& 169281 & 477	& 20504  \\ \hline
+	\multicolumn{6}{|c|}{\textbf{\mforkops{}}} \\ \hline
+       ext\_interrupt	& 174258	& 641	& 189773	& 1702	& 12925 \\
+               cpuid	& 19	& 680	& 1020	& 750	& 526 \\
+          crx\_access	& 657946	& 306	& 158508	& 840	& 11572 \\
+           io\_access	& 240	& 396	& 175702	& 9263	& 2301 \\
+               wrmsr	& 827333	& 258	& 165704	& 508	& 18593 \\
+            eoi\_exit	& 9993	& 314	& 27986	& 483	& 550 \\ \hline
+	\multicolumn{6}{|c|}{\textbf{\mfileops{}}} \\ \hline
+	  ext\_interrupt	& 273731	& 595	& 173298	& 1288	& 18922 \\
+               cpuid	& 20	& 680	& 1025	& 750	& 526 \\
+          crx\_access	& 6	& 629	& 1282	& 1071	& 551 \\
+           io\_access	& 35	& 401	& 172375	& 8326	& 2280 \\
+               wrmsr	& 718708	& 282	& 196490	& 698	& 12640 \\
+            eoi\_exit	& 9985	& 267	& 30031	& 620	& 550 \\ \hline
+	\multicolumn{6}{|c|}{\textbf{\mhackbench{}}} \\ \hline
+       ext\_interrupt	& 45230	& 651	& 6460	& 1138	& 1069 \\
+               cpuid	& 19	& 680	& 1003	& 741	& 526 \\ 
+          crx\_access	& 2272384	& 268	& 150476	& 703	& 22033 \\ 
+           io\_access	& 611	& 380	& 176205	& 23042	& 2301 \\
+               wrmsr	& 2321823	& 216	& 149052	& 234	& 20198 \\
+            eoi\_exit	& 9993	& 216	& 864	& 287	& 559 \\ \hline
+	\multicolumn{6}{|c|}{\textbf{\mmmapops{}}} \\ \hline
+       ext\_interrupt	& 50559	& 714	& 149292	& 1077	& 19426 \\
+               cpuid	& 19	& 680	& 930	& 736	& 524 \\ 
+          crx\_access	& 21054	& 276	& 148436	& 546	& 20032 \\
+           io\_access	& 35	& 396	& 183566	& 7604	& 2364 \\ 
+               wrmsr	& 131238	& 216	& 148856	& 469	& 20278 \\
+            eoi\_exit	& 9984	& 208	& 724	& 296	& 559 \\ \hline
+	\multicolumn{6}{|c|}{\textbf{\mstdout{}}} \\ \hline
+       ext\_interrupt	& 192641	& 430	& 186435	& 1240	& 21429 \\
+               cpuid	& 19	& 675	& 1030	& 759	& 526 \\
+          crx\_access	& 6	& 556	& 1287	& 1056	& 551 \\
+           io\_access	& 35	& 396	& 176710	& 8470	& 2322 \\
+               wrmsr	& 756404	& 262	& 186014	& 708	& 19836 \\
+            eoi\_exit	& 9993	& 267	& 27206	& 345	& 550 \\ \hline
+	\multicolumn{6}{|c|}{\textbf{\mthreadops{}}} \\ \hline
+       ext\_interrupt	& 189248	& 590	& 200313	& 1265	& 19804 \\ 
+               cpuid	& 19	& 680	& 1207	& 771	& 517 \\ 
+          crx\_access	& 6	& 595	& 1246	& 1051	& 551 \\ 
+           io\_access	& 204	& 401	& 185776	& 19111	& 2385 \\
+               wrmsr	& 506235	& 282	& 172878	& 624	& 18745 \\ 
+            eoi\_exit	& 9985	& 272	& 29733	& 590	& 550 \\ \hline
+
+\caption{Phidias runtime profiling information} 
+\label{phidias-runtime-detailed}
+\end{longtable}
+

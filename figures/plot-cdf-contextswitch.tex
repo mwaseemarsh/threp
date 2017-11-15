@@ -1,0 +1,24 @@
+\begin{figure}[!htb]
+\begin{center}
+
+\begin{tikzpicture}
+
+
+\begin{axis}[name=plot1, height=8cm, width=12cm,
+		legend pos=south east,
+		xlabel=context-switch overhead(us), 
+		ylabel=Probability, enlargelimits=0.05,
+		%ymajorgrids=true, grid style = very thin,
+		]
+	\addplot [ultra thick, blue] table[x=Latency,y=Probability] {./figures/vmexitentry_10k_cdf.dat};
+	\addplot [very thick, red, dashed] table[x=Latency,y=Probability] {./figures/vmexitentry_cachepressure_10k_cdf.dat};
+	\legend {\small{no load (max 17.2)}, \small{cache pressure (max 86.8)}}
+\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\ifreport
+\caption{CDF of context-switch overhead}
+\fi
+\label{plot-cdf-contextswitch}
+\end{figure}

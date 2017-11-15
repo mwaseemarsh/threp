@@ -1,0 +1,598 @@
+\chapter{Background\label{chap2}}
+
+\section{Real-time Systems}
+A real-time embedded system consists of computational tasks that are bounded by time constraints. The time constraint is dictated by the environment in which the real-time system is integrated. 
+Kopetz \cite{Kopetz:2011:RSD:1995310} has defined real-time system as follows:
+
+\emph{"real-time system is a computer system in which the correctness of the system behavior depends not only on the logical results of the computations, but also on the physical instant at which these results are produced"}. 
+
+
+The system works correctly as long as the results are logically correct and produced within prescribed timing constraints. 
+A task is a piece of workload that the real-time system has to execute within prescribed timing constraints. 
+The real-time computing system can be designed to perform a single or multiple tasks. 
+Behavior of a real-time system can be well understood by understanding characteristics of real-time tasks. 
+Every real-time task is imposed by a time constraint called \emph{deadline}. 
+The real-time system is supposed to complete real-time tasks before deadline of a task passes.
+The time instance when a real-time task becomes ready for execution is called \emph{release time}. 
+The difference between release time and the instant of time when the real-time task handler is scheduled to compute workload is called latency.
+The maximum or worst-case time needed to complete the task after it is scheduled is called "response time" also called as worst-case execution time (WCET). 
+Figure \ref{fig-rt-task-param} demonstrates response time of real-time task under normal circumstances assuming latency is zero. 
+
+\input{./figures/fig-rt-task-param}
+
+Deadline of a real-time task is categorized into three types: soft, firm and hard. 
+The deadline is firm, if missing the deadline makes the result unusable, soft if result is still usable. 
+A hard deadline means missing it would disrupt the system functionality resulting in a failure of the system.
+Real-time systems are often categorized into soft and hard real-time systems based on the type of deadlines tasks are supposed to meet.
+A hard real-time system consists of at least one task with hard deadline. 
+A safety-critical system is hard real-time system where system failure can cause a disaster.
+On contrary, all tasks in soft real-time system has soft or firm deadlines. 
+Nevertheless, missing a deadline in soft as well as hard real-time systems is undesirable.
+
+There are two types of real-time tasks based on release times: periodic and aperiodic.
+A periodic real-time task is released after same interval of time and aperiodic task has irregular and unpredictable release times.
+An example of periodic task is a periodic timer tick that triggers scheduling events.
+And example of aperiodic task is arrival of external interrupt.
+Most of the tasks in a real-time systems are performed in response to external event or stimulus and they are aperiodic.
+While some are periodic and generally performed on periodic timer interrupts.
+When an external event occurs the release time observed by the system is different from the actual release time due to hardware and scheduling overhead. 
+The time that elapses between actual release time of the event and time instant at which the system notices the event is called \emph{interrupt latency}. 
+
+\input{./figures/fig-latency-jitter}
+
+The interrupt or event handling latency is not a fixed parameter. The variance of interrupt latency depends on current state of the system, e.g. if system is executing a high priority task then observed release time of the event is delayed until execution of a high priority task finishes. 
+The interrupt latency also depends on hardware overhead, which can vary when multiple interrupts arrive at the same time and hardware posts them one by one based on their priority.
+Designers of a real-time system software are supposed to keep the event handling latency within certain bounds to respect timing constraints. 
+The variance of interrupt latency is usually referred as jitter. Figure \ref{fig-latency-jitter} shows relationship of interrupt latency and latency jitter with rest of parameters.
+
+In contrast to desktop and server application, real-time applications are designed to have deterministic response times.
+The general purpose computing tasks are optimized for average running time. 
+While a real-time task is optimized to have deterministic response time even at the expense of increased average-case running time.
+Performance of real-time application is always evaluated based on worst-case execution times.
+The difference leads to a separate class of operating systems called real-time operating systems (RTOS) specifically designed to have deterministic properties.
+Characteristics of RTOS are described in the next section.
+
+
+\section{Real-Time Operating Systems} \label{sec:rtos-and-types}
+The operating system, or general purpose operating system (GPOS), is a piece of software that manages resources of hardware platform and provides a nice abstraction to application software for using these resources \cite{Tanenbaum:2014:MOS:2655363}. Kernel-based design is a common design approach for GPOS. The OS implements two completely isolated work spaces: kernel-space and user-space. The OS layer that manages the hardware and provides services to userspace makes up the kernel-space. The user application reside in userspace and use services provided by the OS kernel. In kernel-based OS design, typical services provided to userspace applications by OS kernel are process management, inter-process communication, time management, interrupt handling, process synchronization. 
+
+Real-time application typically execute on top of a real-time operating system (RTOS). 
+The RTOS has the same responsibilities as general purpose operating system, however the resource management and scheduling policies are usually different to guarantee deterministic behavior and respect timing constraints of real-time tasks.
+%%The real-time operating systems are designed to be predictable such that the timing constraints of real-time applications are respected.
+Various design approaches has been used to design RTOS.
+Following sections briefly shed light on most common design approaches.
+
+\subsection{Pure Real-time Operating Systems}
+A large number of operating systems are designed exclusively for real-time applications.
+Pure RTOS are typically designed to target single or a few similar real-time applications. 
+For example Contiki RTOS \cite{Dunkels:2004:CLF:1032658.1034117} is designed specifically for wireless sensor nodes and it is optimized for small footprint and power efficiency.
+Purposely built real-time operating systems come in many varieties: some are designed for small foot-print suited for embedded devices, and some for safety-critical applications like control of a nuclear power plant.
+Many RTOSs are designed for small devices that use micro-controllers whiteout MMU support and occupy memory in the order of few tens of kilo-bytes. Examples from this class are Nucleus RTOS, $\mu$C/OS-III and Contiki.
+On the other hand RTOSs like VxWorks support high-end processor families with MMU (x86, ARM, MIPS, and PowerPC). 
+Often these RTOSs are rich in library content to support complex devices like graphical displays.
+Most of real-time operating systems from this category are commercial and proprietary. However there are some RTOS that are open-source.
+FreeRTOS is an an open-source RTOS that belong to this category.
+
+\subsection{Extensions to GPOS Kernels} \label{sec:rtos-ext-gpos}
+One of the key aspects of general purpose OS is that they support a large number of devices and are very rich in library features. 
+Open-source GPOS like Linux enjoys the fact that large group of people are continuously adding support for new features and support for devices.
+Many real-time operating systems lack this feature because only a small group of people are maintaining the source code. 
+Hence, another type of real-time operating systems available today is based on general purpose OS kernel.
+A well-know example from this category is PREEMPT\_RT patch \cite{PREEMPT-RT}. 
+The patchset once applied converts Linux kernel to a real-time kernel.
+In order to convert non real-time kernel to real-time, the PREEEMPT\_RT patchset add preemption to non-preemptible parts.
+The non-preemptible parts of the Linux kernel include interrupt handlers and critical sections.
+Interrupt handlers are modified to run in process context. 
+Critical sections that includes spinlocks are modified to be preemptible by enabling interrupts.
+Another key feature added by the patch is priority inheritance to avoid priority inversion.  
+
+\subsection{Dual-Kernels}
+Yet another approach used to convert GPOS to real-time OS is adding a small and thin real-time kernel that runs in parallel to GP kernel.
+Once the GP kernel boots up the system, real-time kernel takes over the control of the hardware resources.
+The real-time applications use API interface and scheduling policies provided by real-time kernel and the GP kernel runs as a low priority task.
+This approach was first adopted in design of RTLinux \cite{yodaiken1999rtlinux}, followed by RTAI \cite{RTAI} and Xenomai\cite{Xenomai}. 
+One of the disadvantages of dual-kernel based RTOS is that there is no separation between real-time and the host kernel.
+
+\subsection{Microkernel-based RTOS}
+The microkernel design approach unlike monolithic kernels provide minimalistic set of features necessary run in kernel space. 
+The remaining services run as server like processes on top of microkernel and user applications use services when necessary.
+The microkernel-based real-time operating systems design approach leverage the idea of microkernel to separate real-time kernel from non real-time.
+One of the examples of such an operating system is L4RTL \cite{mehnert2001rtlinux} which follows microkernel based implementation to replace RTLinux.
+%MORE INFO...
+
+%\subsubsection{Library-based (kernel-less)}
+%\subsubsection{Monolithic}
+%\subsubsection{Exokernel-VirtualMachine}
+
+
+\section{Virtualization} % of Real-time Applications}
+Virtualization refers to creating and hosting multiple virtual machines on one hardware platform.
+The piece of software that enables virtualization and manages virtual machines is called virtual machine monitor (VMM) or hypervisor.
+A virtual machine is an environment created by hypervisor to host an operating system with application running on top called guests.
+Virtualization technology enables concurrent execution of multiple guests on same hardware as shown in Figure \ref{fig-virtualization}.
+Virtualization is widely used in cloud computing and enterprise domains mainly for software consolidation to reduce hardware costs.
+Virtualization is also used to enhance security of the software system.
+%%Recently virtualization has found its way in real-time embedded systmes.
+\input{./figures/fig-virtualization}
+
+
+Virtualization has been around for decades. In 1972 IBM released VM/370 operating system for mainframe computers capable of running guest operating systems.
+Hypervisor can be classified into two types.
+Type-I hypervisor runs bare-metal and has full control over the hardware resources.
+An example of type-I hypervisor is Xen \cite{Barham:2003:XAV:1165389.945462}.
+Type-II hypervisor runs in a hosted environment on top of another operating system as a process.
+An example of type-I hypervisor is KVM \cite{kivity2007kvm}.
+The type-II hypervisor can only utilize resources allocated by the host operating system.
+Type-I hypervisor can be more efficient than type-II, as it runs directly on the hardware.
+
+\subsection{Virtualization Techniques}
+Virtualization can be achieved in number of ways. This section presents well known techniques used for virtualization.
+
+\subsubsection{Classical Virtualization}
+In 1974, Popek and Golberg defined virtual machine as \emph{"an efficient, isolated duplicate of the real machine"} and presented formal requirements to virtualize a computer architecture \cite{popek1974formal}. They described three most important characteristics of a virtual machine as follows:
+
+\begin {itemize}
+	\item {\textbf{Equivalence:}} The virtual environment provided to the virtual machine is essentially identical. The guest operating system can run in the virtual environment as if running on actual hardware.
+	\item {\textbf{Performance:}} The virtual machine running in a virtual environment has comparable performance to when running natively.
+	\item {\textbf{Resource Control:}} The virtual machine monitor software is in full control of all the system resources. The guest running in virtual environment has access to only the resources explicitly allocated to this virtual machine.
+\end {itemize}
+
+These characteristics provided formal requirements for virtual machine monitor and underlying hardware architecture.
+The virtual machine monitor provides duplicate execution environment to the real machine and does not add too much overhead to the execution of virtual machine.
+Furthermore, virtual machine monitor has full control over hardware resources.
+
+An instruction set architecture (ISA) of a CPU defines at least two privilege levels or modes of operation.
+The set of instructions that can only be executed in highest privileged mode are called \emph{"privileged instructions"}.
+Such instruction generate a fault if executed in user mode.
+The highest privilege mode is used by operating system kernel to access and manage system resources.
+User application run in less privileged mode than the operating system kernel.
+Popek and Golberg designated set of instruction that have different behavior depending on the mode of operation as \emph{"sensitive instructions"}.
+These instructions included IO operations and instructions that interact with MMU.
+Popek and Golberg stated that a computer architecture is virtualizable only if set of sensitive instructions is a subset of privileged instructions. 
+The computer architectures that fulfill Popek and Goldberg's criteria are called classically virtualizable architectures.
+Classically virtualizable architectures can be used to implement faithful virtualization.
+Faithful virtualization technique does not require modification in the guest operating system.
+
+\input{./figures/fig-virt-faithful}
+
+Faithful virtualization technique allows direct execution of most of the guest code. 
+Hypervisor emulates parts of guest code that cannot be executed directly on the hardware.
+Faithful virtualization is achieved by executing guest code in a less privileged processor mode in which privileged instruction are not allowed to execute. 
+When the processor encounters a privileged instruction it generates a fault, trapping into hypervisor code.
+The hypervisor take control and emulates the behavior for faulted guest operating system code. 
+Once the required behavior is emulated, guest code starts executing again directly on the CPU.
+Figure \ref{fig-virt-faithful} demonstrates faithful virtualization technique.
+The guest OS is fooled into believing that it is executing in highest privileged mode.  
+This technique is also called trap-and-emulate as virtualization is achieved by emulating trapped guest OS code.   
+Faithful virtualization achieves good performance as most of the guest code executes directly. 
+%%Unlike paravirtualization in faithful virtualization the guest OS can execute without modification.
+%%This technique is also called classical virtualization because the underlying cpu architecture has to satisfy Popek and Goberg requirement for virtualization.
+
+
+\subsubsection{Software-based Virtualization}
+Software-based virtualization technique translates guest operating system instructions into instruction of the target hardware.
+It technique is also known as Emulation. 
+In this technique behavior of guest OS code is generated by emulating the behavior of guest code. 
+Figure \ref{fig-virt-software} demonstrates software-based virtualization technique.
+One of the advantages of using emulation is that guest ISA and host ISA can be different. 
+Emulation is useful in situations where target hardware is not accessible or very expensive to use. 
+\input{./figures/fig-virt-software}
+
+The performance of emulation is poor compared to other virtualization techniques where guest code can run directly on the target hardware. 
+Techniques like dynamic binary translation and translation cache are used to improve the performance of an emulator \cite{ebcioglu2001dynamic}.
+An example of virtualization software from this class is QEMU \cite{bellard2005qemu}.
+QEMU is one of the most extensively used emulator, it uses optimization techniques like binary translation and translation cache to improve performance. 
+%%A very simple mechnism of virtualization is to emulate the guest OS instruction behavior.
+
+\subsubsection{Paravirtualization}
+%Classical virtualization requires underlying hardware to trap guest operating system for all sensitive instrucitons. If architecture
+Paravirtualization is a technique in which the hypervisor provides set of functions to the guest operating system to perform sensitive operations. 
+The guest operating system is modified to replace sensitive instruction with function calls, also referred as hypercalls.
+The guest operating system software is executed directly on the hardware as long as no sensitive operation is required. 
+Figure \ref{fig-virt-para} demonstrates paravirtualization technique.
+A disadvantage of this technique is that guest OS has to be modified to to replace sensitive operations.
+\input{./figures/fig-virt-para}
+
+The performance of paravirtualized guest OS is very close to executing guest operating system bare-metal.
+An advantage of using paravirtualization over faithful virtualization is it can be used for architectures that lack hardware support for virtualization.
+An example from this class is Xen hypervisor \cite{Barham:2003:XAV:1165389.945462}.
+Xen is type-1 hypervisor that initially used paravirtualization to virtualize architectures that are not virtualizable. 
+Xen also supports faithful virtualization through hardware-assisted virtualization.
+
+\subsection{Virtualization of Real-time Applications}
+
+Virtualization has been around for decades however the main area of deployment was usually desktop and server computers.
+Since real-time system are subjected to strict timing constraints and require deterministic response times, any virtualization solution for real-time applications must address these issues.
+Over the past few years many virtualization solutions for real-time applications has been proposed.
+Most virtualization solutions are customized to target one or a set of similar market segments of real-time systems. 
+An example is Xtratum hypervisor which is specifically designed to host safety critical applications \cite{Carrascosa:2014:XHR:2668138.2668142}.
+Custom designed commercial virtualization solutions for real-time application also exist. 
+Examples include WindRiver hypervisor for VxWorks \cite{bialowas2010achieving}, 
+Greenhills INTEGRITY multivisor\cite{greenhills-multivisor}, 
+Real-Time Systems GmbH Hypervisor \cite{realtime-systems-gmbh-hypervisor}
+SysGO PikeOS \cite{kaiser2007pikeos}, 
+and National Instruments Real-Time Hypervisor \cite{ni-realtime-hypervisor}.
+
+Many researchers has focused on bringing real-time capabilities to widely used open-source virtualization software.
+Xen \cite{Barham:2003:XAV:1165389.945462} is an open-source type-1 hypervisor widely used in research and cloud services.
+A large amount of research has been conducted to make is acceptable for real-time applications.
+Masrur et al. \cite{masrur2010vm} evaluated real-time performance of Xen SEDF (Simple Earliest Deadline First)
+scheduling algorithm. They proposed PSEDF (Priority-based scheduling plus SEDF) that separates
+real-time domains from other domains to achieve lower latencies and jitter.
+RT-Xen project \cite{Xi:2011:RTR:2038642.2038651} has developed real-time scheduling framework for Xen.
+Xen uses split-driver architecture for handling I/O. A special guest, called domain0, contains the
+back-end driver and other guests (referred as user domains) contain front-end driver.
+Physical interrupts are first delivered to hypervisor. Hypervisor passes them to back-end drivers in domain0.
+From domain0 they are routed to the front-end drivers in user domains.
+Many research efforts has been made to lower interrupt response times caused by split-driver model.
+
+KVM on the other hand is a type-2 hypervisor and uses Linux as host \cite{kivity2007kvm}. 
+It is also an open-source project and extensively used in virtualization solution for enterprise domain.
+Kiszka \cite{kiszka2009towards} proposed real-time improvements to Linux host to append real-time capabilities to KVM.
+One of the improvements was using PREEMPT\_RT patch to append real-time capabilities to host Linux kernel.
+Zhang et al. \cite{zuo2010performance} proposed real-time virtualization solution based on KVM and suggested improvements to 
+enhance real-time performance. The improvements include CPU shielding and interrupt prioritization. CPU shiedling
+refers to allocating a CPU core to real-time application. 
+
+Many real-time virtualization solutions based on L4 microkernel has been proposed. 
+In contrast to monolithic kernel, microkernel based designs enjoys the benefit of having small TCB \cite{Heiser:2008:RVE:1435458.1435461}.
+Examples include OKL4 microkernel-based hypervisor designed by Open Kernel Labs and PikeOS hypervisor developed by SysGo.
+One application area for microkernel-based virtualization solutions is mobile platforms like smart phones.
+The light weight virtualization solution can enable co-existence of a GPOS for user interface applications and
+RTOS to handle performance critical tasks.
+
+%%Aavailability of large amounts of computational power on a single multicore chip and emerging technological trends has brought new opportunities and challenges for real-time systems.
+%%Virtualization can be used to consolidate mixed criticality applications to efficiently use computational resources on multicore chip and reduced system costs.
+%%Real-time systems are now accessible than ever before. Emerging technological trends has streered them to provide user access over the network.
+%%Virtualization can provide security to real-time applications.
+%%Many real-time applications run on a hetrogeneous computing platform with non real-time applications running aside. 
+%%Virtualization can be used in such scenarios to isolated real-time applications from others.
+
+\subsection{Virtual Machines on Multicore}
+Multicore processors has become a norm and the average number of cores available per processors are expected to increase in future.
+Multicore processing provides unique opportunities for real-time virtualization solutions.
+Multicore processors has enabled co-location of applications of mixed-criticality on one platform by sandboxing each on separate set of cores.
+Real-time applications can be assigned a dedicated processor core(s) to ensure spatial isolation from other applications.
+It enables consolidation of application of mixed-criticality on one machine that reduces system cost.
+Many virtualization solutions has been proposed that use separate CPU cores to isolate real-time applications
+from others. Examples include Quest-V \cite{West:2016:VSK:2966277.2935748} and Xtratum \cite {Carrascosa:2014:XHR:2668138.2668142} hypervisors.
+
+
+\section{Hardware-Assisted Virtualization on x86}
+For a long time, the x86 architecture was not virtualizable as it did not fulfill Popek and Goldberg's criteria.
+Software-based emulation has remained the only choice of faithful virtualization for x86 architecture until 2005.
+In year 2005, Intel \cite{uhlig2005intel} and AMD released hardware extensions (VT-x and SVM respectively) that allowed x86 to be virtualized using classical trap-and-emulate technique.
+This section presents how hardware-assisted virtualization works.
+The discussion is primarily based on Intel VT-x technology however it is equally valid for AMD SVM.
+
+\subsection{Processor Operation Modes}
+Intel Virtualization Technology (VT-x) adds virtual machine extensions (VMX) to existing x86 architecture.
+The technology defines two new modes of processor operation: VMX root operation mode and VMX non-root operation mode \cite{intel-sdm-vol3}.
+%The hypervisor runs in VMX root operation which is highest priviledge mode, and guest operation system executes in VMX non-root operation which is less privileged than VMX root operation mode.
+The hypervisor runs in VMX root operation mode and guest operating system executes in VMX non-root operation mode.
+Both modes of operation include all privilege rings, which allows guest code to run at its intended ring. 
+Hence no de-privileging is needed for the guest OS.
+
+VT-x technology defines two types of transition for VMX operation modes. 
+Transition into VMX non-root operation are called VM entries. 
+Transition from VMX non-root to VMX root operation mode are called VM exits.
+In VMX root operation mode processor functionality is extended with new instruction set that
+hypervisor can use to create and manage virtual machines.
+%The functionality of VMX root operation is same as if processor is executing in kernel mode, except that there are new instructions defined for hypervisor manage virtual machines. 
+The functionality of VMX non-root operation is restricted. 
+Execution of a sensitive instruction can cause VM exit giving control back to hypervisor.
+Once virtual machine is properly configured by the hypervisor, these modes of operation are hidden from the guest. 
+
+\subsection{Virtual Machine Control Structure}
+VT-x technology allows configuration and management of a virtual machine via data structure called virtual machine control structure (VMCS).
+The hypervisor can control behavior of virtual CPU by properly configuring VMCS data structure.
+Hypervisor is responsible to allocate, initialize and manage one VMCS data structure for each virtual processor.
+The VMCS is further divided into subfields as follows:
+\begin{itemize}
+	\item \textbf{Guest-state area} used to load and store guest state on vmx transitions
+	\item \textbf{Host-state area} used to load and store host state on vmx transitions
+	\item \textbf{VM-execution control fields} includes fields to controls vmx non-root operation mode
+	\item \textbf{VM-exit control fields} includes fields to controls vmexit transition
+	\item \textbf{VM-entry control fields} includes fields to control vmentry transition
+	\item \textbf{VM-exit information fields} used to store information about vmexit transition
+\end{itemize}
+
+VT-x technology supports new instructions that hypervisor can use in VMX root operating mode to manage VMCS.
+For example to read and write a field of VMCS host uses VMREAD and VMWRITE instruction respectively.
+
+\input{./figures/fig-vmcs-ds}
+
+\subsection{Virtual Machine Control Flow}
+The hypervisor enters VMX root operation mode by executing VMXON instruction.
+VMLAUNCH instruction is used to launch a virtual machine that causes VM entry.
+On VM entry transition hardware loads guest state from the guest-state area of VMCS
+and begins execution of guest code at an address specified in VMCS.
+During VM entry transition the hardware checks fields of VMCS to 
+identify if hypervisor has request injection of a virtual interrupt.
+If so, the virtual interrupt is delivered to the guest right after VM entry transition.
+Flags in VMCS VM-execution control fields area define when to take VM exit transition.
+For example \emph{"Unconditional IO exiting"} flag with cause VM exit transition 
+when guest code tries to execute an IO instruction. Figure \ref{fig-vmcs-ds} demonstrates 
+what happens when IO instruction is encountered in guest code.
+Similarly \emph{"external interrupt exiting"} will cause VM exit transition if
+an external interrupt arrives in vmx non-root operation mode, giving control back to hypervisor.
+During VM exit transition the hardware stores guest state back to guest-state area in VMCS and
+loads host state from host-state area in VMCS.
+Furthermore, the detailed information about the cause of VM exit transition is
+saved in VM-exit information area in VMCS. This information helps hypervisor
+to determine appropriate action required to emulate guest behavior.
+
+\subsection{Features for Efficient Virtualization}
+This section sheds light upon x86 hardware features that enable efficient virtualization of guests.
+
+\subsubsection{MMU Virtualization} \label{sec:vmmu}
+In a virtualized environment a guest executes in its own virtual address space and hypervisor has full control over the physical memory.
+In order to keep the illusion that guest has control over physical memory, hypervisor uses nested page-tables also known as shadow page-tables.
+When a guest tries to access physical memory, guest physical addresses are treated as virtual addresses and 
+translated to real physical addresses through nested page-tables.
+The nested page-tables can be implemented in software in which case software emulates the behavior of page-table walk to
+translate guest physical address (host virtual address) to host physical addresses.
+
+\input{./figures/fig-vmmu}
+
+Recent revisions of hardware-assisted virtualization extensions of x86 supports translation of guest physical address to host physical address 
+in hardware using feature called extended page-tables (EPT). 
+The feature removes the need of maintaining nested page-tables in software, hence reducing software overhead to perform the translation.
+Figure \ref{fig-vmmu} shows how guest virtual address is translated to machine physical address using EPT data structures.
+The first stage is a usual, the guest virtual address is translated to guest physical address by using guest page-tables.
+The guest physical address is then translated in hardware in stage 2 using extended page-tables. The translation processor is
+autonomous.
+
+VT-x extensions also added the concept of virtual-processor identifiers (VPIDs). 
+The feature allows processor the cache address translation of multiple address spaces by associated different VPIDs to each address space.
+VPID is 16-bit identifier assigned to a guest by hypervisor during virtual machine initialization.
+This feature also allows VPID based TLB flushing and clearing single translations.
+
+\subsubsection{APIC Virtualization} \label{sec:vapic}
+x86 virtualization extensions VT-x supports virtualization of Local APIC (Advanced Programmable Interrupt Controller). 
+The APIC virtualization (APIC-v) allows emulation of most interrupt controller register accesses by the guest and keeps track of the virtual APIC state. 
+APIC-v supports direct injection of the virtual interrupts without hypervisor intervention through a feature called posted interrupts (PI).
+The feature requires hypervisor to allocate a memory page for the guest where virtual state of the APIC is maintained by the hardware.
+All read accesses to the APIC registers are emulated in hardware by passing contents of virtual APIC memory page without hypervisor intervention.
+The write accesses to APIC registers are also emulated in hardware by writing new values to virtual APIC page. 
+However for certain registers hypervisor intervention is required and the control is transferred to hypervisor at end of write emulation.
+Figure \ref{fig-vapic} displays how virtual APIC page is accessed by the guest without hypervisor involvement. 
+Hypervisor is responsible to allocate virtual APIC page and store address of the page in VMCS before initializing a virtual machine.
+From there onwards all access to APIC by the guest are virtualized by hardware.
+
+\input{./figures/fig-vapic}
+
+\subsubsection{Direct Interrupt Injection} \label{sec:dii}
+Intel APIC-v feature enables direct injection of a virtual interrupt to the guest without intervention from the hypervisor.
+Intel calls this feature Posted Interrupts (PI) Processing. The mechanism uses a data structure called Posted Interrupt Descriptor (PID).
+The PID contains bit-fields for to enable posted interrupt mechainsm on the basis of interrupt vector.
+Figure \ref{fig-pi-ds} shows fields of PID data structure.
+\input{./figures/fig-pi-ds}
+PID is a field of VMCS and initialized by the host to inject interrupts owned by guest OS. 
+The host also initializes posted interrupt notification vector (PINV) field in VMCS.
+PINV is compared in hardware with the physical vector number to decide when an interrupt should be injected directly to the guest.
+When an external interrupt whose physical vector is same as PINV arrives and PIR bit for the corresponding vector is set along with outstanding notification (ON) bit the interrupt is delivered to the guest without VM exit transition.
+The direct interrupt injection allows reducing virtualization overhead. It allows host to deliver interrupts from devices owned by the guest directly without
+intervention. Figure \ref{fig-pi-delivery} shows how virtualization overhead can be reduced by direct interrupt injection mechanism.
+
+\input{./figures/fig-pi-delivery}
+
+\subsubsection{Cache Allocation} \label{sec:cat}
+Recent x86 multiprocessor architectures supports up to three levels caches. The first two levels (L1 and L2) are private to the CPU core and L3 (last-level cache) cache is shared between all cores. 
+Recently Intel introduced a new feature, called Cache Allocation Technology (CAT), which can be used to partition the last
+level cache on the basis of class of service (CLOS). The CLOS is an identifier that can be assigned to a thread or process running on the a CPU core
+to ensure quality of service to the application. It can also be used by the hypervisor to assign portion of a cache to a guest.
+LLC cache can be partitioned into multiple units by programming a set of registers called capacity bitmasks. Size and number of these registers are
+architecture specific, each bit in the mask can correspond to a way in cache. The operating system or hypervisor can use these masks to create 
+partitions in the cache where each partition is accessible through CLOS identifier. In order to assign a portion of LLC cache to an application
+the operating system or hypervisor assigns CLOS identifier to the application by programming CLOS register on context switch. The underlying hardware ensures 
+whenever an access to LLC cache from the application occurs the access goes to only portion of cache assigned to it.
+
+\input{./figures/fig-cat-bitmasks}
+Figure \ref{fig-cat-bitmasks} shows an example where capacity bitmask registers are shown for four applications. The first two masks are 
+an example where LLC partitions are isolated. The last two masks give an example where LLC is shared by two applications.
+
+The feature can be used to isolate a real-time guest cache from other guests to ensure any accesses to LLC from GPOS
+will not pollute the cache of real-time application. Figure \ref{fig-cat-isolated} gives and example scenario where virtualized software system
+uses cache allocation feature to partition LLC of four guests according to bitmasks given in Figure \ref{fig-cat-bitmasks}.
+\input{./figures/fig-cat-isolated}
+
+
+
+\section{PHIDIAS Hypervisor}
+Provable Hypervisor with Integrated Development Information (PHDIAS) is a multikernel based hypervisor specifically designed to host real-time applications \cite{nordholz2017design}. 
+PHIDIAS hypervisor follows design principles that makes it suitable for real-time systems. 
+The hypervisor supports multi-core architectures ARM, x86 and MIPS. This section will provide brief description of Phidias hypervisor design, 
+implementation on x86 architecture and the mechanisms provided to guest OS.
+
+\subsection{Multikernel Architecture}
+Baumann et. al. introduced the idea of multikernel OS architecture for multicore and heterogeneous computer architectures \cite{baumann2009multikernel}. 
+The approach removes the requirement of synchronization primitives between software parts executing on different cores by removing the shared memory.
+The design approach supports sharing of data between cores using explicit message passing communication primitives.
+Phidias uses multikernel design approach where each physical core of the processor runs an instance of Phidias microkernel.
+Every instance of the kernel runs in its own address space. The code is shared by all instances but data is private to each instance. 
+The hypervisor kernel instance manages virtual machines and only this instance has access to the virtual machine state.
+The multikernel model greatly simplifies the design of hypervisor and removes the need of synchronization primitives, 
+hence reducing the complexity of the hypervisor.
+The multikernel design approach is a matching solution for virtual machines as each VM is running in isolation and 
+has nothing to share with other VMs.
+In order to support communication between different virtual CPUs of a virtual machine, Phidias supports 
+explicit message passing communication mechanism.
+
+\subsection{Principle of Staticity}
+The key design idea used to design PHIDIAS is use of principle of staticity.
+Jan Nordholz in his PhD thesis \cite{nordholz2017design} has defined the principle of staticity as follows:
+\emph {"A hypervisor implementation for an embedded system can
+and should be meticulously tailored to its usage scenario. Thus
+every element of dynamicity that does not constitute a mandatory 
+part of runtime functionality is to be transformed into a
+compile-time configuration tool. The retained runtime code is
+then purely static, its actions determined by previously generated and externally verifiable configuration data."}
+
+Every real-time embedded application has different requirements and requires a custom tailored solution for the use case. 
+Many real-time system go through rigorous testing before they are deployed in the field and require the designers to prove their correctness.
+The principle of staticity states that an embedded hypervisor should have no dynamic component, or minimal if there is not other way around.
+Phidias uses principle of staticity as a key design rule to ease software provability and reduce run time complexity. 
+Removing the dynamic components from the hypervisor also reduces it's footprint which is very attractive for embedded application with limited
+memory resources.
+The principle of staticity requires that all types of memory requests needed for the virtual machine and devices are known 
+before integration of the software systems.
+
+The Phidias hypervisor uses an XML based system configuration tool to create virtual machine configuration and generate
+core of the hypervisor. Phidias supports static partitioning of hardware resources. 
+Each guest operating system is assigned a subset of processing elements, memory space and IO devices.
+Figure \ref{fig-static-part} shows an example configuration scenario where CPU cores and memory divided between the guests.
+The principle of staticity is used by Phidias to completely remove memory allocation system.
+The memory allocater is removed by creating static page-tables from system descriptions, for both the hypervisor and the virtual machines.
+The device emulation core also uses principle of staticity to create and add custom tailored emulation core,
+hence reducing the run time complexity.
+
+\input{./figures/fig-static-part}
+
+\subsection{Non-Preemptible Kernel}
+Phidias hypervisor kernel is non-preemptible and interrupts are always disabled when hypervisor executes. 
+Preemptibility means a higher priority task can preempt currently running task until it finishes and lower priority task is then resumed.
+An RTOS is always designed to be preemptible, even the GPOS also provide voluntary preemption.
+
+Preemptible kernels sound great, however it is achieved at the cost of higher software complexity.  
+It introduces new execution paths in the kernel and makes is difficult to prove correctness of the software system.
+Since the software can be preempted at any point by a high priority task the kernel has to support context switching and
+synchronization primitives to ensure correct software behavior.
+
+Non-preemptibility can be tolerated if all execution path in the hypervisor are kept very short, which is true for Phidias.
+To keep low software complexity and footprint preemption is not supported by Phidias.
+Phidias hypervisor kernel paths are very short that simplifies the software design and makes it easier to prove correctness.
+
+\subsection{Inter-VM Communication}
+Phidias supports asynchronous communication between virtual machines.
+Virtual machines can transfer data between each other through communication channels that
+are configured statically before deploying software system.
+A communication channel consists of shared buffer and a virtual interrupt for signaling.
+The VM stores data in shared buffer and generates an interrupt to inform receiver.
+Phidias injects a virtual interrupt to the receiving VM to inform availability of data.
+Phidias does not support creation of communication channels at run time.
+
+\subsection{Small TCB}
+Since Phidias uses principle of staticity that eliminates dynamic parts and non-preemptive
+kernel to reduce hypervisor complexity, the resulting hypervisor has very small code size.
+The small code size of the hypervisor results in small trusted computing base (TCB).
+Small TCB increases the confidence in software system's security.
+The overhead of formal verification and mathematical proof reduces significantly.
+
+
+\subsection{Guest Device Handling} 
+Phidias hypervisor supports three mechanisms to interface guest devices, a brief introduction to each mechanism is provide in this section.
+Figure \ref{fig-device-handling} shows difference between the three device handling mechanisms supported.
+\input{./figures/fig-device-handling}
+
+\subsubsection{Device Passthrough}
+The device passthrough mechanism allows a guest to take complete ownership of a device. 
+The virtual machine interacts with the device without any intervention from the hypervisor.
+Memory mapped devices are passed to the guest by giving complete ownership of the device memory region. 
+In this case, the Phidias configuration tool enables addition of an entry in the static nested page-tables of the owner guest 
+for exclusive read write access of the device memory.
+On contrary some devices are IO mapped, in which case exclusive access to that IO region is given to the owner guest.
+The device passthrough mechanism results in highest performance however it is suitable only when a guest exclusively owns the device.
+
+\subsubsection{Device Multiplexing}
+If same device is accessed from multiple guests then Phidias hypervisor supports multiplexing of the device between guests. 
+Device multiplexing is achieved by restoring the device state for a guest whenever context switch takes place. 
+The current state of the device is saved until the context switch happens again. 
+Saving and restoring device state on context switch add small overhead however once completed the device can be accessed exclusively by the guest OS.
+This mechanism can only be supported for devices that are virtualization aware and expose their complete state.
+Another situation when the mechanism can be useful is if the guests use same state for the device, in such scenario even the overhead of 
+state restore can be saved.
+
+\subsubsection{Device Emulation}
+Device emulation is the only choice of device handling if the device does not exist on the hardware or it is not virtualization aware.
+The behavior of the device is completely emulated by the hypervisor in software and guest OS is oblivious to the fact that device does not exist on the hardware.
+All requests to the target device are trapped and emulated by the host software. This mechanism has the largest overhead due to emulation of device in software.
+
+\subsubsection{Static Configuration Tool}
+Phidias hypervisor kernel itself is created through a static configuration tool. 
+As stated earlier, the hypervisor uses principle of staticity as the main design goal to ease provability and lower the software complexity.
+Principle of staticity requires all configuration of the hypervisor kernel and virtual machines to be enlisted prior to creation of hypervisor executable. 
+The static configuration tool takes the configuration as input and creates all necessary data structures to configure the hypervisor microkernel. 
+The configuration tool also generates page-tables data structures for hypervisor and nested page-tables for each virtual machine. 
+All page-table structures are transformed to binary and packaged into the final executable of the software system.
+
+
+\subsection{Implementation on x86}
+This section will give a brief overview of Phidias implementation on Intel x86 platform.
+
+Phidias utilizes Intel virtualization extensions to implement faithful virtualization. 
+It uses extended page-table (Intel EPT) feature for MMU virtualization. 
+And supports per core local APIC virtualization through software
+emulation or by using hardware virtualization technique for APIC virtualization (APIC-v).
+
+The hypervisor executes in VM root operation mode and launches virtual machines that run in VM non-root operation mode.
+Hypervisor configures virtual machine control structure (VMCS) to cause vmexit transition if guest tries to execute an IO operation, on arrival of an external interrupt, and or guest tries to execute of a privileged instruction.  
+The hypervisor takes control when such a situation occurs, emulates desired behavior and returns control back to the virtual machine through vmentry transition. 
+Phidias only handles exceptions for nested page-tables, the guest has complete control over exceptions that may occur on guest page-tables.
+The nested page-table exceptions are configured as traps and used to emulate device accesses. 
+
+Recent Intel virtualization extensions support optimizing hypervisor operation for guest access to machine specific registers and IO ports through bitmaps.
+Phidias hypervisor supports all these mechanisms to lower virtualization overhead. 
+
+In order to perform useful operations, a Linux guest requires a least four devices: a timer as clocksource, a timer for event generation, an interrupt controller, and a serial interface for input/output. The event generation and clock source timers can use the same timer infrastructure, however on x86 these two can be different. Phidias supports these minimal set of devices per guest, details of implementation follows:
+
+\subsubsection{Interrupt Controller}
+An interrupt controller is a programmable logic circuit inside the microprocessor chip that allows processor core to configure and control interrupts.
+CPU associates an individual interrupt source with an interrupt vector by writing the vector number into the corresponding interrupt controller register.
+This interrupt vector number is given to the processor by interrupt controller when an interrupt arrives from the particular source, which allows CPU to
+recognize source of interrupt. The interrupt controller also allows CPU to disable an individual interrupt.
+
+The x86 multiprocessor architecture supports two types of interrupt controllers.
+An interrupt controller per physical CPU core, known as local advanced programmable interrupt controller (LAPIC).
+And at least one interrupt controller to configure interrupts from external IO devices, known as IOAPIC.
+LAPIC is used to configure interrupts local to CPU core and to send and receive inter-processor interrupts (IPIs).
+IOAPIC is used to receive interrupts from devices external to the multiprocessor chip.
+Some external devices also send interrupts to the microprocessor chip on system bus, these interrupt are called Message Signaled Interrupts (MSIs).
+Interrupts delivered by PCIe cards is an example of this type of interrupt.
+LAPIC is responsible to decode these interrupts and forward them to the core.
+
+Phidias hypervisor supports emulation of local APIC in software. 
+In this case a software state of APIC is maintained for the guest while the actual hardware is in full control of the hypervisor.
+Phidias also also supports hardware-based APIC virtualization (APIC-v).
+The APIC virtualization feature allows reducing software emulation time by emulating read/write access in hardware.
+The processor keeps track of virtual APIC core and allows virtual interrupt delivery without hypervisor intervention.
+
+The IOAPIC interrupt controller is emulated by Phidias in software by keeping a software state of IOAPIC. 
+External interrupts are received by Phidias and virtual IOAPIC states of each guest is consulted to inject and a virtual interrupt to that guest.
+The hypervisor supports two types of virtual interrupt injection mechanisms.
+When an interrupt source is shared between guests, the hypervisor injects virtual interrupts to the guests.
+If a guest is the only owner of the interrupt, it allows interrupt passthrough or direct interrupt injection using APIC virtualization.
+When interrupt passthrough is used then hypervisor takes the interrupt and passes it to the hypervisor without further processing, keeping the kernel execution path short. 
+When direct interrupt injection is used, the hypervisor uses APIC virtualization to inject virtual interrupt to the guest without hypervisor intervention.
+
+\subsubsection{Timer as Event Generator}
+Linux guest on x86 platform uses per core local APIC timer (LAPIC timer) to generate events. 
+The local APIC core supports various modes of operation for event generation: periodic, one-shot or TSC-deadline mode. 
+Phidias uses LAPIC timer core to emulate guest timer events.
+It has a generic timer infrastructure to generate timer events and supports all modes of operations desired by the guest. 
+The timer infrastructure keeps a queue of time events sorted by the event deadline.
+Event with earliest deadline is programmed into the LAPIC timer, when timer expires the event is forwarded to the requesting guest.
+The same timer event generation infrastructure is used by the hypervisor scheduler to trigger scheduling events.
+
+\subsubsection{Timer as Clock Source}
+In addition to event generation Linux guest uses a monotonically increasing timer source as its clocksource. 
+Guest uses this timer to keep track of time. 
+On x86 platform Linux guest uses time-stamp counter (TSC) as the clock source. 
+TSC increments monotonically at the processor clock speed and keeps the count value in 64-bit register.
+Phidias hypervisor support TSC counter as a pass-through device.
+The current value of the TSC counter is always available to the guest without hypervisor intervention.
+In order to keep the illusion that guest is running directly on the hardware, Phidias supports TSC-offsetting feature.
+TSC-offsetting feature allows host to offset the counter value to compensate for time quantum for which host executes on the hardware.
+%This feature allows adding an offset value to the actual TSC timer value. 
+PHIDIAS configures the offset value to the time that lapses between vmexit and vmentry.
+
+\subsubsection{Serial Interface}
+A serial interface is very useful for a guest to interact with user and dump debugging information.
+Phidias hypervisor support one serial interface per guest by emulating UART 16650 interface of x86 architecture.
+The hypervisor uses the same interface to dump its own debug information. 
+The emulation works in conjunction to a small tool on the host side that supports multiplexing of the interface between the guests and the hypervisor itself.
+The multiplexer tool opens up one console per guest and one for the hypervisor. When a request to dump information from a guest arrives the hypervisor
+sends this debug information to the serial interface. A special code sequence is sent to the console every time the interface is switched between the guests.
+The code sequence is used by the host tool to differentiate where to dump incoming information. 
+Similarly when user wants to interact with a virtual machine, a special code sequence is sent to hypervisor.
+This time the code sequence helps hypervisor to decide to which guest the input shall be routed. 

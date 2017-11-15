@@ -1,0 +1,64 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture} %[scale = 1.2]
+
+\begin{axis} [name=plot1, height=7cm, width=14cm, ybar=2pt, enlarge y limits={upper,value=0.3},  %enlargelimits=0.3, 
+			ymin=0,
+			legend pos=north east, legend columns=-1,
+                       %legend style={at={(0.5,-0.1)}, anchor=north, legend columns=-1}, 
+                       ylabel={worst-case latency(us)}, %title=no pollution from gp-guest, 
+		       bar width= 24pt,
+			%symbolic x coords={without VPID, with VPID},
+                       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
+	\addplot [fill=black!50] coordinates {
+                                        (no load,129.5) 
+					(cache pressure,145.6)	
+					(forkops,128.2)
+					(fileops,127.1)
+					(threadops,169.6)
+			      };
+
+	\addplot [postaction={pattern=north east lines}] coordinates {
+                                        (no load,130.5) 
+					(cache pressure,131.7)	
+					(forkops,124.8)
+					(fileops,123.7)
+					(threadops,148.8)
+			      };
+\legend{shared TLB, isolated TLB}
+\end{axis}
+
+
+\begin{axis} [name=plot2, at={($(plot1.west)+(0,-9cm)$)}, height=7cm,  width=14cm, ybar=2pt, enlarge y limits={upper,value=0.2},  %enlargelimits=0.3, 
+			ymin=0,
+                       legend pos=north east, legend columns=-1,
+			%legend style={at={(0.5,-0.1)}, anchor=north, legend columns=-1}, 
+                       ylabel={average-case latency (us)}, %title=no pollution from gp-guest, 
+		       bar width= 24pt,
+                       %symbolic x coords={without VPID, with VPID},
+			symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
+	\addplot [fill=black!50] coordinates {
+                                        (no load,18.2) 
+					(cache pressure,18.1)	
+					(forkops,12.6)
+					(fileops,14.5)
+					(threadops,17)			
+			      };
+	\addplot [postaction={pattern=north east lines}] coordinates {
+                                        (no load,17) 
+					(cache pressure,16.7)	
+					(forkops,11.6)
+					(fileops,13.4)
+					(threadops,15.4)			
+			      };
+\legend{shared TLB, isolated TLB}
+\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\caption{Interrupt latency comparison of shared and isolated TLB between guest and Phidias}
+\label{plot-vpid}
+\end{figure}
+

@@ -1,0 +1,42 @@
+\chapter{Conclusion\label{chap6}}
+
+This thesis analyzed real-time capabilities of Phidias hypervisor and performance improvement techniques.
+The results showed that virtualization has increased real-time interrupt response times.
+However, the overhead is bounded and can be reduced by applying performance improvement techniques.
+Furthermore, there is still room for improvement and could be considered in future work.
+
+Worst-case interrupt latency that was under $80us$ in native environment has increased more than twice in virtual environment and stayed under $170us$.
+Investigation of overhead components revealed resource contention as main reason of increased interrupt latency.
+The context-switch time for transitions to and from hypervisor can go as high as $86us$, which is purely hardware overhead.
+CPU performance during the time when hypervisor runs can drop as low as one instruction completes in $77cc$ on average.
+The study has presented enough evidence to conclude most part of the virtualization overhead is purely hardware overhead.
+
+Interrupt response time of real-time guest interrupts improved significantly when latency reduction techniques were applied.
+Direct interrupt injection lowered the interrupt latency by more than $25us$.
+Isolating LLC of real-time guest from GPOS guest decreased interrupt latency by more than $15us$.
+And TLB virtualization allowed latency reduction of more than $3.4us$.
+When latency reduction techniques are used altogether, the virtualized solution can meet real-time constraints in the order of magnitude ($90us-110us$) which not far
+from the native ($20us-80us$). 
+Furthermore, during the study I found potential areas of improvement that could lead to further reduction of interrupt response times.
+
+
+\section{Future Work}
+This study focused on latency reduction techniques to improve real-time interrupt response time.
+The analysis of overhead and latency reduction techniques revealed some areas that need to be investigated more.
+
+Cache allocation used to lower interrupt latency was applied to shared L3 cache to separate traffic of RTOS and GPOS guest.
+Since Phidias also executes on same core as real-time guest does, their data can interfere at L1
+and L2 caches. Like L3 partitioning is supported in hardware, some x86 processors also support L2 partitioning.
+Future work can use one of those processor to avoid interference between guest and hypervisor.
+The x86 processor had multi-level big caches, these caches suffer from long miss penalties.
+The work from this study can be repeated on processor with smaller caches to 
+evaluate Phidias performance and see if long miss penalties are the major component of virtualization overhead.
+
+While executing various kinds of loads on real-time guest, I observed frequent guest traps causing 
+vm transitions. Frequent context-switching can result in pollution of caches already warmed-up for guest code.
+Most transition are necessary, however current version of Phidias hypervisor uses VM configuration to
+exit for all IO access, and accesses to all MSR.
+The x86 VT-x enables host to use bitmasks to take exits only for an access that needs host attention.
+Although I extended Phidias to use these mechanisms, but limited support could be added due to limitation of time.
+More investigation is required to fully utilize these mechanisms and evaluate impact on virtualization overhead.
+

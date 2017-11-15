@@ -1,0 +1,338 @@
+\chapter{Virtualization Overhead\label{chap3}}
+
+This chapter presents analysis of virtualization overhead for Phidias hypervisor and records 
+results of experiments conducted on x86 platform. 
+In order to evaluate virtualization overhead of x86 processor a hypothetical mixed criticality system is used
+that includes an RTOS and GPOS running concurrently in separate virtual machines.
+The key parameter used to measure the overhead is real-time event handling latency, also known as 
+interrupt response time (IRT).
+The interrupt latency is the time that elapses between arrival of an external interrupt request (IRQ) and execution of event handler starts.
+Figure \ref{fig-latency-keymetric} depicts the difference in interrupt latency experienced by and external interrupt request in native and
+virtualized environment.
+In a virtual setup the latency is expected to increase due to hypervisor intervention when external interrupt are routed to guest through hypervisor.
+The hypervisor injects external interrupts to owner guest by servicing interrupt first. Execution of hypervisor before interrupt is passed to 
+the owner guest increases the interrupt latency.
+It is important to measure virtualization overhead to determine if deadlines of the real-time tasks of guest RTOS can still be respected.
+
+\input{./figures/fig-latency-keymetric}
+
+Hypervisor overhead consists for context switch times, execution of hypervisor code to identify and inject virtual interrupt to the real-time guest (rt-guest) and
+resource contention. The resource contention overhead arises due to shared resources between guests and hypervisor.
+While this chapter focuses on analyzing and measuring components of virtualization overhead, the next chapter covers techniques to lower overhead components.
+
+\section{Experimental Setup} 
+All experiments are conducted on Intel Xeon E5-2603v4 processor \cite{intel-ark-xeon} mounted on ASUS X99E WS motherboard \cite{asus-x99e}. 
+The processor runs at $1.7GHz$ clock speed and had access to $4GB$ RAM memory.
+This processor contains $6$ physical CPU cores where each core has private L1 and L2 caches, the cache capacities are $64KB$ and $512KB$ respectively.
+The last-level cache (L3) is shared shared between cores and has 15MB capacity. 
+The processor supports Intel VT-x technology. The virtualization extensions on Xeon processor includes virtualization of LAPIC and MMU.
+
+The evaluated virtualization solution contains hypervisor and two guests: an RTOS and a GPOS.
+RTOS guest has been created by applying latest PREEMPT\_RT patchset (v4.11.12-rt15) to Linux kernel (v4.11.12).
+The details of PREEMPT\_RT patch are covered in section \ref{sec:rtos-ext-gpos}.
+The GPOS guest is Linux kernel (v4.11.8).
+A small patchset was applied to both real-time and general purpose Linux operating systems, given in appendix \ref{app:a}.
+Linux kernel uses PIT (Programmable Interval Timer) to calculate processor clock frequency during bootup process.
+Phidias hypervisor does not support virtualization of PIT device at the moment, the patch is used to fix processor clock frequencies to known values.
+
+
+An external device on PCIe (Peripheral Component Interconnect Express) bus manufactured by VersaLogic is used to generate external events \cite{versalogic}.
+The device is equipped with EXAR XR17v354 SoC \cite{xr17v354} and supports up to 12 general purpose input/outputs (GPIOs). 
+The VersaLogic GPIO device has the capability to send Message Signaled Interrupts (MSIs) to the processor when an external event is detected.
+Each GPIO can be programmed to cause an external interrupt when a rising pulse is detected on the inputs.
+The RTOS guest was given full access to the device by granting read/write accesses to the device memory.
+Furthermore real-time guest was given full access to HPET (High Precision Event Timer) device. 
+The HPET device is needed by cyclictest\cite{cyclictest}, a widely used tool to evaluate real-time performance of PREEMPT\_RT Linux kernel.
+The cyclictest has been used for two purposes. First, it was used to validate latency results produced for gpio device interrupts.
+Secondly, it was used as load to exercise POSIX thread operations as explained in next section.
+Table \ref{experiment-setup} summarizes setup used to conduct experiments.
+
+
+\begin{table}[!htbp]
+\centering
+%\begin{longtable}{|p{.20\textwidth} | p{.70\textwidth}|}
+\begin{longtable}{|p{2cm}|p{2cm}|p{6cm}|p{2cm}|}  
+\hline
+\textbf{Resource} & \textbf{CPUs} & \textbf{Devices} & \textbf{Physical Memory} \\ \hline 
+RTOS & & & \\ 
+(rt-guest) & one vCPU & vLAPIC, vIOAPIC, vLAPIC-Timer, vUART, PCIe GPIO, HPET & 256MB \\ \hline
+GPOS & & & \\ 
+(gp-guest) & one vCPU & vLAPIC, vIOAPIC, vLAPIC-Timer, vUART & 256MB \\ \hline
+PHIDIAS & & & \\ 
+Hypervisor & two cores & LAPIC, IOAPIC, LAPIC Timer, UART & -- \\ \hline
+Hardware & \multicolumn{3}{|c|}{Xeon  E5-2603v4 Processor} \\ \hline
+\caption{Experiment Setup}
+\label{experiment-setup}
+\end{longtable}
+\end{table}
+
+\section{Measurement Setup} \label{sec:measurement-setup}
+The interrupt latency measurement setup consists of an external FPGA board \cite{terasic-de0nano} and external PC for latency measurement.
+Two GPIOs of FPGA are connected to PCIe GPIO device. First one to cause an interrupt and send low-to-high pulse and second to listen for
+response time of GPIO interrupt handler. External PC sends commands to FPGA on UART to generate an interrupt.
+The measurement setup generates an interrupt for rt-guest and expects rt-guest to respond by asserting an output GPIO.
+
+A small patch for EXAR XR17v354 SoC was added to rt-guest to configure GPIOs for desired behavior.
+And a separate kernel module was designed and loaded on rt-guest to register interrupt handler for the PCIe GPIO device.
+Source code for added gpio device functionality and interrupt handler module is given in appendix \ref{app:a}.
+The very first instruction executed by gpio interrupt handler is assertion of an output pin, to mark time instance when interrupt handler starts execution.
+The pin assertion marks the response time of gpio interrupt handler.
+It allows external setup to measure latency by calculating time difference between observed response time and interrupt generation.
+The FPGA hardware is programmed to perform a routine as follows:
+\begin {itemize}
+	\item {wait to receive command from external PC on UART interface}
+	\item {generate interrupt for rt-guest by asserting input GPIO of PCIe device}
+	\item {count FPGA clock cycles while waiting rt-guest interrupt handler to send response on output GPIO}
+	\item {send counted clock cycles to external PC on UART interface}
+\end {itemize}
+
+Figure \ref{fig-measure-steup} describes measurement setup and demonstrates how GPIOs are used to measure latency.
+The external PC calculates interrupt latency by scaling the count value by known FPGA clock frequency (50MHz). 
+A small script on external PC can be used to repeat measurement routine multiple time to find worst-case interrupt latency.
+
+
+\input{./figures/fig-measure-setup}
+
+
+\section{Methodology} \label{sec:methodology}
+The latency overhead of Phidias hypervisor is measured in two steps. 
+At first the real-time guest is executed bare-metal, without hypervisor. 
+In this scenario real-time kernel (rt-kernel) executes natively with full control over hardware resources. 
+The interrupt latency in this case purely consists of rt-kernel overhead to schedule interrupt handler.
+The second step consists of running same rt-guest in a virtualized environment.
+Now Phidias has control over hardware resources. 
+This time the interrupt latency consists of rt-kernel overhead and 
+virtualization overhead. The virtualization overhead includes hypervisor run time to route
+interrupt to rt-guest and contention of shared resources. 
+%The real-time guest is assigned to a physical core to remove hypervisor overhead and CPU contention. 
+The virtualization overhead is depicted in Figure \ref{fig-latency-keymetric}.
+In both setups the latency measurement mechanism consisting of external PC, FPGA and PCIe GPIO device is same.
+
+Synthetic microbenchmarks were used to create realistic workload scenarios to increase reliability of the results. 
+These benchmarks include small programs that exercise common operations typically used by the userspace applications.
+A brief description of each microbenchmark is included in Table \ref{microbenchmarks}.
+%Notice that cyclictest 
+%\footnote{Cyclictest is a tool widely used to evaluate real-time performance of PREEMPT\_RT patch.} %\\
+%\url{https://wiki.linuxfoundation.org/realtime/documentation/howto/tools/cyclictest}} 
+%and hackbench 
+%\footnote{Hackbench is benchmark commonly used to stress kernel scheduler.}
+%are used to add load on the rt-guest kernel. 
+
+\begin{table}[!htb]
+\centering
+%\begin{longtable}{|p{.20\textwidth} | p{.70\textwidth}|}
+\begin{longtable}{|r|p{8cm}|}  
+\hline
+& \\
+\textbf{Microbenchmark} & \textbf{Description} \\ \hline 
+\mcachepressure{} & The benchmark processes big arrays of data to add pressure on the caches. The sizes of arrays are bigger than L2 cache.\\ \hline
+\mforkops{} 	& The benchmark exercises fork operation of Linux kernel from userspace\\ \hline
+\mfileops{} 	& The benchmark exercises file operation of Linux kernel from userspace \\ \hline
+\mhackbench{} 	& The benchmark adds load on kernel scheduler. The load was added using hackbench\tablefootnote{hackbench -p -s1024 -l10000}. \\ \hline
+\mmmapops{} 	& The benchmark exercises memory map operations of Linux kernel from userspace \\ \hline
+\mstdout{} 		& The benchmark exercises data output operations of Linux kernel on null device from userspace \\ \hline
+\mthreadops{} 	& The benchmark exercises posix thread operations from userspace. The load was added using cyclictest\tablefootnote{cyclictest -a -t10 -p80 -n -l100000 -i1000 -q}. \\ \hline
+\mnoload{} 	& no load was added \\ \hline
+\caption{Microbenchmarks used as synthetic workloads} % needs to go inside longtable environment
+\label{microbenchmarks}
+\end{longtable}
+\end{table}
+
+The measurement setup is capable to calculate interrupt latency very precisely.
+The worst-case interrupt latency is computed by repeating latency measurement procedure 
+10 thousand times. The interrupts are generated periodically at the rate of approximately 2ms.
+
+The measurement procedure consists of running PREEMPT\_RT guest (rt-guest) in native and virtual setup with buildroot \footnote{\url{https://buildroot.org/}} based userspace.
+A script from external PC commands FPGA to generate interrupt on PCIe GPIO device.
+The FPGA generates an interrupt and measures number of clock cycles that elapses between sending interrupt and receiving
+a response from rt-guest interrupt handler. The elapsed time, in clock cycles, is sent back external PC
+where the script calculates interrupt latency and stores the result for further processing.
+The script repeats the measurement procedure for ten thousand times
+and reports average and worst case event handling latency. 
+The procedure is repeated with different workload conditions on rt-guest generated using microbenchmarks.
+
+
+\section{Baseline}
+In the interest of measuring virtualization overhead of hypervisor a reference needs to be established. 
+The most reliable way to establish baseline is to measure real-time guest interrupt handling latency
+in native setup. In native setup rt-guest is allowed to execute without hypervisor. Figure \ref{fig-native}
+demonstrates the native setup that is used to establish baseline.
+
+\input{./figures/fig-native}
+The latency measurement procedure described in section \ref{sec:methodology} was executed to determine worst-case interrupt latency
+of the rt-guest. The experiments were repeated under different load conditions using the microbenchmarks.
+\input{./figures/plot-baseline}
+
+The baseline worst-case and average interrupt latency histogram is plotted in Figure \ref{plot-baseline}.
+The worst-case latency without load is about three times more than interrupt latency with load. 
+One straightforward reason for lower latency with benchmarks is warming up of caches.
+When benchmarks are running they exercise kernel library operations that warm up the caches. 
+As a results, most memory access are satisfied from caches when external interrupt arrives.
+An exception to this behavior is worst-case latency with \mcachepressure{} benchmark.
+This time the caches are polluted by the benchmark, resulting in increased overhead to service an interrupt.
+The average-case latency follows same trend, when caches are warmed-up the average case is about $5$ times lower than the worst-case.
+
+\section{Virtualization overhead of PHIDIAS} \label{sec:virtual-overhead}
+The latency measurement procedure is repeated for the rt-guest 
+executing in a virtual machine to determine virtualization overhead for Phidias hypervisor.
+The virtualized setup consists of rt-guest and gp-guest assigned to separated cores of the processor.
+Both guests has virtualized LAPIC, LAPIC-Timer, IOAPIC, and UART.
+The guest physical memory is limited to $256MB$ and LLC is shared.
+Rt-guest has direct access to  PCIe GPIO device, 
+but interrupts are received by Phidias hypervisor first and then routed to the rt-guest.
+Figure \ref{fig-virtual} shows virtual setup used to measure virtualization overhead.
+Furthermore, the rt-guest has direct access to HPET device. 
+The HPET device is used by guest kernel as clock-source.
+
+\input{./figures/fig-virtual}
+%%\input{./figures/plot-virtual-overhead}
+\input{./figures/plot-native-vs-virtual}
+
+Figure \ref{plot-native-vs-virtual} plots comparison of worst-case and average-case latency in native and virtual setup.
+The worst-case interrupt latency of virtualized rt-guest has increased more than twice for all microbenchmarks.
+However, considering the worst-case scenario for native setup, the increase is about $2$ times when loaded with \mcachepressure{} benchmark.
+Worst-case latency is affected more than the average-case latency in virtualized environment.
+
+On average virtualization has increased interrupt latency by an offset of $100\mu{}s$.
+The increased interrupt response time demands in-depth investigation of each overhead component which is covered in section \ref{sec:overheadcomp}.
+Figure \ref{plot-cdf-native-vs-virtual} plots CDF (cumulative density function) of latency in native and virtual setups for three load conditions.
+The CDF in virtual setup almost always follows the native pattern.
+The patterns reveal that in virtual setup the interrupt latency is shifted by an offset which is approximately the difference in average-case latency.
+The probability of worst-case interrupt latency is very low and most events converge to the average-case.
+
+\input{./figures/plot-cdf-native-vs-virtual}
+
+Before moving on it is important to investigate how often Hypervisor intervention is required by the guest code.
+Next section reports guest traps recorded for the duration of an experiment with different load conditions.
+
+
+\subsection{Phidias Intervention}
+A key aspect to lower virtualization overhead is to keep hypervisor intervention to a minimum and allow guest code to execute directly on the processor.
+This section records frequency at which guest is trapped to hypervisor.
+A small instrumentation code was inserted in hypervisor exit handler routine to measure number of exits for the duration of an experiment. 
+Figure \ref{plot-phidias-inter} plots frequency of exits during each experiment. 
+Execution of an experiment with a load condition took about $30s$.
+\input{./figures/plot-phidias-inter}
+
+The plot categorizes exits on the basis of exit reason. 
+The guest code is trapped to hypervisor more often than the rate at which external interrupts are sent to the real-time guest.
+In worst-case guest is trapped 115 times in 1ms for experiment with \mhackbench{} load. About one time in best-case with \mcachepressure{} load.
+When guest is trapped the hypervisor emulates the desired guest behavior. The emulation takes time and could cause pollution of shared resources like caches and TLBs. Emulation and resource contention are the main reason for increase in the interrupt response time.
+Arrival of external interrupt, access to CR (control register) and write to an MSR(model specific register) are the most common reasons for exit.
+In the next section each component of virtualization overhead is measured separately.
+
+
+\subsection{Overhead Components} \label{sec:overheadcomp}
+The virtualization overhead consists of four components. 
+Figure \ref{fig-virt-overhead-all-comp} describes all overhead components.
+First is the context switch times for vmexits and vmentries.
+This overhead is experienced by every guest trap and it is purely hardware overhead.
+Hardware-assisted virtualization extensions support context store and restore on vmexit and vmentry transitions.
+The second overhead component is hypervisor run-time, which is emulation of desired behavior or routing of interrupts when guest is trapped.
+This component can range from few machine cycles to thousands when no action is required to full device emulation.
+The third component of the overhead is resource contention of shared resources like TLBs and LLC cache.
+This component is variable and depends how much the guest and hypervisor cached enteries interfere with each other.
+The last component is MMU virtualization which includes nested page-walks. 
+As explained earlier in section \ref{sec:vmmu}, virtualized system uses nested page-tables to translate 
+guest physical page numbers to machine physical page numbers. The nested paging involves higher number of pointer dereferences, which in turn
+can significantly increase the memory access times for the guest code.
+Phidias runtime and context-switch times can be measured by adding small instrumentation code in hypervisor and real-time guest. 
+
+Overheads resulting from resource contention and MMU virtualization are hard to measure.
+However presence of these overheads is a fact and hardware techniques can help to reduce them.
+The next chapter will shed light on some of the techniques to lower resource-contention overhead.
+Here I will present results of efforts made to measure Phidias run-time and context-switch times.
+
+\input{./figures/fig-virt-overhead-all-comp}
+
+\subsection{Phidias Runtime}
+Phidias runtime is the time to emulate guest behavior for a trap. 
+Phidias runtime can significantly influence interrupt latency and could be a major component of virtualization overhead.
+Figure \ref{fig-virt-overhead-all-comp} shows Phidias runtime as the virtualization overhead component.
+
+To measure Phidias runtime, a small instrumentation code was added at the beginning and end of Phidias vmexit handler.
+The instrumentation code takes time-stamp at the beginning and end to measure worst-case vmexit handling time.
+Furthermore, it also measures number of instructions executed for wort-case execution path using x86 performance monitoring core.
+Figure \ref{plot-phidias-runtime} plots histogram of worst-case Phidias runtime to handle an exit. 
+
+\input{./figures/plot-phidias-runtime}
+
+Table \ref{phidias-runtime} summarizes average and worst-case execution times of Phidias. It includes the number of
+instructions executed during the worst-case path. To evaluate processor performance during the worst-case path CPI (cycles per instruction)
+is calculated and enlisted in the table. 
+In worst-case hypervisor code has CPI of $78$ clock cycles, which is too high.
+Without any question, it can concluded that worst-case runtime is affected by resource contention.
+The Phidias runtimes are taken from profiling information gathered during repeating
+the latency measurement experiments. Detailed results are included in appendix \ref{app:b}.
+
+\begin{table}[H]
+\centering
+\begin{longtable}{|c|c|c|c|c|}  
+\hline
+				& \multicolumn{2}{|c|}{Phidias run time} & instructions	& CPI\\
+Benchmark		& average (cc)	&	worst-case (cc)	&	retired &	(WC) \\ \hline 
+\mcachepressure{}	& 16548	& 178716 & 2322 & 77\\ \hline
+\mforkops{}		& 9263 & 175702 & 2301 & 76.4\\ \hline
+\mfileops{}		& 698 & 196490 & 12640 & 15.5\\ \hline
+\mhackbench{} 		& 23042 & 176205 & 2301 & 76.6\\ \hline
+\mmmapops{} 		& 7604 & 183566 & 2364 & 77.7\\ \hline
+\mstdout{} 			& 1240 & 186435 & 21429 & 8.7\\ \hline
+\mthreadops{} 		& 1265 & 200313 & 19804 & 10.1\\ \hline
+\caption{Phidias worst-case execution time and CPU performance} 
+\label{phidias-runtime}
+\end{longtable}
+\end{table}
+
+
+\subsection{Context-Switch time} \label{sec:context-switch-overhead}
+The context-switch time consists of hardware time needed for vmexit and vmentry.
+In order to measure this overhead, a sensitive instruction was added to guest code to cause a trap. 
+The instruction was wrapped in assertion and deassertion of an output pin, generating a pulse of the duration of instruction execution time.
+Phidias was extended to return control back to guest code when trap is caused by the instruction added for trap.
+External measurement setup explained earlier was used to measure context switch times for ten thousand traps.
+The average and worst case times are summarized in table \ref{context-switch-time}.
+
+\begin{table}[H]
+\centering
+\begin{longtable}{|c||c|c|}  
+\hline
+	Context-switch time	&	average (us)	&	worst-case (us) \\ \hline \hline
+	\mnoload{}				&	1				&		17.2 \\ \hline
+	\mcachepressure{}		&	1				&		86.8 \\ \hline
+\caption{Context-switch overhead (hardware time to perform vmexit and vmentry)} 
+\label{context-switch-time}
+\end{longtable}
+\end{table}
+
+Context-switch time was measured in two scenarios. When there is no load on the guest
+the worst-case context switch time is $17.2\mu{}s$. The experiment was repeated with \mcachepressure{} microbenchmark.
+In worst-case this time can be as high as $86.8\mu{}s$ which is very close to virtualization overhead measured in the section \ref{sec:virtual-overhead}.
+These results validate that most part of the virtualization overhead is made up of contention on the caches shared between guest and hypervisor.
+Figure \ref{plot-cdf-contextswitch} plots CDF of context-switch times without load and with cache pressure.
+The CDF is generated for 10,000 samples and shows that probability of high context-switch times than average values is very small.
+\input{./figures/plot-cdf-contextswitch}
+
+%%\subsection{Resource Contention}
+
+%% \subsection{Purpose}
+%%  This chapter will demonstrate virtualization overhead introduced by Phidias hypervisor.
+
+%% Following topics are covered:
+%% \begin {itemize}
+%% \item overhead measurement mechanism and test setup
+%% \item test scenarios (benchmarks)
+%% \item test results and discussion 
+%% \end {itemize}
+
+
+%% \section{Latency Reduction}
+%% \subsection{Purpose}
+%% This chapter demonstrates results of latency reduction mechanisms
+
+%% Following topics are covered:
+%% \begin {itemize}
+%% \item test enviorment and test scenarios
+%% \item latency reduction using cache allocation technology 
+%% \item latency reduction using direct interrupt injection
+%% \item results and discussion
+%% \end {itemize}

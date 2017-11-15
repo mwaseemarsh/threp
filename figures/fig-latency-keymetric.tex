@@ -1,0 +1,42 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
+
+\newcommand\yh{0.65cm}
+
+%\draw[step=1cm, gray, very thin, dotted] (0,0) grid (15,6);
+
+\node at (0,4) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 3cm, anchor=south west] (kubefore) {kernel/user};
+\node at (3.2,4) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 2cm, anchor=south west] (kservice) {kernel};
+\node at (5.4,4) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 3cm, anchor=south west] (kuafter) {\small{IRQ} handler};
+\draw[black, thick] (3.1,3.25) -- (3.1,5.25) node [above] {IRQ};
+\draw[black, thick] (5.3,3.25) -- (5.3,5.25) node [above] {};
+\draw[black, dashed, <->] (3.1,3.6) -- (5.3,3.6) node [below, align=center, midway, text width=2cm] {\tiny{interrupt latency}};
+
+\draw[black, thick, ->] (0,3.8) -- (10,3.8) node at (10,3.8) [below] {t};
+
+
+
+\node at (0,1) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 3cm, anchor=south west] (kubefore) {kernel/user};
+\node at (3.2,1) [rectangle, draw=black, thick, fill=black!15, rounded corners, minimum height = \yh, minimum width = 4.0cm, anchor=south west] (hyper) {hypervisor};
+%\node at (5.3,1) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 2.0cm, text width=1.75cm, anchor=south west] (rc) {\small{resource contension}};
+\node at (7.5,1) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 2cm, anchor=south west] (kservice) {kernel};
+\node at (9.7,1) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 3cm, anchor=south west] (kuafter) {\small{IRQ} handler};
+
+\draw[black, thick] (3.1,0.25) -- (3.1, 2.25)  node [left] {IRQ};
+\draw[black, thick] (7.4, 0.65) -- (7.4, 2.25) node [above] {};
+\draw[black, thick] (9.6,0.25) -- (9.6, 2.25) node [above] {};
+
+\draw[black, dashed, <->] (3.1,2.1) -- (7.4,2.1) node [above, align=center, midway] {\tiny{virtualization overhead}};
+\draw[black, dashed, <->] (3.1,0.6) -- (9.6,0.6) node [below, align=center, midway] {\tiny{interrupt latency}};
+
+
+\draw[black, thick, ->] (0,0.8) -- (13.5,0.8) node at (13.5,0.8) [below] {t};
+
+\end{tikzpicture}
+\end{center}
+\ifreport
+\caption{Interrupt Latency in native and virtualized environment}
+\fi
+\label{fig-latency-keymetric}
+\end{figure}

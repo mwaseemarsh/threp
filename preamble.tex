@@ -1,0 +1,41 @@
+\usepackage[usenames,dvipsnames]{xcolor} % for coloring fonts
+\usepackage{url}                % for printing formatted url using \url
+\usepackage{longtable}          % for multipage tables
+\usepackage{graphicx}           % for images
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{pgfplots}
+%\usepackage{pgfplotstable}
+\usepackage{ifthen}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{tablefootnote}
+%\usepackage{acro}
+\usepackage[section,nopostdot,nonumberlist,acronym,nogroupskip]{glossaries}
+%\usepackage[acronym,nohypertypes={acronym,notation}]{glossaries}
+
+\usetikzlibrary{calc}
+\usetikzlibrary{patterns}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.pathreplacing}
+\graphicspath{ {img/} }
+
+\pgfplotsset{compat=1.12,height=0.3\textheight,legend cell align=left,tick scale binop=\times}
+%\pgfplotsset{grid style={loosely dotted,color=darkgray!30!gray,line width=0.6pt},tick style={black,thin}}
+%\pgfplotsset{every axis plot/.append style={line width=0.8pt}}
+
+
+\input{./misc/acronyms}
+
+
+\newcommand\mcachepressure{\texttt{cache\_pressure}}
+\newcommand\mforkops{\texttt{forkops}}
+\newcommand\mfileops{\texttt{fileops}}
+\newcommand\mhackbench{\texttt{hackbench}}
+\newcommand\mmmapops{\texttt{mmapops}}
+\newcommand\mstdout{\texttt{stdout}}
+\newcommand\mthreadops{\texttt{threadops}}
+\newcommand\mnoload{\texttt{no load}}
+
+\newif\ifreport
+\newif\ifdefense

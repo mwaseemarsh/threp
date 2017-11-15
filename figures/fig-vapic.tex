@@ -1,0 +1,41 @@
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
+
+\node at (0,5) [rectangle, draw=black, thick, fill=green!10, minimum height = 2.9cm, minimum width = 6cm, anchor=south west] (vm) {};
+\node [below right, inner sep=5pt] at (vm.north west) {VM};
+
+\node at (0.5,5.3) [rectangle, rounded corners, draw=black, thick, fill=pink!30, minimum height = 1cm, minimum width = 5cm, anchor=south west] (g) {guest};
+\node at (4.0,6.5) [rectangle, draw=black, thick, fill=yellow!20, minimum height = 1cm, minimum width = 0.5cm, anchor=south west] (vmcs) {VMCS};
+
+\node at (0,4) [rectangle, draw=black, thick, fill=Cyan!20, minimum height = 0.9cm, minimum width = 4cm, anchor=south west] (hyper) {Hypervisor};
+
+\node at (0,0) [rectangle, draw=black, thick, fill=blue!10, minimum height = 3.9cm, minimum width = 6cm, anchor=south west] (hard) {};
+\node [above left, inner sep=5pt] at (hard.south east) {Hardware};
+
+\node at (1.5,1.5) [rectangle, draw=black, thick, fill=yellow!10, minimum height = 2cm, minimum width = 1.5cm, anchor=south west] (apic) {APIC};
+\node at (1.5,0.2) [rectangle, draw=black, thick, fill=yellow!10, minimum height = 0.8cm, minimum width = 1.5cm, anchor=south west] (ioapic) {\tiny{IOAPIC}};
+
+\node at (4,1.5) [dotted, rectangle, draw=black, thick, fill=yellow!15, minimum height = 2cm, minimum width = 1.5cm, anchor=south west, text width=1cm] (vapic) {virtual APIC};
+
+\begin{scope}[>=latex]	
+	\draw [ultra thick, <->] (apic.west) -| ([xshift=-6ex, yshift=2ex]hyper.south) ;
+	\draw [ultra thick, <->] ([xshift=10ex, yshift=2ex]g.south) -- (vapic.north) ;
+	\draw [thick,  decorate, decoration=coil, ->] (vapic.west) -| ([xshift=10ex, yshift=2ex]hyper.south) ;
+	\draw [thick, dashed, ->] (vmcs.east) to [bend left=20] ([yshift=4ex]vapic.east) ;
+	\draw [thick, <->] (apic.south) -- (ioapic.north) ;
+
+	\draw [ultra thick, <->] (6.5,1.5) -- (7.5,1.5) node [right] {\small{read/write access}};
+	\draw [thick, decorate, decoration=coil] (6.5,1) -- (7.5,1) node [right] {\small{guest trap}};
+	\draw [thick, dashed, ->] (6.5,0.5) -- (7.5,0.5) node [right] {\small{pointer}};
+\end{scope}
+
+
+
+\end{tikzpicture}
+\end{center}
+\ifreport
+\caption{APIC Virtualization}
+\fi
+\label{fig-vapic}
+\end{figure}

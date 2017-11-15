@@ -1,0 +1,50 @@
+\begin{figure}[!htb]
+\begin{center}
+
+\begin{tikzpicture}
+
+
+\begin{axis}[name=plot1, height=6cm, width=12cm, ymin=0, ymax=1, xmin=0, 		
+		xlabel=latency(us), 
+		ylabel=probability,
+		title style={yshift=-2ex},
+		legend pos=south east,
+		title=load:cache pressure,
+		]
+	\addplot [thick, blue] table[x=Latency,y=Probability] {./figures/native_cachepressure_10k_cdf.dat};
+	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_cachepressure_10k_cdf.dat};
+	\legend {\small{native (max 77.9)}, \small{virtual (max 131.1)}}
+\end{axis}
+
+
+\begin{axis}[name=plot2, at={($(plot1.south west)+(0,-6.5cm)$)}, height=6cm, width=12cm, ymin=0, ymax=1, xmin=0, 
+		legend pos=south east,
+		xlabel=latency(us), 
+		ylabel=probability, 
+		title style={yshift=-2ex},
+		title=load:threadops,
+		]
+	\addplot [thick, blue] table[x=Latency,y=Probability] {./figures/native_threadops_cdf.dat};	
+	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_threadops_10k_cdf.dat};
+	\legend {\small{native (max 12.4)}, \small{virtual (max 169.1)}}
+\end{axis}
+
+
+
+\begin{axis}[name=plot3, at={($(plot2.south west)+(0,-6.5cm)$)}, height=6cm, width=12cm, ymin=0, ymax=1, xmin=0, 
+		legend pos=south east,
+		xlabel=latency(us), 
+		ylabel=probability, 
+		title style={yshift=-2ex},
+		title=load:forkops,
+		]
+	\addplot [thick, blue] table[x=Latency,y=Probability] {./figures/native_forkops_10k_cdf.dat};	
+	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_forkops2_10k_cdf.dat};
+	\legend {\small{native (max 25.9)}, \small{virtual (max 119.5)}}
+\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\caption{Comparison of interrupt latency CDF between native and virtual setup for different load conditions}
+\label{plot-cdf-native-vs-virtual}
+\end{figure}

@@ -1,0 +1,147 @@
+%%REF: https://www.sharelatex.com/blog/2013/08/02/thesis-series-pt1.html
+%%REF: https://tex.stackexchange.com/questions/291156/phd-master-bachelor-thesis-which-document-class-to-choose
+%\documentclass[12pt, twoside]{report}
+
+\documentclass[11pt]{report}
+%\documentclass[bibtotoc,liststotoc,BCOR5mm,DIV12]{scrbook}
+
+%\usepackage{geometry}
+\usepackage[english]{babel}
+%\usepackage[usenames, dvipsnames]{xcolor} % for coloring fonts
+\usepackage{fancyhdr}           % for header footer not used yet
+%\usepackage{url}                % for printing formatted url using \url
+%\usepackage{longtable}          % for multipage tables
+%\usepackage{pifont}             % for printing special characters using \ding
+%\usepackage{graphicx}           % for images
+%\usepackage{multirow}           % for combining multiple rows in a table
+%\usepackage{array}              % for table adjustments
+%\usepackage[utf8]{inputenc}
+%\usepackage{tikz}
+%\usepackage{pgfplots}
+%\usepackage{ifthen}
+\usepackage{titlesec}
+%\usepackage{float}
+%\usepackage{tablefootnote}
+%\usepackage{textcomp}
+%\usepackage{palatino}
+%\usepackage[acronym]{glossaries}
+%\usepackage{acro}
+%%%%%%%%PATCH FOR DISAPPEARANCE OF SECTION NUMBERS%%%%%%%%%%%%%%%%
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+\patchcmd{\ttlh@hang}{\noindent}{}{}{}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% BIBLIO IN TABLE OF CONTENTS %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\titleformat{\chapter}{\normalfont\huge\bf}{\thechapter.}{20pt}{}
+
+\usepackage[backend=bibtex,bibencoding=ascii,style=ieee,backref=true]{biblatex}
+\addbibresource{ref/references.bib}
+
+\include{preamble}
+\reporttrue
+
+%%https://tex.stackexchange.com/questions/67446/change-colour-of-boxes-surrounding-links-in-hyperref
+%%\usepackage{hyperref}
+
+%% Page Dim (A4): 210 × 297
+\usepackage[a4paper,width=145mm,top=30mm,bottom=30mm]{geometry}
+%\usepackage[english]{babel}
+\hypersetup{
+    %hyperfootnotes=false
+    linkbordercolor=blue!30,
+    allbordercolors=blue!30,
+    %backref=true,
+    backref=page,       
+    pagebackref=true,               
+    hyperindex=true, 
+    %colorlinks=true,                
+    breaklinks=true,                
+    urlcolor= black,                
+    linkcolor= black,                
+    bookmarks=true,
+    bookmarksopen=false,
+    filecolor=black,
+    citecolor=black,
+}
+
+
+\pagestyle{fancy}
+\fancyhf[RE,RO,LO,LE,C]{}
+%\fancyhead[L]{\rightmark} %% clear out all headers
+\fancyfoot[R]{\thepage} %% clear out all footers
+%\fancyhead[LE,RO]{\textbf{\thepage}}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+
+%\fancyhf{}
+%\rhead{}
+%\lhead{}
+%\rfoot{\thepage}
+
+%\makeglossaries
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%PREAMBLE%%%%%%%%%%%%%%%%%%%%%%%
+\input{./misc/title}
+\clearpage{\thispagestyle{empty}\cleardoublepage}
+
+\pagenumbering{roman}
+
+\input{./misc/declaration}
+\clearpage{\thispagestyle{empty}\cleardoublepage}
+
+
+\input{./misc/abstract}
+\clearpage{\thispagestyle{empty}\cleardoublepage}
+
+%\input{./misc/dedication}
+%\clearpage{\thispagestyle{empty}\cleardoublepage}
+
+\input{./misc/acknowledgements}
+\clearpage{\thispagestyle{empty}\cleardoublepage}
+
+\tableofcontents
+\clearpage{\thispagestyle{empty}\cleardoublepage}
+
+\listoffigures 
+\clearpage{\thispagestyle{empty}\cleardoublepage}
+
+\listoftables
+\clearpage{\thispagestyle{empty}\cleardoublepage}
+
+%%%%%%%%%%%%%%%%%%%%%%CHAPTERS%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+\input{./chap/chapter1}
+\input{./chap/chapter2}
+\input{./chap/chapter3}
+\input{./chap/chapter4}
+\input{./chap/chapter5}
+\input{./chap/chapter6}
+
+%%%%%%%%%%%%%%%%%%%%%%APPENDICES%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\input{./app/appA.tex}
+\input{./app/appB.tex}
+
+%\printnoidxglossary[type=\acronymtype,title=Abbreviations]
+%\clearpage
+%\chapter*{} \label{abreviations}
+%\printacronyms[include-classes=abbrev,name=Abbreviations]
+\chapter{Glossary} \label{glossary:c}
+%\printglossaries[style=super, type=\acronymtype]
+\printnoidxglossaries
+
+% ---------------------------------------------------------------
+%\backmatter
+%\newgeometry{tmargin=2.8cm,bmargin=3.5cm,lmargin=4cm,rmargin=3cm}
+
+%\bibliographystyle{ieeetr}
+
+\glsaddall
+\printbibliography[heading=bibintoc]
+\end{document}
