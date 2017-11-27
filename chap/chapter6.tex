@@ -1,23 +1,28 @@
 \chapter{Conclusion\label{chap6}}
 
 This thesis analyzed real-time capabilities of Phidias hypervisor and performance improvement techniques.
-The results showed that virtualization has increased real-time interrupt response times.
+The results showed that real-time interrupt response time has increased in the virtualization environment.
 However, the overhead is bounded and can be reduced by applying performance improvement techniques.
 Furthermore, there is still room for improvement and could be considered in future work.
 
-Worst-case interrupt latency that was under $80us$ in native environment has increased more than twice in virtual environment and stayed under $170us$.
-Investigation of overhead components revealed resource contention as main reason of increased interrupt latency.
-The context-switch time for transitions to and from hypervisor can go as high as $86us$, which is purely hardware overhead.
-CPU performance during the time when hypervisor runs can drop as low as one instruction completes in $77cc$ on average.
-The study has presented enough evidence to conclude most part of the virtualization overhead is purely hardware overhead.
+The worst-case interrupt latency that was under $80\mu{}s$ in the native environment has increased 
+more than twice in the virtual environment and stayed under $170\mu{}s$.
+Investigation of overhead components revealed resource contention is a major component of increased interrupt latency.
+Context-switch time for transitions to and from hypervisor can go as high as $86\mu{}s$ when rt-guest is running \mcachepressure{} benchmark.
+The worst-case context-switch time is close to the overhead added to rt-guest interrupt latency in virtual setup.
+CPU performance during the time when hypervisor runs can drop as low as one instruction completes in $78cc$ on average.
+Large values of context-switch time under \mcachepressure{} and poor processor performance when Phidias handles an exit event indicates 
+the contention of shared resources is the main culprit for the significant increase in interrupt latency.
 
-Interrupt response time of real-time guest interrupts improved significantly when latency reduction techniques were applied.
-Direct interrupt injection lowered the interrupt latency by more than $25us$.
-Isolating LLC of real-time guest from GPOS guest decreased interrupt latency by more than $15us$.
-And TLB virtualization allowed latency reduction of more than $3.4us$.
-When latency reduction techniques are used altogether, the virtualized solution can meet real-time constraints in the order of magnitude ($90us-110us$) which not far
-from the native ($20us-80us$). 
-Furthermore, during the study I found potential areas of improvement that could lead to further reduction of interrupt response times.
+The worst-case latency of real-time guest interrupt improved significantly when latency reduction techniques were applied.
+Direct interrupt injection lowered the interrupt latency by more than $25\mu{}s$ (minimum $19\%$ improvement).
+Isolating LLC of real-time guest from GPOS guest decreased interrupt latency by more than $15\mu{}s$ (minimum $8\%$ improvement).
+And TLB partitioning allowed latency reduction of more than $3.4\mu{}s$.
+The average-case latency has always shown greater improvement than the worst-case.
+Implementation of all techniques together has reduced non-deterministic behavior of the virtualization solution.
+When latency reduction techniques are used altogether, the virtualized solution can meet real-time constraints in the order of magnitude ($90\mu{}s-110\mu{}s$) which not far from the native ($20\mu{}s-80\mu{}s$).
+The study has presented enough evidence to indicate that a substantial part of the virtualization overhead was made up from contention of shared resources.
+Furthermore, during the study, we have found potential areas of improvement that could be used to further reduce non-deterministic behavior of real-time virtualization solution based on the x86 platform.
 
 
 \section{Future Work}
@@ -27,16 +32,47 @@ The analysis of overhead and latency reduction techniques revealed some areas th
 Cache allocation used to lower interrupt latency was applied to shared L3 cache to separate traffic of RTOS and GPOS guest.
 Since Phidias also executes on same core as real-time guest does, their data can interfere at L1
 and L2 caches. Like L3 partitioning is supported in hardware, some x86 processors also support L2 partitioning.
-Future work can use one of those processor to avoid interference between guest and hypervisor.
+Future work can use one of those processors to avoid interference between guest and hypervisor.
 The x86 processor had multi-level big caches, these caches suffer from long miss penalties.
 The work from this study can be repeated on processor with smaller caches to 
 evaluate Phidias performance and see if long miss penalties are the major component of virtualization overhead.
 
-While executing various kinds of loads on real-time guest, I observed frequent guest traps causing 
-vm transitions. Frequent context-switching can result in pollution of caches already warmed-up for guest code.
-Most transition are necessary, however current version of Phidias hypervisor uses VM configuration to
+While executing various kinds of loads on the real-time guest, we observed frequent guest traps causing 
+VM transitions. Frequent context-switching can result in pollution of caches already warmed-up for the guest code.
+Most transitions are necessary, however current version of Phidias hypervisor uses VM configuration to
 exit for all IO access, and accesses to all MSR.
-The x86 VT-x enables host to use bitmasks to take exits only for an access that needs host attention.
-Although I extended Phidias to use these mechanisms, but limited support could be added due to limitation of time.
-More investigation is required to fully utilize these mechanisms and evaluate impact on virtualization overhead.
+The x86 VT-x enables the host to use bitmasks to take exits only for an access that needs hypervisor involvement.
+Although we extended Phidias to use these mechanisms, however, limited support could be added due to the limitation of time.
+More investigation is required to fully utilize these mechanisms and evaluate the impact on virtualization overhead.
+Following section briefly describes how certain exits can be avoided.
 
+\subsection{Reducing PHIDIAS Involvement}
+
+Chapter \ref{chap3} recorded \mwrmsr{} exit as a major component of overall exit transitions.
+The current implementation of Phidias hypervisor handles all read/write accesses to core local and global MSRs.
+At runtime, some of the MSRs are accessed frequently by the guest, especially when process context-switch takes place. 
+For example, a set of registers, local to the CPU core, are used by the guest kernel to implement system call gates. 
+In situations when real-time guests are assigned dedicated CPU cores, the guest can be granted full access to such register
+by using MSR bitmasks. Since MSR bitmasks are control
+fields in VMCS data structure, the hypervisor can preconfigure bitmasks specific to these
+registers to avoid exits on a read/write access by the guest.
+
+Similarly, \mextinterrupt{} exit is another major component of overall exit transitions. 
+Chapter \ref{chap4} demonstrated performance improvement when DII is used to deliver interrupt owned by guests without exits.
+LAPIC timer interrupts is a major component of \mextinterrupt{}  exit transitions.
+The current implementation of Phidias gains full control of LAPIC timer and implements event queues 
+to generate scheduling events and emulation of guest event timer.
+Phidias can be extended to inject LAPIC timer interrupt directly to the guest without taking exit transitions.
+However, in order to inject interrupt directly to the guest without exit, Phidias should use interrupt vector number desired by the guest 
+and should be able to initialize PID data structures before interrupt injection.
+Although more instructions will be needed to implement the logic, however, avoiding an exit can reduce shared resource contention.
+Additionally, in certain situations where a guest has been assigned dedicated CPU core, 
+it might be possible to remove scheduler and grant access to the LAPIC timer from the guest.
+
+Furthermore, all IO operations from guests are handled by Phidias.
+Intel VT-x also supports IO bitmasks to control guest access to IO regions. 
+The IO bitmasks is a control field of VMCS data structure that can be used by the hypervisor to control guest accesses.
+Phidias can be extended to grant full read/write access to certain IO regions that corresponds to the IO device owned by the guests.
+
+
+  

@@ -2,21 +2,22 @@
 \begin{center}
 \begin{tikzpicture} %[scale=1.2]
 
-\begin{axis} [ ybar=2pt, height=8cm, width=15cm, enlarge y limits={upper,value=0.2}, %enlargelimits=0.1,
-                       legend style={at={(0.5,-0.3)}, anchor=north, legend columns=-1},
-                       ylabel={interrupt latency(us)}, %title=vmexits after bootup, 
-		       bar width=16pt,
-       		       %%enlarge x limits={abs=0.8cm}, 		       
-                       symbolic x coords={no load, cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops, all benchmarks},
-                       xtick=data, nodes near coords, 
-		       %nodes near coords align={vertical},
-			%ymajorgrids=true, grid style = very thin,
-		       every node near coord/.append style={rotate=90, anchor=west},
-                       x tick label style={rotate=45,anchor=east}, ]                    
+\begin{axis} [ ybar=\ybarSepVO, height=\figheight, width=\figwidth, enlarge y limits={upper,value=0.1}, %enlargelimits=0.1,
+                legend pos=north east, legend columns=-1,				
+                ylabel={interrupt latency ($\mu{}s$)}, %title=vmexits after bootup, 
+		        bar width=\ybarWidthVO,
+				%x=1.3cm,
+       		    %%enlarge x limits={abs=0.8cm}, 		       
+                symbolic x coords={no load, cache\_pressure,forkops, fileops, hackbench, mmapops, stdout, threadops, all benchmarks},
+                xtick=data, nodes near coords,
+		        nodes near coords align={vertical},  nodes near coords style={font=\ttfamily\scriptsize},
+			    %ymajorgrids=true, grid style = very thin,
+		        %every node near coord/.append style={rotate=90, anchor=west},
+                x tick label style={rotate=45,anchor=east, xshift=0pt, font=\ttfamily\small}, ]                    
 
-	\addplot [fill=black!20] coordinates {
+	\addplot [fill=blue!30] coordinates {
 				(no load, 67.6)				
-				(cache pressure, 73.7)
+				(cache\_pressure, 73.7)
 				(forkops, 25.9)
 				(fileops, 24.7)
 				(hackbench, 9.3)
@@ -26,9 +27,9 @@
 				(all benchmarks, 19.8)				
 			    };
 
-	\addplot [postaction={pattern=north east lines}] coordinates {
+	\addplot [fill=yellow!20, postaction={pattern=north east lines}, pattern color=gray] coordinates {
 				(no load, 44.2)
-				(cache pressure, 43.1)
+				(cache\_pressure, 43.1)
 				(forkops, 6.1)
 				(fileops, 6.1)
 				(hackbench, 4.5)

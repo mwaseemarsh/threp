@@ -6,7 +6,7 @@
 
 \begin{axis}[name=plot1, height=6cm, width=7cm, ymin=0, ymax=100, minor y tick num = 5, xmin=0, 
 		area style, 
-		xlabel=latency(us), 
+		xlabel=latency ($\mu{}s$), 
 		ylabel=frequency, 
 		%ymajorgrids=true, grid style = very thin,
 		title=cache\_pressure (native),
@@ -17,7 +17,7 @@
 
 \begin{axis}[name=plot2, at={($(plot1.south east)+(2cm,0)$)},height=6cm, width=7cm, ymin=0, ymax=100, minor y tick num = 5, xmin=0, 
 		area style, 
-		xlabel=latency(us), 
+		xlabel=latency ($\mu{}s$), 
 		ylabel=frequency, 
 		%ymajorgrids=true, grid style = very thin,
 		title=cache\_pressure (virtual),
@@ -28,7 +28,7 @@
 
 \begin{axis}[name=plot3, at={($(plot1.south west)+(0,-7cm)$)}, height=6cm, width=7cm, ymin=0, ymax=100, minor y tick num = 5, xmin=0, 
 		area style, 
-		xlabel=latency(us), 
+		xlabel=latency ($\mu{}s$), 
 		ylabel=frequency, 
 		%ymajorgrids=true, grid style = very thin,
 		title=threadops (native),
@@ -39,7 +39,7 @@
 
 \begin{axis}[name=plot4, at={($(plot3.south east)+(2cm,0)$)},height=6cm, width=7cm, ymin=0, ymax=100, minor y tick num = 5, xmin=0, 
 		area style, 
-		xlabel=latency(us), 
+		xlabel=latency ($\mu{}s$), 
 		ylabel=frequency, 
 		%ymajorgrids=true, grid style = very thin,
 		title=threadops (virtual),

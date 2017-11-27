@@ -6,35 +6,36 @@
 %\draw[step=0.5cm, gray, very thin] (0,0) grid (9,9);
 
 
-\node at (0,5.5) [rectangle, draw=black, thick, fill=black!3, rounded corners,  postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1cm, anchor=south west] (g1) {g1};
-\node at (1.25,5.5) [rectangle, draw=black, fill=black!3, thick, rounded corners, postaction={pattern=  dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1cm, anchor=south west] (g2) {g2};
-\node at (2.5,5.5) [rectangle, draw=black, fill=black!3, thick, rounded corners, postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1cm, anchor=south west] (gN) {g3};
-\node at (3.75,5.5) [rectangle, draw=black, fill=black!3, thick, rounded corners, postaction={pattern=  dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1cm, anchor=south west] (gN) {g4};
+\node at (0,5.5) [rectangle, draw=black, thick, fill=Black!10, rounded corners,  postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1.1cm, anchor=south west] (g1) {g1};
+\node at (1.25,5.5) [rectangle, draw=black, fill=Black!10, thick, rounded corners, postaction={pattern=  dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1.1cm, anchor=south west] (g2) {g2};
+\node at (2.5,5.5) [rectangle, draw=black, fill=Black!10, thick, rounded corners, postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1.1cm, anchor=south west] (gN) {g3};
+\node at (3.75,5.5) [rectangle, draw=black, fill=Black!10, thick, rounded corners, postaction={pattern=  dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1.1cm, anchor=south west] (gN) {g4};
 
-\node at (6,5.5) [rectangle, draw=black, fill=black!3, thick, rounded corners, postaction={pattern= north east lines, pattern color=black!50}, minimum height = 2cm, minimum width = 1cm, anchor=south west] (g1) {g1};
-\node at (7.25,5.5) [rectangle, draw=black, fill=black!3, thick, rounded corners, postaction={pattern= north west lines, pattern color=black!50}, minimum height = 2cm, minimum width = 1cm, anchor=south west] (g2) {g2};
-\node at (8.5,5.5) [rectangle, draw=black, fill=black!3, thick, rounded corners, postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1cm, anchor=south west] (gN) {g3};
-\node at (9.75,5.5) [rectangle, draw=black, fill=black!3, thick, rounded corners, postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1cm, anchor=south west] (gN) {g4};
+\node at (6,5.5) [rectangle, draw=black, fill=green!20, thick, rounded corners, postaction={pattern= north east lines, pattern color=black!50}, minimum height = 2cm, minimum width = 1.1cm, anchor=south west] (g1) {g1};
+\node at (7.25,5.5) [rectangle, draw=black, fill=pink!30, thick, rounded corners, postaction={pattern= north west lines, pattern color=black!50}, minimum height = 2cm, minimum width = 1.1cm, anchor=south west] (g2) {g2};
+\node at (8.5,5.5) [rectangle, draw=black, fill=Blue!10, thick, rounded corners, postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1.1cm, anchor=south west] (gN) {g3};
+\node at (9.75,5.5) [rectangle, draw=black, fill=Blue!10, thick, rounded corners, postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 1.1cm, anchor=south west] (gN) {g4};
 
-\node at (0,4) [rectangle, draw=black, thick, rounded corners, fill=black!3, minimum height = 1cm, minimum width = 5cm, anchor=south west] (hypervisor1) {Hypervisor} ;
-\node at (6,4) [rectangle, draw=black, thick, rounded corners, fill=black!3, minimum height = 1cm, minimum width = 5cm, anchor=south west] (hypervisor2) {Hypervisor} ;
+\node at (0,4) [rectangle, draw=black, thick, rounded corners, fill=Cyan!15, minimum height = 1.25cm, minimum width = 5cm, anchor=south west] (hypervisor1) {Hypervisor} ;
+\node at (6,4) [rectangle, draw=black, thick, rounded corners, fill=Cyan!15, minimum height = 1.25cm, minimum width = 5cm, anchor=south west] (hypervisor2) {Hypervisor} ;
 
-\node at (0,2.5) [rectangle, draw=black, thick, rounded corners, fill=black!5, minimum height = 1cm, minimum width = 5cm, anchor=south west] (cores2) {Processor};
-\node at (6,2.5) [rectangle, draw=black, thick, rounded corners, fill=black!5, minimum height = 1cm, minimum width = 5cm, anchor=south west] (cores2) {Processor};
+\node at (0,2.5) [rectangle, draw=black, thick, rounded corners, fill=SpringGreen!50, minimum height = 1.25cm, minimum width = 5cm, anchor=south west] (cores2) {Processor};
+\node at (6,2.5) [rectangle, draw=black, thick, rounded corners, fill=SpringGreen!50, minimum height = 1.25cm, minimum width = 5cm, anchor=south west] (cores2) {Processor};
 
-\node at (0,0) [rectangle, draw=black, thick, fill=black!3, rounded corners, postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 5cm, anchor=south west] (llc1) {shared LLC (g1, g2, g3, g4)};
-\node at (6,0) [rectangle, draw=black, thick, rounded corners, fill=black!3, minimum height = 2cm, minimum width = 5cm, anchor=south west] (llc2) {};
+\node at (0,0) [rectangle, draw=black, thick, fill=Black!10, rounded corners, postaction={pattern= dots, pattern color=black!50}, minimum height = 2.25cm, minimum width = 5cm, anchor=south west] (llc1) {shared LLC (g1, g2, g3, g4)};
 
-\node at (6,0) [rectangle, draw=black!20, very thin, rounded corners, postaction={pattern= north east lines, pattern color=black!50}, minimum height = 2cm, minimum width = 1.5cm, anchor=south west] (g1llc) {g1};
-\node at (7.5,0) [rectangle, draw=black!20,  very thin, rounded corners,postaction={pattern= north west lines, pattern color=black!50}, minimum height = 2cm, minimum width = 1.5cm, anchor=south west] (g2llc) {g2};
-\node at (9,0) [rectangle, draw=black!20,  very thin, rounded corners,  postaction={pattern= dots, pattern color=black!50}, minimum height = 2cm, minimum width = 2cm, anchor=south west] (g23llc) {g2, g3};
+\node at (6,0) [rectangle, draw=black!3, fill=green!20, very thin, rounded corners, postaction={pattern= north east lines, pattern color=black!50}, minimum height = 2.25cm, minimum width = 1.5cm, anchor=south west] (g1llc) {g1};
+\node at (7.5,0) [rectangle, draw=black!3, fill=pink!30,  very thin, rounded corners,postaction={pattern= north west lines, pattern color=black!50}, minimum height = 2.25cm, minimum width = 1.5cm, anchor=south west] (g2llc) {g2};
+\node at (9,0) [rectangle, draw=black!3, fill=Blue!10,  very thin, rounded corners,  postaction={pattern= dots, pattern color=black!50}, minimum height = 2.25cm, minimum width = 2cm, anchor=south west] (g23llc) {g2, g3};
+
+\node at (6,0) [rectangle, draw=black, thick, rounded corners, minimum height = 2.25cm, minimum width = 5cm, anchor=south west] (llc2) {};
 
 \draw [decorate, decoration={random steps,segment length=3pt,amplitude=1pt}] (5.5,-0.2) -- (5.5,7.7);
 
 \end{tikzpicture}
 \end{center}
 \ifreport
-\caption{Comparison of shared and isolated LLC. One the left is virtual setup when LLC is shared by four guests. On the right is a virtual setup that uses bitmasks from Figure \ref{fig-cat-bitmasks}}
+\caption{Comparison of shared and isolated LLC. On the left is virtual setup when LLC is shared by four guests. On the right is a virtual setup that uses bitmasks from Figure \ref{fig-cat-bitmasks}}
 \fi
 \label{fig-cat-isolated}
 \end{figure}

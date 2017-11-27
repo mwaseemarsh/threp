@@ -1,0 +1,36 @@
+\chapter*{Zusammenfassung}
+
+Eingebettete Systeme sind tief in unsere Gesellschaft integriert, daher neigen wir dazu ihre Existenz nicht mehr wahr zu nehmen.
+Diese Systeme verbesserten die Lebensqualit{\"a}t und eine erh{\"o}hten die menschliche Produktivit{\"a}t durch Automatisierung.
+Viele Anwendungen, die auf diesen Ger{\"a}ten ausgef{\"u}hrt werden, haben Echtzeitanforderungen, die strengen Timing-Einschr{\"a}nkungen unterliegen.
+Echtzeitanwendungen waren fr{\"u}her einfach und liefen normalerweise auf Single-Core-Prozessoren, dies ist heutzutage nicht mehr der Fall.
+
+Aktuelle Trends wie \emph{"Industrie 4.0"} und \emph{"Internet of Things"} führen zu einer vermehrten Vernetzung von Echtzeit-Fähigen Systemen.
+Diese Entwicklung hat zu einer erh{\"o}hten Komplexit{\"a}t des Software-Stacks gef{\"u}hrt und verlangt die Entwicklung neuer
+Mechanismen, um die Systemzuverl{\"a}ssigkeit zu erreichen.
+Desweiteren haben Fortschritte in der Multicore-Prozessortechnologie ihren Weg in eingebetteten Systemen gefunden.
+Systemdesigner haben sich f{\"u}r Multicore-Technologie entschieden und es laufen so viele Echtzeitanwendungen auf Multicore-Architekturen wie nie zuvor.
+Die Multicore-Technologie hat neue M{\"o}glichkeiten er{\"o}ffnet.
+Anwendungen gemischter Kritikalit{\"a}t, die fr{\"u}her auf separaten Hardwareplattformen ausgef{\"u}hrt wurden, k{\"o}nnen auf einer Plattform konsolidiert werden.
+Echtzeitanwendungen k{\"o}nnen dedizierten Prozessorkernen zugewiesen werden, um eine r{\"a}umliche Isolierung zu gew{\"a}hrleisten.
+Diese L{\"o}sung ist f{\"u}r Legacy-Anwendungen gleicherma{\ss}en g{\"u}ltig, sofern sich ihr Ausf{\"u}hrungsverhalten nicht ändert.
+
+Eine klassische L{\"o}sung zur Konsolidierung mehrerer Anwendungen auf einer Plattform ist Virtualisierung.
+Seit vielen Jahren wird Virtualisierung in den Bereichen Server- und Cloud-Computing eingesetzt, um mehrere Anwendungen auf einer einzigen Maschine zu hosten.
+In letzter Zeit hat sich Virtualisierung auch bei eingebettete Systeme  f{\"u}r die Anwendungskonsolidierung etabliert.
+Durch die Konsolidierung k{\"o}nnen Systementwickler die Systemkosten reduzieren und die volle Rechenleistung auf einem Chip nutzen.
+Allerdings sind Virtualisierungsl{\"o}sungen, die in der Unternehmensdom{\"a}ne weit verbreitet sind, nicht direkt auf Echtzeit-Systeme übertragbar.
+Diese L{\"o}sungen sollen den durchschnittlichen Durchsatz des Softwaresystems erh{\"o}hen.
+
+Im Gegensatz dazu werden Echtzeitsysteme hinsichtlich der Antwortzeiten im worst-case Fall optimiert.
+Da Echtzeitsysteme strengen zeitlichen Einschr{\"a}nkungen unterliegen muss eine L{\"o}sung f{\"u}r Echtzeitsystem eine deterministische Antwortzeit garantieren.
+Eine f{\"u}r das Echtzeitsystem geeignete, zuverl{\"a}ssige Virtualisierungsl{\"o}sung muss diese Echtzeitanforderung erfüllen.
+.
+Ein Hypervisor sollte einen geringen Platzbedarf benötigen und muss die zeitliche und R{\"a}umliche Isolierung von virtualisierten Anwendungen gew{\"a}hrleisten.
+
+Phidias ist ein statisch konfigurierbarer Hypervisor, der speziell f{\"u}r das Hosten von Echtzeitanwendungen entwickelt wurde.
+Der Hypervisor-Footprint ist klein und folgt den f{\"u}r Echtzeitanwendungen g{\"u}nstigen Designprinzipien.
+Echtzeitf{\"a}higkeiten sind noch unbekannt. Diese Arbeit best{\"a}tigt die Echtzeitf{\"a}higkeiten von Phidias Hypervisor auf der x86-Plattform
+durch Messen des Virtualisierungsoverheads f{\"u}r einen Echtzeitgast. Des Weiteren pr{\"a}sentiert die Arbeit Leistungsoptimierung
+Mechanismen zur Reduzierung der Interrupt-Antwortzeiten von Echtzeit-Gast.
+Die Ergebnisse zeigen, dass Latenzreduktionstechniken den Virtualisierungsaufwand deutlich reduzieren k{\"o}nnen.

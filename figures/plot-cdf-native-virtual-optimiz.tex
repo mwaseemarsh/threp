@@ -4,52 +4,78 @@
 \begin{tikzpicture}
 
 
-\begin{axis}[name=plot1, height=6cm, width=12cm, ymin=0, ymax=1, xmin=0, 		
-		xlabel=latency(us), 
+\begin{axis}[name=plot1, height=\figheightVOCDF, width=\figwidthVOCDF, ymin=0, ymax=1, xmin=0, 		
+		xlabel=latency ($\mu{}s$), 
 		ylabel=probability,
 		title style={yshift=-2ex},
 		legend pos=south east,
-		title=load:cache pressure,
+		title=load: \mcachepressure{},
 		]
-	\addplot [thick, blue] table[x=Latency,y=Probability] {./figures/native_cachepressure_10k_cdf.dat};
-	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_cachepressure_10k_cdf.dat};
-	\addplot [very thick, green] table[x=Latency,y=Probability] {./figures/allopt_cachepressure_10k_cdf.dat};
-	\legend {\small{native (avg 44.2, max 77.9)}, \small{virtual (avg 18.2, max 131.1)}, \small{optimized (avg 11, max 100.4)}}
+	\addplot [dashed, very thick, blue] table[x=Latency,y=Probability] {./figures/native_cachepressure_10k_cdf.dat};
+	\addplot [dotted, very thick, red] table[x=Latency,y=Probability] {./figures/virt_cachepressure_10k_cdf.dat};
+	\addplot [very thick, OliveGreen] table[x=Latency,y=Probability] {./figures/allopt_cachepressure_10k_cdf.dat};
+	\legend {\small{native (avg 43.1, max 73.7)}, \small{virtual (avg 18.2, max 131.2)}, \small{optimized (avg 11, max 100.4)}}
 \end{axis}
 
+%%%%%%%%%%%%%%%%%%for defense presentation%%%%%%%%%%%%%%%%%%%%
+\ifdefense
 
-\begin{axis}[name=plot2, at={($(plot1.south west)+(0,-6.5cm)$)}, height=6cm, width=12cm, ymin=0, ymax=1, xmin=0, 
+\end{tikzpicture}
+\end{center}
+\label{plot-cdf-native-vs-virtual1}
+\end{figure}
+	
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
+
+\fi
+%%%%%%%%%%%%%%%%%%%%%ENDIF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{axis}[name=plot2, \atCmdVOCDFLowerPlotA, height=\figheightVOCDF, width=\figwidthVOCDF, ymin=0, ymax=1, xmin=0, 
 		legend pos=south east,
-		xlabel=latency(us), 
+		xlabel=latency ($\mu{}s$), 
 		ylabel=probability, 
 		title style={yshift=-2ex},
-		title=load:threadops,
+		title=load: \mthreadops{},
 		]
-	\addplot [thick, blue] table[x=Latency,y=Probability] {./figures/native_threadops_cdf.dat};	
-	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_threadops_10k_cdf.dat};
-	\addplot [very thick, green] table[x=Latency,y=Probability] {./figures/allopt_threadops_10k_cdf.dat};
+	\addplot [dashed, very thick, blue] table[x=Latency,y=Probability] {./figures/native_threadops_cdf.dat};	
+	\addplot [dotted, very thick, red] table[x=Latency,y=Probability] {./figures/virt_threadops_10k_cdf.dat};
+	\addplot [very thick, OliveGreen] table[x=Latency,y=Probability] {./figures/allopt_threadops_10k_cdf.dat};
 	\legend {\small{native (avg 5, max 12.4)}, \small{virtual (avg 16.4, max 169.1)}, \small{optimized (avg 9.6, max 96.8)}}
 \end{axis}
 
+%%%%%%%%%%%%%%%%%%for defense presentation%%%%%%%%%%%%%%%%%%%%
+\ifdefense
 
+\end{tikzpicture}
+\end{center}
+\label{plot-cdf-native-vs-virtual1}
+\end{figure}
+	
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
 
-\begin{axis}[name=plot3, at={($(plot2.south west)+(0,-6.5cm)$)}, height=6cm, width=12cm, ymin=0, ymax=1, xmin=0, 
+\fi
+%%%%%%%%%%%%%%%%%%%%%ENDIF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{axis}[name=plot3, \atCmdVOCDFLowerPlotB,  height=\figheightVOCDF, width=\figwidthVOCDF, ymin=0, ymax=1, xmin=0, 
 		legend pos=south east,
 		xlabel=latency(us), 
 		ylabel=probability, 
 		title style={yshift=-2ex},
-		title=load:forkops,
+		title=load: \mforkops{},
 		]
-	\addplot [thick, blue] table[x=Latency,y=Probability] {./figures/native_forkops_10k_cdf.dat};	
-	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_forkops2_10k_cdf.dat};
-	\addplot [very thick, green] table[x=Latency,y=Probability] {./figures/allopt_forkops_10k_cdf.dat};
+	\addplot [dashed, very thick, blue] table[x=Latency,y=Probability] {./figures/native_forkops_10k_cdf.dat};	
+	\addplot [dotted, very thick, red] table[x=Latency,y=Probability] {./figures/virt_forkops2_10k_cdf.dat};
+	\addplot [very thick, OliveGreen] table[x=Latency,y=Probability] {./figures/allopt_forkops_10k_cdf.dat};
 	\legend {\small{native (avg 6.1, max 25.9)}, \small{virtual (avg 12.6, max 119.5)}, \small{optimized (avg 7.6, max 97.7)}}
 \end{axis}
 
 \end{tikzpicture}
 \end{center}
 \ifreport
-\caption{Comparison of interrupt latency CDF between native and virtual setup for different load conditions}
+\caption{Interrupt latency CDF comparison between native, virtual and optimized setups}
 \fi
 \label{plot-cdf-native-virtual-optimiz}
 \end{figure}

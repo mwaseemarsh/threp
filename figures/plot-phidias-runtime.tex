@@ -2,19 +2,19 @@
 \begin{center}
 \begin{tikzpicture}
 
-\begin{axis} [ ymin=0, ybar=2pt, height=7cm, width=14cm, enlarge y limits={upper,value=0.2}, 
+\begin{axis} [ ymin=0, ybar=2pt, height=7.5cm, width=\figwidth, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=north, legend columns=-1},
-               ylabel={worst-case Phidias runtime (us)},
+               ylabel={Worst-Case PHIDIAS runtime ($\mu{}s$)},
 		       bar width=24pt,
   		       %%enlarge x limits={abs=0.8cm}, 		       
-               symbolic x coords={no load, cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops, all benchmarks},
+               symbolic x coords={no load, cache\_pressure,forkops, fileops, hackbench, mmapops, stdout, threadops, all benchmarks},
                xtick=data, nodes near coords, 
 		       nodes near coords align={vertical},
 		       %every node near coord/.append style={rotate=90, anchor=west},
-               x tick label style={rotate=45,anchor=east}, ]    
+               x tick label style={rotate=25, anchor=east, xshift=4pt, font=\ttfamily\small}, ]    
 
-			\addplot [fill=black!20] coordinates {				
-				(cache pressure, 105.1)
+			\addplot [fill=NavyBlue!50] coordinates {				
+				(cache\_pressure, 105.1)
 				(forkops, 103.4)
 				(fileops, 115.6)
 				(hackbench, 103.7)

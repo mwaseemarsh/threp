@@ -1,47 +1,42 @@
 \chapter*{Abstract}
-Embedded systems are deeply integrated in our society to an extent that we tend to forget about their existence.
-These systems has improved quality of life and increased human productivity through automation.
-Many application that run on these devices are real-time subjected to stringent timing constraints.
+Embedded systems are deeply integrated into our society to an extent that we tend to forget about their existence.
+These systems have improved quality of life and increased human productivity through automation.
+Many applications that run on these devices have real-time requirements subjected to stringent timing constraints.
 Real-time application used to be simple and usually ran on single core processors, but this is not true anymore. 
-%However, due to recent technological advancements it .
 
 Recent technological trends like \emph{"Industry 4.0"} and \emph{"Internet of Things"}
 has steered real-time system designers to support networking.
-These improvements has led to increased complexity of software stack and demands secure 
+These improvements have led to the increased complexity of software stack and demand secure 
 mechanisms to achieve system reliability.
-Advancements in multicore processor technology has found its way to embedded systems. 
-System designers has embraced multicore technology and many real-time application run on multicore architectures than ever before.
-Multicore technology has brought new set of opportunities.
+Advancements in multicore processor technology have found its way to embedded systems. 
+System designers have embraced multicore technology and more real-time application run on multicore architectures than ever before.
+Multicore technology has brought a new set of opportunities.
 Applications of mixed-criticality that used to run on separate hardware platforms can be consolidated on one platform.
 Real-time applications can be assigned to dedicated processor core(s) to ensure spatial isolation. 
-The solution is equally valid for legacy application, given their execution behavior
+The solution is equally valid for the legacy applications, given their execution behavior
 is not affected.
 
 A classical solution to consolidate application on one platform is Virtualization.
 For many years virtualization has been used in server and cloud computing to host multiple applications
-on single machine.
-Recently virtualization has acquired acceptance in embedded domain for application consolidation.
-Consolidation allows system designers to reduce system cost and utilize huge amounts of processing power available on one chip.
-However, virtualization solutions that are widely accepted in enterprise domain are not applicable to 
+on the single machine.
+Recently virtualization has acquired acceptance in the embedded domain for application consolidation.
+Consolidation allows system designers to reduce system costs, and utilize huge amounts of processing power available in one chip.
+However, virtualization solutions that are widely accepted in enterprise domain are not applicable to the
 real-time system. 
-These solutions are designed to increase average throughput of the software system.
+These solutions are designed to increase the average throughput of the software system.
 
-Real-time system are evaluated based on worst-case response times to handle an event.
-Since real-time systems are subjected to strict timing constraints, virtualization
-solution for real-time system has to guarantee deterministic response times.
-A faithful virtualization solution suitable for real-time system has to
-be aware of real-time constraints. Hypervisor should keep small footprint and 
+Real-time systems are evaluated based on worst-case response times to handle an event.
+Since real-time systems are subjected to stringent timing constraints, a virtualization
+solution for the real-time system has to guarantee deterministic response times.
+A faithful virtualization solution suitable for the real-time system has to
+be aware of real-time constraints. A hypervisor should keep small footprint and 
 has to ensure temporal and spatial isolation of virtualized applications.
 
-Phidias is statically configurable hypervisor that is specifically to host real-time applications.
-While hypervisor footprint is small and follows design principles that are favorable to real-time applications, its
-real-time capabilities are still unknown. This thesis confirms real-time capabilities of Phidias hypervisor on x86 platform
-by measuring virtualization overhead for a real-time guest. Furthermore, the thesis presents performance tuning
+Phidias is a statically configurable hypervisor that follows microkernel and multikernel design models.
+The hypervisor keeps low complexity and memory footprint by deploying the principle of staticity.
+While the hypervisor follows design principles that are favorable to real-time applications, its real-time capabilities are unknown.
+This thesis confirms real-time capabilities of Phidias hypervisor on the x86 platform
+by measuring virtualization overhead for a real-time guest. 
+Furthermore, the thesis presents performance tuning
 mechanisms to reduce interrupt response times of real-time guest. 
-The results shows that latency reduction techniques used can significantly reduce virtualization overhead.
-
-%The hypervisor has to guarantee spatial 
-%and time
-%for real-time system are required to keep their overhead to minimum.
-
-
+The results show that latency reduction techniques used can significantly reduce the virtualization overhead.

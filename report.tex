@@ -2,7 +2,8 @@
 %%REF: https://tex.stackexchange.com/questions/291156/phd-master-bachelor-thesis-which-document-class-to-choose
 %\documentclass[12pt, twoside]{report}
 
-\documentclass[11pt]{report}
+%\documentclass[11pt]{report}
+\documentclass[twoside,openright,11pt]{report}
 %\documentclass[bibtotoc,liststotoc,BCOR5mm,DIV12]{scrbook}
 
 %\usepackage{geometry}
@@ -26,6 +27,7 @@
 %\usepackage{palatino}
 %\usepackage[acronym]{glossaries}
 %\usepackage{acro}
+\usepackage{emptypage}
 %%%%%%%%PATCH FOR DISAPPEARANCE OF SECTION NUMBERS%%%%%%%%%%%%%%%%
 \usepackage{etoolbox}
 \makeatletter
@@ -44,11 +46,37 @@
 \include{preamble}
 \reporttrue
 
+%%commands latency reduction plots%%%%
+\newcommand\figheight {8cm}
+\newcommand\figwidth  {13.5cm}
+\newcommand\ybarXdist {2.3cm}
+\newcommand\ybarWidth {22pt}
+\newcommand\ybarSep {3pt}
+\newcommand\xShiftLatency {0cm}
+\newcommand\xShiftImprove {0.7cm}
+\newcommand\atCmdLowerPlot {at={($(plot1.west)+(0,-10.5cm)$)}}
+%%commands for virtualization overhead plots %%%%
+\newcommand\ybarWidthVO {15pt}
+\newcommand\atCmdVOverheadLowerPlot {at={($(plot1.west)+(0,-11.5cm)$)}}
+\newcommand\ybarSepVO {3pt}
+\newcommand\ybarXdistVO {1.3cm}
+%%commands for virtualization overhead CDF plots %%%%
+\newcommand\atCmdVOCDFLowerPlotA {at={($(plot1.south west)+(0,-6.5cm)$)}}
+\newcommand\atCmdVOCDFLowerPlotB {at={($(plot2.south west)+(0,-6.5cm)$)}}
+\newcommand\figheightVOCDF {6cm}
+\newcommand\figwidthVOCDF {12cm}
+%%commands for virtualization overhead CDF plots in appendix %%%%
+\newcommand\figheightVOCDFApp {7cm}
+\newcommand\figwidthVOCDFApp {12cm}
+\newcommand\atCmdVOCDFLowerPlotAApp {at={($(plot1.south west)+(0,-7.5cm)$)}}
+\newcommand\atCmdVOCDFLowerPlotBApp {at={($(plot2.south west)+(0,-7.5cm)$)}}
+
 %%https://tex.stackexchange.com/questions/67446/change-colour-of-boxes-surrounding-links-in-hyperref
 %%\usepackage{hyperref}
 
 %% Page Dim (A4): 210 × 297
-\usepackage[a4paper,width=145mm,top=30mm,bottom=30mm]{geometry}
+%%bindingoffset=0.4in
+\usepackage[a4paper,left=30mm,width=150mm,top=30mm,bottom=30mm]{geometry}
 %\usepackage[english]{babel}
 \hypersetup{
     %hyperfootnotes=false
@@ -69,13 +97,11 @@
 }
 
 
-\pagestyle{fancy}
-\fancyhf[RE,RO,LO,LE,C]{}
-%\fancyhead[L]{\rightmark} %% clear out all headers
-\fancyfoot[R]{\thepage} %% clear out all footers
-%\fancyhead[LE,RO]{\textbf{\thepage}}
-\fancyhead[RE]{\nouppercase{\leftmark}}
-\fancyhead[LO]{\nouppercase{\rightmark}}
+%\pagestyle{fancy}
+%\fancyhf[RE,RO,LO,LE,C]{}
+%\fancyfoot[R]{\thepage} %% clear out all footers
+%\fancyhead[RE]{\nouppercase{\leftmark}}
+%\fancyhead[LO]{\nouppercase{\rightmark}}
 
 %\fancyhf{}
 %\rhead{}
@@ -99,12 +125,22 @@
 \input{./misc/abstract}
 \clearpage{\thispagestyle{empty}\cleardoublepage}
 
+\input{./misc/Zusammenfassung}
+\clearpage{\thispagestyle{empty}\cleardoublepage}
+
 %\input{./misc/dedication}
 %\clearpage{\thispagestyle{empty}\cleardoublepage}
 
 \input{./misc/acknowledgements}
 \clearpage{\thispagestyle{empty}\cleardoublepage}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhf[RE,RO,LO,LE,C]{}
+\fancyfoot[R]{\thepage} %% clear out all footers
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tableofcontents
 \clearpage{\thispagestyle{empty}\cleardoublepage}
 
@@ -114,6 +150,14 @@
 \listoftables
 \clearpage{\thispagestyle{empty}\cleardoublepage}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhf[RE,RO,LO,LE,C]{}
+\fancyfoot[R]{\thepage} %% clear out all footers
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%CHAPTERS%%%%%%%%%%%%%%%%%%%%%%%
 \pagenumbering{arabic}
 \input{./chap/chapter1}
@@ -127,6 +171,7 @@
 \appendix
 \input{./app/appA.tex}
 \input{./app/appB.tex}
+\input{./app/appC.tex}
 
 %\printnoidxglossary[type=\acronymtype,title=Abbreviations]
 %\clearpage

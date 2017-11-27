@@ -2,148 +2,165 @@
 \begin{center}
 \begin{tikzpicture}
 
+	\newcommand\barWD{14pt}
 
 	\begin{axis} [name=plot1, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=north, legend columns=-1},
-               ylabel={exits for fileops},
-		       bar width=8pt,       
-               symbolic x coords={ext\_int, wrmsr, cpuid, crx\_access},
+               ylabel={exits},
+				title={\mfileops{}},
+				title style={yshift=-2ex},
+		       bar width=\barWD,       
+               symbolic x coords={\mextint{}, \mwrmsr{}, \mcpuid{}, \mcrxaccess{}},
                %xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
     		   ymajorgrids=true, grid style = very thin,
                x tick label style={rotate=45,anchor=east},]   
 
-		\addplot [fill=black!30] coordinates {
-				(ext\_int,222767)
-				(wrmsr, 581681)
-				(cpuid,0)
-				(crx\_access,0)
+		\addplot [fill=LimeGreen!60] coordinates {
+				(\mextint{},222767)
+				(\mwrmsr{}, 581681)
+				(\mcpuid{},0)
+				(\mcrxaccess{},0)
 			    };
 	\end{axis}
 
 
 	\begin{axis} [name=plot2, at={($(plot1.south east)+(2.25cm,0)$)}, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
-               ylabel={exits for forkops},
-		       bar width=8pt,       
-		symbolic x coords={ext\_int, wrmsr, cpuid, crx\_access},
+               ylabel={exits},
+				title={\mforkops{}},
+				title style={yshift=-2ex},
+		       bar width=\barWD,       
+		symbolic x coords={\mextint{}, \mwrmsr{}, \mcpuid{}, \mcrxaccess{}},
                %xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
     		   ymajorgrids=true, grid style = very thin,
                x tick label style={rotate=45,anchor=east},]
-		\addplot [fill=black!30] coordinates {
-				(ext\_int,140981)
-				(wrmsr, 696616)
-				(cpuid,0)
-				(crx\_access,543490)
+		\addplot [fill=LimeGreen!60] coordinates {
+				(\mextint{},140981)
+				(\mwrmsr{}, 696616)
+				(\mcpuid{},0)
+				(\mcrxaccess{},543490)
 			    };
 	\end{axis}
 
 
 	\begin{axis} [name=plot3, at={($(plot1.south west)+(0,-5.5cm)$)}, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
-               ylabel={exits for mmapops},
-		       bar width=8pt,       
-               symbolic x coords={ext\_int, wrmsr, cpuid, crx\_access},
+               ylabel={exits},
+				title={\mmmapops{}},
+				title style={yshift=-2ex},
+		       bar width=\barWD,       
+               symbolic x coords={\mextint{}, \mwrmsr{}, \mcpuid{}, \mcrxaccess{}},
                %xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
     		   ymajorgrids=true, grid style = very thin,
                x tick label style={rotate=45,anchor=east},]
-		\addplot [fill=black!30] coordinates {
-				(ext\_int,45641)
-				(wrmsr, 110179)
-				(cpuid,0)
-				(crx\_access,18902)
+		\addplot [fill=LimeGreen!60] coordinates {
+				(\mextint{},45641)
+				(\mwrmsr{}, 110179)
+				(\mcpuid{},0)
+				(\mcrxaccess{},18902)
 			    };
 	\end{axis}
 
 
 	\begin{axis} [name=plot4, at={($(plot3.south east)+(2.25cm,0)$)}, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
-               ylabel={exits for cachepressure},
-		       bar width=8pt,       
-               symbolic x coords={ext\_int, wrmsr, cpuid, crx\_access},
+               ylabel={exits},
+				title={\mcachepressure{}},
+				title style={yshift=-2ex},
+		       bar width=\barWD,       
+               symbolic x coords={\mextint{}, \mwrmsr{}, \mcpuid{}, \mcrxaccess{}},
                %xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
     		   ymajorgrids=true, grid style = very thin,
                x tick label style={rotate=45,anchor=east},]
-		\addplot [fill=black!30] coordinates {
-				(ext\_int,2319)
-				(wrmsr, 4540)
-				(cpuid,5358)
-				(crx\_access,2208)
+		\addplot [fill=LimeGreen!60] coordinates {
+				(\mextint{},2319)
+				(\mwrmsr{}, 4540)
+				(\mcpuid{},5358)
+				(\mcrxaccess{},2208)
 			    };
 	\end{axis}
 
 
 	\begin{axis} [name=plot5, at={($(plot3.south west)+(0,-5.5cm)$)}, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
-               ylabel={exits for hackbench},
-		       bar width=8pt,       
-               symbolic x coords={ext\_int, wrmsr, cpuid, crx\_access},
+               ylabel={exits},
+				title={\mhackbench{}},
+				title style={yshift=-2ex},
+		       bar width=\barWD,       
+               symbolic x coords={\mextint{}, \mwrmsr{}, \mcpuid{}, \mcrxaccess{}},
                %xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
     		   ymajorgrids=true, grid style = very thin,
                x tick label style={rotate=45,anchor=east},]
-		\addplot [fill=black!30] coordinates {
-				(ext\_int,31602)
-				(wrmsr, 1731800)
-				(cpuid,0)
-				(crx\_access,1698102)
+		\addplot [fill=LimeGreen!60] coordinates {
+				(\mextint{},31602)
+				(\mwrmsr{}, 1731800)
+				(\mcpuid{},0)
+				(\mcrxaccess{},1698102)
 			    };
 	\end{axis}
 
 
 	\begin{axis} [name=plot6, at={($(plot5.south east)+(2.25cm,0)$)}, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
-               ylabel={exits for threadops},
-		       bar width=8pt,       
-               symbolic x coords={ext\_int, wrmsr, cpuid, crx\_access},
+               ylabel={exits},
+				title={\mthreadops{}},
+				title style={yshift=-2ex},
+		       bar width=\barWD,       
+               symbolic x coords={\mextint{}, \mwrmsr{}, \mcpuid{}, \mcrxaccess{}},
                %xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
     		   ymajorgrids=true, grid style = very thin,
                x tick label style={rotate=45,anchor=east},]
-		\addplot [fill=black!30] coordinates {
-				(ext\_int,133559)
-				(wrmsr, 336922)
-				(cpuid,0)
-				(crx\_access,0)
+		\addplot [fill=LimeGreen!60] coordinates {
+				(\mextint{},133559)
+				(\mwrmsr{}, 336922)
+				(\mcpuid{},0)
+				(\mcrxaccess{},0)
 			    };
 	\end{axis}
 
 
 	\begin{axis} [name=plot7, at={($(plot5.south west)+(0,-5.5cm)$)}, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
-               ylabel={exits for stdout},
-		       bar width=8pt,       
-               symbolic x coords={ext\_int, wrmsr, cpuid, crx\_access},
+               ylabel={exits},
+			   title={\mstdout{}},
+				title style={yshift=-2ex},
+		       bar width=\barWD,       
+               symbolic x coords={\mextint{}, \mwrmsr{}, \mcpuid{}, \mcrxaccess{}},
                %xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
     		   ymajorgrids=true, grid style = very thin,
                x tick label style={rotate=45,anchor=east},]
-		\addplot [fill=black!30] coordinates {
-				(ext\_int,187686)
-				(wrmsr, 749643)
-				(cpuid,0)
-				(crx\_access,0)
+		\addplot [fill=LimeGreen!60] coordinates {
+				(\mextint{},187686)
+				(\mwrmsr{}, 749643)
+				(\mcpuid{},0)
+				(\mcrxaccess{},0)
 			    };
 	\end{axis}
 
 
-	\begin{axis} [name=plot8, at={($(plot7.south east)+(2.5cm,0)$)}, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
+	\begin{axis} [name=plot8, at={($(plot7.south east)+(2.25cm,0)$)}, ymin=0, ybar=2pt, height=5cm, width=6cm, enlarge y limits={upper,value=0.2}, 
 		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
-               ylabel={exits for noload},
-		       bar width=8pt,       
-               symbolic x coords={ext\_int, wrmsr, cpuid, crx\_access},
+               ylabel={exits},
+			   title={\mnoload{}},
+				title style={yshift=-2ex},
+		       bar width=\barWD,       
+               symbolic x coords={\mextint{}, \mwrmsr{}, \mcpuid{}, \mcrxaccess{}},
                %xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
     		ymajorgrids=true, grid style = very thin,
                x tick label style={rotate=45,anchor=east},]
-		\addplot [fill=black!30] coordinates {
-				(ext\_int,133559)
-				(wrmsr, 336922)
-				(cpuid,0)
-				(crx\_access,0)
+		\addplot [fill=LimeGreen!60] coordinates {
+				(\mextint{},14)
+				(\mwrmsr{}, 16)
+				(\mcpuid{},1)
+				(\mcrxaccess{},0)
 			    };
 	\end{axis}
 

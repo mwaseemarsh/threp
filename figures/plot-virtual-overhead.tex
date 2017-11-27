@@ -4,17 +4,17 @@
 
 \begin{axis} [ ybar=2pt, height=8cm, width=15cm, enlarge y limits={upper,value=0.2}, %enlargelimits=0.1,
                        legend style={at={(0.5,-0.3)}, anchor=north, legend columns=-1}, 
-                       ylabel={interrupt latency(us)}, %title=vmexits after bootup, 
+                       ylabel={interrupt latency ($\mu{}s$)}, %title=vmexits after bootup, 
 		       bar width=16pt,
        		       %%enlarge x limits={abs=0.8cm}, 		       
-                       symbolic x coords={no load, cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops, all benchmarks},
+                       symbolic x coords={no load, cache\_pressure,forkops, fileops, hackbench, mmapops, stdout, threadops, all benchmarks},
                        xtick=data, nodes near coords, 
 		       %nodes near coords align={vertical},
 		       every node near coord/.append style={rotate=90, anchor=west},
                        x tick label style={rotate=45,anchor=east},]                    
 	\addplot [postaction={pattern=north east lines}] coordinates {
 				(no load, 130.8)
-				(cache pressure, 141.7)
+				(cache\_pressure, 141.7)
 				(forkops, 119.5)
 				(fileops, 146.4)
 				(hackbench, 106.7)
@@ -26,7 +26,7 @@
 
 	\addplot [postaction={pattern=dots}] coordinates {
 				(no load, 18.2)
-				(cache pressure, 26.6)
+				(cache\_pressure, 26.6)
 				(forkops, 12.6)
 				(fileops, 14.3)
 				(hackbench, 10)

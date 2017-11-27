@@ -4,7 +4,7 @@
 
 
 \draw[thick, decorate, decoration=snake, ->] (0, 2) -- (2, 2) node at (0,2) [left] {guest code};
-\draw[thick, |-|] (2, 2) -- (2.3, 2) node [above, right, rotate=60, text width=2cm]{sensitive instruction};
+\draw[very thick, |-|] (2, 2) -- (2.2, 2) node [above, right, rotate=60, text width=2cm]{privileged instruction};
 
 \node at (0,0) [left] {hypervisor};
 \draw[thick, dashed, ->] (2, 2) -- (2, 0) node [above, align=center,midway, rotate=90]{trap};
@@ -12,7 +12,7 @@
 \draw[thick, dashed, ->] (3, 0) -- (3, 2) node [above, align=center, midway, rotate=90] {resume};
 
 \draw[thick, decorate, decoration=snake, ->] (3, 2) -- (5, 2);
-\draw[thick, |-|] (5, 2) -- (5.3, 2) node [above, right, rotate=60, text width=2cm]{sensitive instruction};
+\draw[very thick, |-|] (5, 2) -- (5.2, 2) node [above, right, rotate=60, text width=2cm]{privileged instruction};
 
 \draw[thick, dashed, ->] (5, 2) -- (5, 0) node [above, align=center,midway, rotate=90]{trap};
 \draw[very thick, decorate, decoration=snake, ->] (5, 0) -- (6, 0)  node [below,midway] {emulate};

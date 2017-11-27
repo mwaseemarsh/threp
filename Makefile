@@ -2,14 +2,14 @@ DATE := $(shell date +%Y-%m-%d)
 
 SRC_FILES := preamble.tex report.tex thesis_defense.tex chap/*.tex figures/*.tex figures/*.jpg figures/*.dat misc/*.tex app/*.tex
 IMG_DIR := img/*
-PUBLICATIONS_DIR := ref/publications/* ref/*.bib
+PUBLICATIONS_DIR :=  ref/*.bib
 
 COMPLIER := pdflatex
 
 report:
 	$(COMPLIER) report.tex
 	bibtex report.aux
-#	makeglossaries report
+	#makeglossaries report
 	$(COMPLIER) report.tex
 	$(COMPLIER) report.tex
 

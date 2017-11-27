@@ -1,28 +1,27 @@
 
-
 \newcommand\moreslaw{Law states that number of transistors on a chip doubles approximately every two years}
 \newcommand\IoT{A trend that aims to connect everything to the cloud}
 \newcommand\industry{A trend that aims to enable machine to machine communication and connecting machines to cloud}
 
 \chapter{Introduction \label{chap1}}
 
-Embedded systems has drastically improved productivity, safety, and comfort of an average human being.
-When we are inside the building they regulate temperature and humidity to our desires, 
+Embedded systems have drastically improved productivity, safety, and comfort of an average human life.
+When we are inside the building, they regulate temperature and humidity to our desires, 
 they keep the intruders away and alarm us in critical situations. 
 When we are outside, they monitor and control engine and brake system of the car, bus, train or airplane.
 At work, they automate and regulate the processes without too much human intervention.
 They entertain us when we are well and help diagnose the illness if we are sick.
-In fact every aspect of human is affected by embedded systems.
+In fact, every aspect of the human life is affected by embedded systems.
 %Embedded systems are integrated to our everyday life and they are designed so well that we tend to forget about their existense.
 
-Most of these embedded systems are real-time which means, for simplicity at this point, having stringent time constraints.
+Most of these embedded systems have real-time requirements which mean, for simplicity at this point, having stringent time constraints.
 Deterministic response times is the key design aspect
 that makes them different from traditional computing devices like desktop and server computers.
-Furthermore, real-time applications are designed and evaluated based on the worst case event handling latency and execution times, while
-in desktop and server computers applications are optimized for average case execution time.
-Real-time operating systems or a custom tailored software solutions are used for real-time applications to guarantee these requirements.
-Often multiple embedded devices has been used to isolate constraints imposed on one real-time application from another.
-An example is car infotainment system. Traditionally dedicated computing systems has been used to isolate 
+Furthermore, real-time applications are designed and evaluated based on the worst-case event handling latency and execution times, while
+in desktop and server computers applications are optimized for average-case execution time.
+Real-time operating system or a custom tailored software solution is used for real-time applications to guarantee these requirements. 
+Often multiple embedded devices have been used to isolate constraints imposed on one real-time application from another.
+An example is car infotainment system. Traditionally dedicated computing systems have been used to isolate 
 control and monitoring the car subsystems from computing system responsible for entertainment solutions.
 The traditional landscape is changing due to emerging technological changes in the computing systems.
 
@@ -33,83 +32,69 @@ As they could still put more transistors on a single chip, designers started add
 Hence a new era of multicore computing begun and by now multicore processors has become a norm.
 The multicore trend has led to a new set of challenges and opportunities for real-time embedded systems.
 Availability of multiple processing elements in a single chip enables consolidation of real-time applications with other applications.
-Consolidation of real-time applications can help reduce design complexity, costs and power consumption.
-However it poses a new challenge which is how to ensure temporal and spacial isolation of different applications running on the same platform.
+Consolidation of real-time applications can help reduce design complexity, costs, and power consumption.
+However, it poses a new challenge which is how to ensure temporal and spatial isolation of different applications running on the same platform.
 
 Embedded systems used to be small and simple and software stacks for these devices were relatively simpler
 than general purpose computing devices. But it is not true anymore.
-In the past few years, embedded systems has embraced internet. New technological trends like \emph{Internet of Things}\footnote{\IoT} and \emph{Industry 4.0}\footnote{\industry}
+In the past few years, embedded systems have embraced the internet. New technological trends like \emph{Internet of Things}\footnote{\IoT} and \emph{Industry 4.0}\footnote{\industry}
 has steered embedded systems to become part of a networked system.
-Therefor, embedded systems are becoming increasingly complex much like traditional computer systems.
+Therefore, embedded systems are becoming increasingly complex much like traditional computer systems.
 Even though network connectivity has improved the overall system performance and provided opportunities for innovative solutions to many challenges industry faced,
 it also poses threat to the integrity of the system.
-These systems has become accessible to the outside world, and intruders or malignant applications can compromise the whole system.
+These systems have become accessible to the outside world, and intruders or malignant applications can compromise the whole system.
 
 Virtualization is a technique that allows hosting multiple virtual machines on one physical machine. 
-It has been around of decades and historically used to consolidate multiple server applications on a single machine.
+It has been around for decades and historically used to consolidate multiple server applications on a single machine.
 Virtualization enables system designers to minimize the effects of security threats 
 by providing ease in threat detection, localizing and isolating compromised virtual machine from the others preventing overall system failure \cite{Chen:2001:VBR:874075.876409}.
 Recently virtualization has gained popularity in embedded systems domain.
 Virtualization has potential to provide solutions to the emerging challenges for embedded systems \cite{Heiser:2008:RVE:1435458.1435461}.
-Applications of mixed criticality (real-time and non real-time) can be consolidated on a single platform by executing each 
+Applications of mixed-criticality (real-time and general-purpose) can be consolidated on a single platform by executing each 
 application in a separate virtual machine.
 Virtualization can also solve potential security risks to the real-time applications.
 
-Virtualization has great advantages, however they come at the cost of increased overhead. 
+Virtualization has great advantages, however, they come at the cost of increased overhead.
 The responsiveness of the real-time application can be affected. 
+Sharing of hardware resources poses a threat to deterministic response times required by real-time applications. 
 The virtual machine monitor or hypervisor has to ensure isolation of real-time application from
 other applications running on the same hardware and keeping the application's response time 
-close to when running it native. Several virtualization solutions has been proposed for real-time application
-in the past few years. Most solutions are based on existing time-shared operating system (e.g. KVM, Jailhouse), while some 
-use microkernel-based approach to keep the hypervisor footprint and critical paths to minimum (e.g. OKL4).
+close to when running it natively. Several virtualization solutions have been proposed for real-time application
+in the past few years. Most solutions are based on existing time-shared operating system (e.g. KVM \cite{kivity2007kvm}, Jailhouse \cite{jailhouse}), while some 
+use microkernel-based approach to keep the hypervisor footprint and critical paths to a minimum (e.g. OKL4 \cite{okl4_online}).
 
-An innovative solution that follows microkernel approach PHIDIAS hypervisor. 
-The hypervisor is developed by Jan Nordholz at Security in Telecommunications chair, TU Berlin.
-The hypervisor follows some key design principles that makes it very attractive for the embedded market.
-It supports static partitioning of hardware resources to virtual machines.
-And removes much of the dynamic components of hypervisor by generating data structures like page-tables statically, hence removing dynamic memory allocater altogether.
-The principle of staticity used in Phidias design allows reducing dynamic components and eases provability of the hypervisor.
-The software provability has significant importance to real-time applications that are frequently subjected to various certifications.
+An innovative solution that follows microkernel approach is PHIDIAS hypervisor. 
+The hypervisor is developed by Jan Nordholz at Security in Telecommunications chair, TU Berlin  \cite{nordholz2017design}.
+The hypervisor follows some key design principles that make it very attractive for the embedded market.
+It supports static partitioning of hardware resources among virtual machines.
+And removes much of the dynamic components of hypervisor by generating data structures like page-tables statically, hence removing dynamic memory allocation module altogether.
+The principle of staticity used in Phidias design allows reducing dynamic components.
+Reduction in dynamic components reduces hypervisor complexity and helps reducing its memory footprint.
+Low complexity and memory footprint have significant importance to embedded systems that are frequently subjected to resource constraints.
+Furthermore, support of techniques like resource partitioning and static allocation can help in achieving deterministic response times. 
 
-This thesis evaluates performance of real-time virtualization solution based on Phidias hypervisor on x86 platform.
-Phidias is a successor of Perikles hypervisor also developed at Security in Telecommunications chair, TU Berlin.
+This thesis evaluates the performance of real-time virtualization solution based on Phidias hypervisor on the x86 platform.
+Phidias is a successor of Perikles hypervisor also developed at Security in Telecommunications chair, TU Berlin \cite{secT_institut}.
 A similar study was conducted for Perikles hypervisor on ARMv7 architecture.
 Perikiles is already undergoing integration in an industrial product \cite{opensynergy_coqos}.
-Although ARM processors dominate most of the embedded market, but many complex and compute extensive real-time applications use x86 platform. 
+Although ARM processors dominate most of the embedded market, many complex and compute extensive real-time applications use the x86 platform. 
 An example is industrial robotic-arm movement control. 
-%%Compared to ARM, x86 enjoys rich 
-The x86 architecture is also finding its way into automotive industry where workloads have become very complex than ever before.
+The x86 architecture is also finding its way into the automotive industry where workloads have become very complex than ever before.
 
-
-The objectives of this thesis are twofold: to measure virtualization overhead and use various mechanisms to lower the overhead.
-To improve real-time responsiveness of the applications this thesis evaluates following techniques:
+The objectives of this thesis are twofold. First, to measure virtualization overhead of Phidias hypervisor.
+Second, to evaluate hardware supported features to lower virtualization overhead.
+Resource partitioning techniques are used to remove non-deterministic behavior introduced by sharing of resources.
+To improve the real-time responsiveness of the applications this thesis evaluates following techniques:
 \begin{itemize}
 \item \textbf{Direct interrupt injection} will be used to deliver device interrupts owned by the guest without hypervisor intervention.
-\item \textbf{Partitioning of shared last-level cache} will be used for spacial isolation of real-time guest from other guests.
-\item \textbf{Partitioning of TLB} will be used for spacial isolation of real-time guest from the hypervisor itself.
+\item \textbf{Partitioning of shared last-level cache} will be used for spatial isolation of real-time guest from other guests.
+\item \textbf{Partitioning of TLB} will be used for spatial isolation of real-time guest from the hypervisor itself.
 \end{itemize}
 
 
 The thesis is organized as follows. 
-Chapter \ref{chap2} covers background of real-time systems, virtualization technology, latency reduction mechanisms, and 
+Chapter \ref{chap2} covers the background of real-time systems, virtualization technology, latency reduction mechanisms, and 
 design and implementation of Phidias hypervisor.
-Chapter \ref{chap3} presents presents details of real-time virtualization system used to measure overhead and reports the results.
+Chapter \ref{chap3} presents details of real-time virtualization system used to measure overhead and reports the results.
 The performance improvements using latency reduction mechanisms are reported in Chapter \ref{chap4}.
 Chapter \ref{chap5} gives an account of related work and Chapter \ref{chap6} concludes this thesis.
-
-%% \section{Purpose}
-%% This chapter will give a comprehensive introduction to thesis topic and material covered in the report.
-%% The problem will be introduced by giving:
-%% \begin{itemize}
-%% \item importance of embedded systems
-%% \item how design principles of virtualization techniques differ for embeddded applications from other application like servers
-%% \item significance of embedded hypervisors
-%% \item a very brief intro to Phidias
-%% \end{itemize}
-%% The solution will be introduced by giving brief introdcution to:
-%% \begin{itemize}
-%% \item cache allocation technology by Intel
-%% \item posted interrupt mechanism
-%% \item test enviorment
-%% \end{itemize}
-

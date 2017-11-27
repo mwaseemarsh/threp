@@ -1,0 +1,261 @@
+diff --git a/app/appA.tex b/app/appA.tex
+index 8773ef6..1be9159 100644
+--- a/app/appA.tex
++++ b/app/appA.tex
+@@ -16,9 +16,10 @@
+ \end{itemize}	
+ 
+ \section{Microbenchmarks}
+-\begin{itemize}
+-	\item {loads: \url{https://gitlab.sec.t-labs.tu-berlin.de/m.arshad/misc/tree/master/synthetic-workloads}}
++\begin{itemize}	
++	\item {\mthreadops{} and \mhackbench{}: \url{https://github.com/koppi/linux-rt-tests}}
+ 	\item {\mcachepressure{}: \url{https://gitlab.sec.t-labs.tu-berlin.de/m.arshad/misc/tree/master/cache_pollution/l2cachepollute}}
++	\item {other benchmarks: \url{https://gitlab.sec.t-labs.tu-berlin.de/m.arshad/misc/tree/master/synthetic-workloads}}
+ 	\item {LLC pollution: \url{https://gitlab.sec.t-labs.tu-berlin.de/m.arshad/misc/tree/master/cache_pollution/l3cachepollute}}
+ \end{itemize}	
+ 
+diff --git a/chap/chapter1.tex b/chap/chapter1.tex
+index 8345253..0013091 100644
+--- a/chap/chapter1.tex
++++ b/chap/chapter1.tex
+@@ -33,7 +33,7 @@ Hence a new era of multicore computing begun and by now multicore processors has
+ The multicore trend has led to a new set of challenges and opportunities for real-time embedded systems.
+ Availability of multiple processing elements in a single chip enables consolidation of real-time applications with other applications.
+ Consolidation of real-time applications can help reduce design complexity, costs, and power consumption.
+-However, it poses a new challenge which is how to ensure temporal and spacial isolation of different applications running on the same platform.
++However, it poses a new challenge which is how to ensure temporal and spatial isolation of different applications running on the same platform.
+ 
+ Embedded systems used to be small and simple and software stacks for these devices were relatively simpler
+ than general purpose computing devices. But it is not true anymore.
+@@ -87,8 +87,8 @@ Resource partitioning techniques are used to remove non-deterministic behavior i
+ To improve the real-time responsiveness of the applications this thesis evaluates following techniques:
+ \begin{itemize}
+ \item \textbf{Direct interrupt injection} will be used to deliver device interrupts owned by the guest without hypervisor intervention.
+-\item \textbf{Partitioning of shared last-level cache} will be used for spacial isolation of real-time guest from other guests.
+-\item \textbf{Partitioning of TLB} will be used for spacial isolation of real-time guest from the hypervisor itself.
++\item \textbf{Partitioning of shared last-level cache} will be used for spatial isolation of real-time guest from other guests.
++\item \textbf{Partitioning of TLB} will be used for spatial isolation of real-time guest from the hypervisor itself.
+ \end{itemize}
+ 
+ 
+diff --git a/chap/chapter2.tex b/chap/chapter2.tex
+index d3313e7..5905850 100644
+--- a/chap/chapter2.tex
++++ b/chap/chapter2.tex
+@@ -384,7 +384,7 @@ Table \ref{vpid-entries} shows the two types of TLB entries supported by VT-x ex
+ 	Guest			&	x $(x > 0)$		&		gVA 	 & 	gPA			 \\ \hline
+ 	Hypervisor		&	0				&		VA 		 &  PA			 \\ \hline
+ \end{tabular}
+-\caption{TLB Virtualization, VPIDs allow hypervisor to separate address translations of the guests from each other and from the hypervisor} 
++\caption{TLB Partitioning, VPIDs allow hypervisor to separate address translations of the guests from each other and from the hypervisor} 
+ \label{vpid-entries}
+ \end{table}
+ 
+diff --git a/chap/chapter3.tex b/chap/chapter3.tex
+index d11bb0d..dc94c4d 100644
+--- a/chap/chapter3.tex
++++ b/chap/chapter3.tex
+@@ -14,12 +14,11 @@ the owner guest increases the interrupt latency.
+ It is important to measure virtualization overhead to determine if deadlines of the real-time tasks of guest RTOS can still be respected.
+ 
+ \input{./figures/fig-latency-keymetric}
+-
+ Hypervisor overhead consists of context switch times, execution of hypervisor code to identify and inject virtual interrupt to the real-time guest (rt-guest) and
+ resource contention. The resource contention overhead arises due to shared resources between guests and hypervisor.
+ While this chapter focuses on analyzing and measuring components of virtualization overhead, the next chapter covers techniques to lower overhead components.
+ 
+-\section{Experimental Setup} 
++\section{Experimental Setup}
+ All experiments are conducted on Intel Xeon E5-2603v4 processor \cite{intel-ark-xeon} mounted on ASUS X99E WS motherboard \cite{asus-x99e}. 
+ The processor runs at $1.7GHz$ clock speed and had access to a $4GB$ RAM memory.
+ This processor contains $6$ physical CPU cores where each core has private L1 and L2 caches, the cache capacities are $64KB$ and $512KB$ respectively.
+@@ -375,10 +374,12 @@ Some technique to reduce resource contention are discussed and evaluated in the
+ 
+ 
+ \subsection {VT-x Properties and Real-Time Guests}
+-This section presents some of the properties of x86 architecture that leads to non-deterministic interrupt response times of a real-time guest.
++This section presents some of the properties of x86 architecture that lead to non-deterministic interrupt response times of a real-time guest.
+ 
+-The x86 hardware typically includes big multi-level caches. These caches perform very well in compute-extensive workloads to improve the average-case execution time.
+-However, big multi-level caches suffer from long miss penalties. Missing even a single data item in the cache might add the overhead of thousands of clock cycles.
++The x86 hardware typically includes big multi-level caches with high associativity. These caches perform very well in compute-extensive workloads to improve the average-case execution time by reducing the miss rate.
++However, big multi-level caches suffer from long access times and miss penalties. 
++Missing a data item in the cache might add the overhead of thousands of clock cycles \cite{hennessy2011computer}. 
++The overhead includes access times of caches at all levels and fetching the missed data item from the main memory.
+ The real-time workloads are typically smaller than other computing loads and small and simpler caches might be favorable in these situations.
+ 
+ VT-x extensions use big data structures to manage virtual machines (e.g. VMCS and virtual APIC page).
+@@ -391,7 +392,7 @@ Although recent improvements to x86 architectures enable partitioning of L3 and
+ The hardware support for partitioning core resources could be a huge benefit for real-time virtualization solutions. 
+ 
+ VT-x supports new instruction \mINVVPID{} that enables the host to emulate page invalidation requests generated by the guest.
+-This instruction is an example where the behavior of the x86 processor can change in an unpredictable way.
++This instruction is an example when the behavior of the x86 processor is unpredictable.
+ The instruction can be used by the host to selectively flush address translations cached in TLB.
+ The Intel SDM \cite{intel-sdm-vol3} states in certain situations this instruction can flush the whole TLB. 
+ The unpredictable behavior of instruction like these could lead to non-deterministic response times for the real-time guests.
+diff --git a/chap/chapter4.tex b/chap/chapter4.tex
+index 831ab62..e59c0f9 100644
+--- a/chap/chapter4.tex
++++ b/chap/chapter4.tex
+@@ -89,13 +89,13 @@ It is clear that separating real-time guest cache from the other guest improves
+ Best results are observed when the rt-guest is loaded with \mforkops{} benchmark. 
+ Interrupt latency reduced approximately by $21\mu{}s$ with $16.6\%$ improvement.
+ 
+-\section{TLB Virtualization} \label{sec:vtlb-latency-red}
++\section{TLB Partitioning using VPIDs} \label{sec:vtlb-latency-red}
+ Translation lookaside buffers (TLBs) are used by the processor to cache virtual to physical address translations.
+ Modern architectures have separate TLBs for instruction and data known as iTLB and dTLB respectively. 
+ In a virtual environment hypervisor and guest operating system access different virtual address spaces.
+ Caching translations of both address spaces at same TLB can result in thrashing translations of each other on a context switch. 
+ Furthermore, when a guest flushes TLB entries, it also flushes cached information for hypervisor address space.
+-The hypervisor can use TLB virtualization through VPIDs to isolate traffic of its own address space from the guests running in virtual machines.
++The hypervisor can use TLB partitioning through VPIDs to isolate traffic of its own address space from the guests running in virtual machines.
+ This section evaluates performance improvement for interrupt response time by using VPIDs.
+ 
+ \subsection{Methodology}
+@@ -105,12 +105,12 @@ The guest is oblivious to the VPID mechanism.
+ Note that performance evaluation is focused on isolating guest translations from hypervisor as both execute on the same core.
+ Since Phidias hypervisor uses multikernel approach the shared resources are at least used by the hypervisor and the guest.
+ 
+-The latency reduction is evaluated by measuring worst-case interrupt latency with and without TLB virtualization.
++The latency reduction is evaluated by measuring worst-case interrupt latency with and without TLB partitioning.
+ The setup includes PREEMPT\_RT patched Linux as real-time guest (rt-guest)
+ and Linux as a general-purpose guest (gp-guest). 
+ The setup is similar to the one described in section \ref{sec:methodology}, rt-guest has direct access to PCIe gpio card capable to generate interrupts. 
+ Measurement setup is same as described in section \ref{sec:measurement-setup}.
+-The hypervisor was extended to support TLB virtualization. 
++The hypervisor was extended to support TLB partitioning. 
+ It assigns a unique process identifier to each guest and emulates TLB flush instructions for the guest based on VPIDs.
+ 
+ \subsection{Latency Reduction}
+@@ -125,7 +125,7 @@ however, it has always decreased with load conditions.
+ Best results are produced when the guest is loaded with \mthreadops{} benchmark. 
+ Interrupt latency reduced by approximately $20u\mu{}s$ with $12.2\%$ improvement.
+ 
+-\section{CAT, DII, and vTLB Combined}
++\section{CAT, DII, and VPID Combined}
+ This section records improvement in real-time interrupt latency when all latency reduction techniques are combined.
+ Figure \ref{plot-allopt} plots comparison of average and worst-case interrupt latencies between virtualization 
+ overhead recorded in previous chapter (section \ref{sec:virtual-overhead}) and latency reduction techniques presented in this chapter.
+diff --git a/chap/chapter6.tex b/chap/chapter6.tex
+index 25617c0..42b758e 100644
+--- a/chap/chapter6.tex
++++ b/chap/chapter6.tex
+@@ -17,7 +17,7 @@ the contention of shared resources is the main culprit for the significant incre
+ The worst-case latency of real-time guest interrupt improved significantly when latency reduction techniques were applied.
+ Direct interrupt injection lowered the interrupt latency by more than $25\mu{}s$ (minimum $19\%$ improvement).
+ Isolating LLC of real-time guest from GPOS guest decreased interrupt latency by more than $15\mu{}s$ (minimum $8\%$ improvement).
+-And TLB virtualization allowed latency reduction of more than $3.4\mu{}s$.
++And TLB partitioning allowed latency reduction of more than $3.4\mu{}s$.
+ The average-case latency has always shown greater improvement than the worst-case.
+ Implementation of all techniques together has reduced non-deterministic behavior of the virtualization solution.
+ When latency reduction techniques are used altogether, the virtualized solution can meet real-time constraints in the order of magnitude ($90\mu{}s-110\mu{}s$) which not far from the native ($20\mu{}s-80\mu{}s$).
+diff --git a/misc/Zusammenfassung.tex b/misc/Zusammenfassung.tex
+index 9528796..42e2562 100644
+--- a/misc/Zusammenfassung.tex
++++ b/misc/Zusammenfassung.tex
+@@ -1,42 +1,36 @@
+ \chapter*{Zusammenfassung}
+ 
+-Eingebettete Systeme sind tief in unsere Gesellschaft integriert und neigen dazu, ihre Existenz zu vergessen.
+-Diese Systeme haben eine verbesserte Lebensqualit{\"a}t und eine erh{\"o}hte menschliche Produktivit{\"a}t durch Automatisierung.
++Eingebettete Systeme sind tief in unsere Gesellschaft integriert, daher neigen wir dazu ihre Existenz nicht mehr wahr zu nehmen.
++Diese Systeme verbesserten die Lebensqualit{\"a}t und eine erh{\"o}hten die menschliche Produktivit{\"a}t durch Automatisierung.
+ Viele Anwendungen, die auf diesen Ger{\"a}ten ausgef{\"u}hrt werden, haben Echtzeitanforderungen, die strengen Timing-Einschr{\"a}nkungen unterliegen.
+-Die Echtzeitanwendung war fr{\"u}her einfach und lief normalerweise auf Single-Core-Prozessoren, aber das stimmt nicht mehr.
++Echtzeitanwendungen waren fr{\"u}her einfach und liefen normalerweise auf Single-Core-Prozessoren, dies ist heutzutage nicht mehr der Fall.
+ 
+-Aktuelle technologische Trends wie \emph{"Industrie 4.0"} und \emph{"Internet of Things"}
+-hat Echtzeit-Systementwickler zur Unterst{\"u}tzung der Vernetzung gesteuert.
+-Diese Verbesserungen haben zu einer erh{\"o}hten Komplexit{\"a}t des Software-Stacks gef{\"u}hrt
+-Mechanismen, um Systemzuverl{\"a}ssigkeit zu erreichen.
+-Fortschritte in der Multicore-Prozessortechnologie haben ihren Weg zu eingebetteten Systemen gefunden.
+-Systemdesigner haben sich f{\"u}r Multicore-Technologie entschieden und viele Echtzeitanwendungen laufen auf Multicore-Architekturen wie nie zuvor.
++Aktuelle Trends wie \emph{"Industrie 4.0"} und \emph{"Internet of Things"} führen zu einer vermehrten Vernetzung von Echtzeit-Fähigen Systemen.
++Diese Entwicklung hat zu einer erh{\"o}hten Komplexit{\"a}t des Software-Stacks gef{\"u}hrt und verlangt die Entwicklung neuer
++Mechanismen, um die Systemzuverl{\"a}ssigkeit zu erreichen.
++Desweiteren haben Fortschritte in der Multicore-Prozessortechnologie ihren Weg in eingebetteten Systemen gefunden.
++Systemdesigner haben sich f{\"u}r Multicore-Technologie entschieden und es laufen so viele Echtzeitanwendungen auf Multicore-Architekturen wie nie zuvor.
+ Die Multicore-Technologie hat neue M{\"o}glichkeiten er{\"o}ffnet.
+ Anwendungen gemischter Kritikalit{\"a}t, die fr{\"u}her auf separaten Hardwareplattformen ausgef{\"u}hrt wurden, k{\"o}nnen auf einer Plattform konsolidiert werden.
+ Echtzeitanwendungen k{\"o}nnen dedizierten Prozessorkernen zugewiesen werden, um eine r{\"a}umliche Isolierung zu gew{\"a}hrleisten.
+-Die L{\"o}sung ist f{\"u}r die Legacy-Anwendungen gleicherma{\ss}en g{\"u}ltig, da ihr Ausf{\"u}hrungsverhalten gegeben ist.
+-ist nicht betroffen.
++Diese L{\"o}sung ist f{\"u}r Legacy-Anwendungen gleicherma{\ss}en g{\"u}ltig, sofern sich ihr Ausf{\"u}hrungsverhalten nicht ändert.
+ 
+-Eine klassische L{\"o}sung zur Konsolidierung der Anwendung auf einer Plattform ist die Virtualisierung.
+-Seit vielen Jahren wird Virtualisierung in Server- und Cloud-Computing eingesetzt, um mehrere Anwendungen zu hosten.
+-auf der einzigen Maschine.
+-In letzter Zeit hat sich die Virtualisierung in der eingebetteten Dom{\"a}ne f{\"u}r die Anwendungskonsolidierung durchgesetzt.
+-Durch die Konsolidierung k{\"o}nnen Systementwickler die Systemkosten reduzieren und riesige Mengen an Rechenleistung auf einem Chip nutzen.
+-Allerdings sind Virtualisierungsl{\"o}sungen, die in der Unternehmensdom{\"a}ne weit verbreitet sind, nicht auf
+-Echtzeit-System.
++Eine klassische L{\"o}sung zur Konsolidierung mehrerer Anwendungen auf einer Plattform ist Virtualisierung.
++Seit vielen Jahren wird Virtualisierung in den Bereichen Server- und Cloud-Computing eingesetzt, um mehrere Anwendungen auf einer einzigen Maschine zu hosten.
++In letzter Zeit hat sich Virtualisierung auch bei eingebettete Systeme  f{\"u}r die Anwendungskonsolidierung etabliert.
++Durch die Konsolidierung k{\"o}nnen Systementwickler die Systemkosten reduzieren und die volle Rechenleistung auf einem Chip nutzen.
++Allerdings sind Virtualisierungsl{\"o}sungen, die in der Unternehmensdom{\"a}ne weit verbreitet sind, nicht direkt auf Echtzeit-Systeme übertragbar.
+ Diese L{\"o}sungen sollen den durchschnittlichen Durchsatz des Softwaresystems erh{\"o}hen.
+ 
+-Echtzeitsysteme werden basierend auf Antwortzeiten im schlimmsten Fall bewertet, um ein Ereignis zu behandeln.
+-Da Echtzeitsysteme strengen zeitlichen Einschr{\"a}nkungen unterliegen,
+-L{\"o}sung f{\"u}r Echtzeitsystem muss deterministische Antwortzeiten garantieren.
+-Eine f{\"u}r das Echtzeitsystem geeignete, zuverl{\"a}ssige Virtualisierungsl{\"o}sung muss
+-Beachten Sie die Echtzeitbedingungen. Hypervisor sollte einen geringen Platzbedarf und
+-muss die zeitliche und r{\"a}umliche Isolierung von virtualisierten Anwendungen gew{\"a}hrleisten.
++Im Gegensatz dazu werden Echtzeitsysteme hinsichtlich der Antwortzeiten im worst-case Fall optimiert.
++Da Echtzeitsysteme strengen zeitlichen Einschr{\"a}nkungen unterliegen muss eine L{\"o}sung f{\"u}r Echtzeitsystem eine deterministische Antwortzeit garantieren.
++Eine f{\"u}r das Echtzeitsystem geeignete, zuverl{\"a}ssige Virtualisierungsl{\"o}sung muss diese Echtzeitanforderung erfüllen.
++.
++Ein Hypervisor sollte einen geringen Platzbedarf benötigen und muss die zeitliche und R{\"a}umliche Isolierung von virtualisierten Anwendungen gew{\"a}hrleisten.
+ 
+-Phidias ist ein statisch konfigurierbarer Hypervisor, der speziell f{\"u}r das Hosten von Echtzeitanwendungen gedacht ist.
++Phidias ist ein statisch konfigurierbarer Hypervisor, der speziell f{\"u}r das Hosten von Echtzeitanwendungen entwickelt wurde.
+ Der Hypervisor-Footprint ist klein und folgt den f{\"u}r Echtzeitanwendungen g{\"u}nstigen Designprinzipien.
+ Echtzeitf{\"a}higkeiten sind noch unbekannt. Diese Arbeit best{\"a}tigt die Echtzeitf{\"a}higkeiten von Phidias Hypervisor auf der x86-Plattform
+ durch Messen des Virtualisierungsoverheads f{\"u}r einen Echtzeitgast. Des Weiteren pr{\"a}sentiert die Arbeit Leistungsoptimierung
+ Mechanismen zur Reduzierung der Interrupt-Antwortzeiten von Echtzeit-Gast.
+ Die Ergebnisse zeigen, dass Latenzreduktionstechniken den Virtualisierungsaufwand deutlich reduzieren k{\"o}nnen.
+-
+diff --git a/misc/abstract.tex b/misc/abstract.tex
+index d24a6f3..3e09358 100644
+--- a/misc/abstract.tex
++++ b/misc/abstract.tex
+@@ -29,12 +29,14 @@ Real-time systems are evaluated based on worst-case response times to handle an
+ Since real-time systems are subjected to stringent timing constraints, a virtualization
+ solution for the real-time system has to guarantee deterministic response times.
+ A faithful virtualization solution suitable for the real-time system has to
+-be aware of real-time constraints. Hypervisor should keep small footprint and 
++be aware of real-time constraints. A hypervisor should keep small footprint and 
+ has to ensure temporal and spatial isolation of virtualized applications.
+ 
+-Phidias is a statically configurable hypervisor that is designed to host real-time applications.
+-While the hypervisor has a small footprint and follows design principles that are favorable to real-time applications, its real-time capabilities are still unknown.
++Phidias is a statically configurable hypervisor that follows microkernel and multikernel design models.
++The hypervisor keeps low complexity and memory footprint by deploying the principle of staticity.
++While the hypervisor follows design principles that are favorable to real-time applications, its real-time capabilities are unknown.
+ This thesis confirms real-time capabilities of Phidias hypervisor on the x86 platform
+-by measuring virtualization overhead for a real-time guest. Furthermore, the thesis presents performance tuning
++by measuring virtualization overhead for a real-time guest. 
++Furthermore, the thesis presents performance tuning
+ mechanisms to reduce interrupt response times of real-time guest. 
+ The results show that latency reduction techniques used can significantly reduce the virtualization overhead.
+diff --git a/ref/references.bib b/ref/references.bib
+index 8c64dc1..9467006 100755
+--- a/ref/references.bib
++++ b/ref/references.bib
+@@ -1,4 +1,11 @@
+ 
++@book{hennessy2011computer,
++  title={Computer architecture: a quantitative approach},
++  author={Hennessy, John L and Patterson, David A},
++  year={2011},
++  publisher={Elsevier}
++}
++
+ @misc{opensynergy_coqos,
+ 	title = {{COQOS} - {Modular} {Software} {Framework} for {Infotainment} and {Connectivity} {Systems}: {OpenSynergy}},
+ 	url = {http://www.opensynergy.com/en/products/coqos/},
+

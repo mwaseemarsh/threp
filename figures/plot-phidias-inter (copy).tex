@@ -1,0 +1,136 @@
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+
+
+	\begin{axis} [name=plot1, ymin=0, ybar=2pt, height=6cm, width=6cm, enlarge y limits={upper,value=0.2}, 
+		       legend style={at={(0.5,-0.3)}, anchor=north, legend columns=-1},
+               ylabel={exit frequency for ext int},
+		       bar width=8pt,       
+               symbolic x coords={cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops},
+               %xtick=data, nodes near coords, 
+		       %nodes near coords align={vertical},
+    		   ymajorgrids=true, grid style = very thin,
+               x tick label style={rotate=45,anchor=east},]   
+
+			\addplot [fill=black!10] coordinates {
+				(cache pressure,5229)
+				(forkops,143650)
+				(fileops,274394)
+				(hackbench,40926)
+				(mmapops,47258)
+				(stdout,195436)
+				(threadops,158602)
+			    };
+	\end{axis}
+
+
+	\begin{axis} [name=plot2, at={($(plot1.south east)+(1.5cm,0)$)}, ymin=0, ybar=2pt, height=6cm, width=6cm, enlarge y limits={upper,value=0.2}, 
+		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
+               ylabel={exit frequency for cpuid},
+		       bar width=8pt,       
+               symbolic x coords={cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops},
+               %xtick=data, nodes near coords, 
+		       %nodes near coords align={vertical},
+    		   ymajorgrids=true, grid style = very thin,
+               x tick label style={rotate=45,anchor=east},]
+	\addplot+ [fill=black!10] coordinates {
+				(cache pressure,11572)
+				(forkops,20)
+				(fileops,19)
+				(hackbench,0)
+				(mmapops,0)
+				(stdout,19)
+				(threadops,19)				
+			    };
+	\end{axis}
+
+
+	\begin{axis} [name=plot3, at={($(plot1.south west)+(0,-7cm)$)}, ymin=0, ybar=2pt, height=6cm, width=6cm, enlarge y limits={upper,value=0.2}, 
+		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
+               ylabel={exit frequency for crx access},
+		       bar width=8pt,       
+               symbolic x coords={cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops},
+               %xtick=data, nodes near coords, 
+		       %nodes near coords align={vertical},
+    		   ymajorgrids=true, grid style = very thin,
+               x tick label style={rotate=45,anchor=east},]
+	\addplot+ [fill=black!10]  coordinates {
+				(cache pressure,4766)
+				(forkops,545662)
+				(fileops,6)
+				(hackbench,2018287)
+				(mmapops,19758)
+				(stdout,6)
+				(threadops,6)				
+			    };
+	\end{axis}
+
+
+	\begin{axis} [name=plot4, at={($(plot3.south east)+(1.5cm,0)$)}, ymin=0, ybar=2pt, height=6cm, width=6cm, enlarge y limits={upper,value=0.2}, 
+		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
+               ylabel={exit frequency for io access},
+		       bar width=8pt,       
+               symbolic x coords={cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops},
+               %xtick=data, nodes near coords, 
+		       %nodes near coords align={vertical},
+    		   ymajorgrids=true, grid style = very thin,
+               x tick label style={rotate=45,anchor=east},]
+		\addplot+ [fill=black!10] coordinates {
+				(cache pressure,135)
+				(forkops,35)
+				(fileops,35)
+				(hackbench,0)
+				(mmapops,0)
+				(stdout,154)
+				(threadops,459)
+			    };
+	\end{axis}
+
+
+	\begin{axis} [name=plot5, at={($(plot3.south west)+(0,-7cm)$)}, ymin=0, ybar=2pt, height=6cm, width=6cm, enlarge y limits={upper,value=0.2}, 
+		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
+               ylabel={exit frequency for wrmsr},
+		       bar width=8pt,       
+               symbolic x coords={cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops},
+               %xtick=data, nodes near coords, 
+		       %nodes near coords align={vertical},
+    		   ymajorgrids=true, grid style = very thin,
+               x tick label style={rotate=45,anchor=east},]
+		\addplot[fill=black!10]  coordinates {
+				(cache pressure,28555)
+				(forkops,681097)
+				(fileops,719541)
+				(hackbench,2064207)
+				(mmapops,123174)
+				(stdout,770222)
+				(threadops,407221)
+			    };
+	\end{axis}
+
+
+	\begin{axis} [name=plot6, at={($(plot5.south east)+(1.5cm,0)$)}, ymin=0, ybar=2pt, height=6cm, width=6cm, enlarge y limits={upper,value=0.2}, 
+		       legend style={at={(0.5,-0.3)}, anchor=east, legend columns=-1},
+               ylabel={exit frequency for eoi exit},
+		       bar width=8pt,       
+               symbolic x coords={cache pressure,forkops, fileops, hackbench, mmapops, stdout, threadops},
+               %xtick=data, nodes near coords, 
+		       %nodes near coords align={vertical},
+    		   ymajorgrids=true, grid style = very thin,
+               x tick label style={rotate=45,anchor=east},]
+		\addplot[fill=black!10] coordinates {
+				(cache pressure,9997)
+				(forkops,9994)
+				(fileops,9981)
+				(hackbench,9990)
+				(mmapops,9990)
+				(stdout,9990)
+				(threadops,9989)
+			    };
+	\end{axis}
+
+\end{tikzpicture}
+\end{center}
+\caption{Phidias Intervetion}
+\label{plot-phidias-inter}
+\end{figure}

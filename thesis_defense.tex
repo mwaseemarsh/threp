@@ -19,8 +19,31 @@
 \let\@footnotetext=\beamer@framefootnotetext
 \makeatother
 
+\usepackage[absolute,overlay]{textpos}
 \include{preamble}
 \defensetrue
+
+%%commands latency reduction plots%%%%
+\newcommand\figheight {7cm}
+\newcommand\figwidth {12cm}
+\newcommand\ybarXdist {1.8cm}
+\newcommand\ybarWidth {18pt}
+\newcommand\ybarSep {3pt}
+\newcommand\xShiftLatency {0cm}
+\newcommand\xShiftImprove {0.5cm}
+\newcommand\atCmdLowerPlot {}
+%%commands for virtualization overhead plots %%%%
+\newcommand\ybarWidthVO {12pt}
+\newcommand\atCmdVOverheadLowerPlot {}
+\newcommand\ybarSepVO {2pt}
+\newcommand\ybarXdistVO {1.0cm}
+%%commands for virtualization overhead CDF plots %%%%
+\newcommand\atCmdVOCDFLowerPlotA {}
+\newcommand\atCmdVOCDFLowerPlotB {}
+\newcommand\figheightVOCDF {7cm}
+\newcommand\figwidthVOCDF {12cm}
+
+
 % There are many different themes available for Beamer. A comprehensive
 % list with examples is given here:
 % http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
@@ -54,22 +77,22 @@
 %\usetheme{Szeged}
 %\usetheme{Warsaw}
 
-\title{Latency Reduction using Intel Cache Allocation
-and Direct Interrupt Injection in Virtualized
+\title{Latency Reduction using Intel CAT in Virtualized
 Environment}
 
 % A subtitle is optional and this may be deleted
 \subtitle{Master Thesis}
 
-\author{Muhammad Waseem Arshad\inst{1}} %F.~Author\inst{1} \and S.~Another\inst{2}}
+\author{Muhammad Waseem Arshad\inst{1} \\ Student ID: 387428 \\ ICT Innovation}
 % - Give the names in the same order as the appear in the paper.
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
 
-\institute[TUB] % (optional, but mostly needed)
+\institute[TU Berlin] % (optional, but mostly needed)
 {
   \inst{1}
-  Department of Security in Telecommunications\\
+  Department of Security in Telecommunications,\\
+  Electrical Engineering and Computer Science Faculty,\\
   {Technische Universit{\"a}t Berlin}
   %\and
   %\inst{2}%
@@ -98,7 +121,7 @@ Environment}
 
 % Delete this, if you do not want the table of contents to pop up at
 % the beginning of each subsection:
-\AtBeginSubsection[]
+\AtBeginSection[]
 {
   \begin{frame}<beamer>[allowframebreaks]{Outline}
     \small\tableofcontents[currentsection,currentsubsection]
@@ -120,15 +143,67 @@ Environment}
 % Section and subsections will appear in the presentation overview
 % and table of contents.
 %%%%%%%%%%%%%%%%%~~~...SECTION...~~~%%%%%%%%%%%%%%%%%
-\section{Introduction and Motivation}
-\begin{frame}{Introduction to the Problem}{Motivation}
+\section{Problem Statement and Proposed Solution}
+\begin{frame}{Embedded Systems}{role and challenges}
   \begin{itemize}
-  \item {Role of real-time embedded systems \pause{}}
-  \item {evolution \pause{}}
-  \item {complexity, security \pause{}}
-  \item {role of virtualization \pause{}}
-  \item {Phidias Hypervisor \pause{}}
-  \item {aims and objectives \pause{}}
+  \item {Role of Embedded Systems: \pause{}
+			\begin{itemize}
+			  \item {production}
+			  \item {automotive}
+			  \item {transportation}
+		  	  \item {healthcare}
+			  \item {avionics}
+			 \end{itemize}
+		}
+		\pause{}
+	
+  \item {evolution:\pause{}
+		 \begin{itemize}
+      	  \item {Internet of Things} \pause{} 
+		  \item {Industry 4.0} \pause{}
+		  \item {multicore processors \pause{}}
+	     \end{itemize}
+		}
+  \item {challenges: 
+          \begin{itemize}
+      	   \item {complexity} \pause{}
+		   \item {security}  \pause{}
+		   \item {efficient utilization of resources}
+	      \end{itemize}
+		}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Virtualization Technology}{role and challenges}
+  \begin{itemize}  
+  \item {virtualization technology: \pause{} 
+		  \begin{itemize}
+      	   \item {consolidation} \pause{}
+		   \item {cost reduction}  \pause{}
+		   \item {security}  \pause{}
+	      \end{itemize} 
+		}	
+  \item {challenges: 
+          \begin{itemize}
+      	   \item {traditionally used in server domain} \pause{}
+		   \item {not aware of real-time constraints}  \pause{}
+		   \item {complexity, footprint, deterministic behavior}
+	      \end{itemize}
+		}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Proposed Solution}{aims and objectives}
+  \begin{itemize}
+  \item {PHIDIAS Hypervisor: \pause{} designed for real-time embedded systems}  \pause{}
+  \item {aims and objectives: \pause{}
+	        \begin{itemize}
+        	   \item {measure virtualization overhead on x86 platform}  \pause{} 
+			   \item {latency reduction: \pause{} CAT, \pause{} DII, \pause{} VPID}  \pause{}
+	        \end{itemize}
+		}
+  \item {Why x86?}
   \end{itemize}
 \end{frame}
 
@@ -139,156 +214,238 @@ Environment}
 \subsection{Real-time Systems}
 \begin{frame}{Real-time Systems}
   \begin{itemize}
-  \item {correctnesss depends on 1) logical correctness 2) instance at which results are produced}
-  \item {stringent time constraints}
-  \item {deterministic response time}
-  \end{itemize}
-	\begingroup
+  \item {correctness depends:\pause{}
+			\begin{itemize}
+        	   \item {logical correctness}  \pause{}  AND
+			   \item {instance at which results are produced}  \pause{} 
+	        \end{itemize}
+		}
+  \item {stringent time constraints} \pause{}
+  %\item {WCET, deadline, latency, jitter} \pause{}
+  	\begingroup
 	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}
 	\input{./figures/fig-latency-jitter}
 	\endgroup
+    \pause{}
+  \item {deterministic response time} 
+  \item {soft versus hard real-time}
+  \end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
 \subsection{Virtualization}
-\begin{frame}{Virtualization}
+\begin{frame}{Virtualization Technology}
   \begin{itemize}
-  \item {hosting multiple virtual machines on one hardware platform}
-  \end{itemize}
-  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}
+  \item {hosting multiple virtual machines on one hardware platform}  \pause{}
+  \item {software layer: VMM or Hypervisor}  \pause{}
+   	\begingroup
+	\tikzset{every picture/.style={scale=0.9}, every node/.style={scale=0.9}}
 	\input{./figures/fig-virtualization}
 	\endgroup
-\end{frame}
-\begin{frame}{Virtualization Techniques} {Classical Virtualization}
-  \begin{itemize}
-  \item {something}
+    \pause{}
+  \item {Types: type-I (bare-metal), type-II(hosted)} \pause{}
+  \item {Benefits: software consolidation, cost reduction, security enhancement etc.}
   \end{itemize}
-  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}
+\end{frame}
+\begin{frame}{Virtualization Techniques} {Classical Virtualization (trap-and-emulate)}
+  \begin{itemize}
+  %\item {requirements: Equivalence, Performance, Resource Control} \pause{}
+  \item{sensitive instructions should be a subset of privileged instructions} \pause{}		
+  %\item {guest traps whenever it tries to execute privileged instruction}  \pause{}
+  	%\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}
 	\input{./figures/fig-virt-faithful}
-	\endgroup
+	%\endgroup
+    \pause{}
+  \item{Pros: supports unmodified guests (faithful virtualization)} \pause{}
+  \item{Cons: requires hardware support}
+  \end{itemize}
 \end{frame}
 \begin{frame}{Virtualization Techniques} {Software-based Virtualization}
   \begin{itemize}
-  \item {something}
-  \end{itemize}
-  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}
+  \item {Translation engine transforms all or sensitive instructions of guest code \pause{}}
+  	%\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}
 	\input{./figures/fig-virt-software}
-	\endgroup
+	%\endgroup
+	\pause{}
+  \item{Examples: QEMU, VMware Workstation, VirtualBox}  \pause{}
+  \item{Pros: guest and hardware ISA can be different, unmodified guest} \pause{}
+  \item{Cons: emulation overhead}
+
+  \end{itemize}
 \end{frame}
 \begin{frame}{Virtualization Techniques} {Paravirtualization}
   \begin{itemize}
-  \item {something}
-  \end{itemize}
-  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+  \item {Sensitive instructions are replaced with hypercalls \pause{}}  
+  	%\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/fig-virt-para}
-	\endgroup
+	%\endgroup
+	\pause{}
+  \item{Examples: Xen} \pause{}
+  \item{Pros: near native performance} \pause{}
+  \item{Cons: guest has to be modified}
+
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Virtualization of Real-time Applications}
   \begin{itemize}
-  \item {Commercial:}
-  \item {Xen, KVM}
-  \item {OKL4, Xtratum, Quest-V}
+ %%	 \item {traditional virtualization solutions does not address real-time issues:} \pause{}
+ %%	 		\begin{itemize}
+ %%				\item{deterministic response times} \pause{}
+ %%			\item{complexity, footprint} \pause{}
+ %%		\end{itemize}
+  \item {real-time virtualization solutions also exist} \pause{}
+ 		\begin{itemize}
+			\item{industry specific: Xtratum for safety-critical applications} \pause{}
+			\item{custom designed: WindRiver hypervisor for VxWorks} \pause{}
+			\item{real-time extensions: \pause{}RT-Xen (Xen with real-time framework), \pause{}KVM with PREEMPT\_RT patch} \pause{}
+			\item{microkernel based: OKL4} \pause{}
+			\item{resource partitioning: Quest-V}
+		\end{itemize}  
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Virtual Machines on Multicore Processors}
-  \begin{itemize}
-  \item {sandboxing}
-  \end{itemize}
-\end{frame}
+%% \begin{frame}{Virtual Machines on Multicore Processors}
+%%   \begin{itemize}
+%%   \item {real-time app. on single core processors} \pause{}
+%%   \item {multicore platforms has become a norm} \pause{}
+%%   \item {designers have embraced multicore} \pause{}
+%%   \item {heterogeneous and manycore processor platforms} \pause{}
+%%   \item {user demands: complex software stacks} \pause{}
+%%   \item {require timing guarantees, not so much computing resources} \pause{}
+%%   \item {allows consolidation} \pause{}
+%%   \item {dedicated CPU cores} 
+%%  \end{itemize}
+%% \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
 \subsection{Hardware-assisted Virtualization on x86}
-\begin{frame}{Hardware-assisted Virtualization on x86}
-  \begin{itemize}
-  \item {processor operating modes}
-  \item {VMCS}
-  \item {Control Flow}
-  \end{itemize}
+\begin{frame}{Hardware-assisted Virtualization on x86} {modes of operation}
+		\begin{table}[H]
+		\centering
+		\begin{longtable}{|r|c|c|} 
+		\hline
+			\textbf{CPU operation mode}	&	{\textbf{VMX non-root}} 	&	{\textbf{VMX root}} \\ \hline \hline
+			Instruction set		&	sensitive instructions 		&  new instruction added \\
+				                &	are restricted (e.g. out	&  to manage VMs \\ 
+				                &	instruction cause trap to   & (e.g. VMLAUNCH,  \\ 
+				                &	VMX root mode)              & VMREAD, VMWRITE) \\ \hline
+			Software 			&	OS (Kernel and User)	&	Hypervisor \\ \hline
+		\end{longtable}
+		\end{table}
+
+		\begin{itemize}
+			\item {VMX transitions: vmexit, vmentry}
+		\end{itemize}
+\end{frame}
+
+\begin{frame}{Hardware-assisted Virtualization on x86} {VMCS}
+ 	\begingroup
+	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+	\input{./figures/fig-vmcs-ds}
+	\endgroup
 \end{frame}
 
 \begin{frame}{Features for Efficient Virtualization} {MMU Virtualization}
-  \begin{itemize}
-  \item {something}
-  \end{itemize}
  	\begingroup
-	\tikzset{every picture/.style={scale=0.5}, every node/.style={scale=0.5}}	
+	\tikzset{every picture/.style={scale=0.55}, every node/.style={scale=0.55}}	
 	\input{./figures/fig-vmmu}
 	\endgroup
 \end{frame}
 
+\begin{frame}{Features for Efficient Virtualization} {TLB Virtualization}
+	\begin{itemize}
+		\item {VPID (Virtual Process Identifiers) allow hypervisor to separate address translations}
+	\end{itemize}
+	\begin{table}[!h]
+	\centering
+	\begin{tabular}{|c||c|c|c|}  
+	\hline
+		\textbf{TLB Entry}	&	\textbf{VPID}	&	\textbf{Tag} &	\textbf{Data}\\ \hline \hline
+		Guest			&	x $(x > 0)$		&		gVA 	 & 	gPA			 \\ \hline
+		Hypervisor		&	0				&		VA 		 &  PA			 \\ \hline
+	\end{tabular}
+	\label{vpid-entries}
+	\end{table}
+\end{frame}
+
 \begin{frame}{Features for Efficient Virtualization} {APIC Virtualization}
-  \begin{itemize}
-  \item {EPT and VPIDs}
-  \end{itemize}
+  %\begin{itemize}
+  %\item {EPT and VPIDs}
+  %\end{itemize}
  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+	\tikzset{every picture/.style={scale=0.7}, every node/.style={scale=0.7}}	
 	\input{./figures/fig-vapic}
 	\endgroup
 \end{frame}
 
 \begin{frame}{Features for Efficient Virtualization} {Direct Interrupt Injection}
   \begin{itemize}
-  \item {DII}
+  	\item {supports Posted Interrupts (PI)}
+  	\item {Hypervisor can inject guest interrupts without exit}
   \end{itemize}
+
  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+	\tikzset{every picture/.style={scale=0.7}, every node/.style={scale=0.7}}	
 	\input{./figures/fig-pi-ds}
 	\endgroup
 \end{frame}
 
-\begin{frame}{Features for Efficient Virtualization} {Direct Interrupt Injection continued}
-  \begin{itemize}
-  \item {DII}
-  \end{itemize}
+\begin{frame}{Features for Efficient Virtualization} {Comparison of Interrupt Delivery}
+  %\begin{itemize}
+  %\item {DII}
+  %\end{itemize}
  	\begingroup
 	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/fig-pi-delivery}
 	\endgroup
 \end{frame}
 
-%%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
-\subsection{PHIDIAS Hypervisor}
-\begin{frame}{PHIDIAS Hypervisor}{Design Principles}
+\begin{frame}{Features for Efficient Virtualization} {Cache Allocation}
   \begin{itemize}
-  \item {Principle of Staticity}
-  \item {Multikernel Architecture}
+  \item {CAT uses CLOS identifier and Bitmask registers}  \pause{}
+  \end{itemize}
  	\begingroup
 	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+	\input{./figures/fig-cat-bitmasks}
+	\endgroup
+\end{frame}
+
+\begin{frame}{Features for Efficient Virtualization} {Cache Allocation}
+ 	\begingroup
+	\tikzset{every picture/.style={scale=0.7}, every node/.style={scale=0.7}}	
+	\input{./figures/fig-cat-isolated}
+	\endgroup
+\end{frame}
+
+%%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
+\subsection{PHIDIAS Hypervisor}
+\begin{frame}{PHIDIAS Hypervisor}{Design Principles and Features}
+  \begin{itemize}
+  \item {principle of staticity: static page-tables} \pause{}
+  \item {multikernel and microkernel} \pause{}
+  \item {static resource allocation} \pause{}
+ 	\begingroup
+	\tikzset{every picture/.style={scale=0.7}, every node/.style={scale=0.7}}	
 	\input{./figures/fig-static-part}
 	\endgroup
-  \item {Non-Preemptible Kernel}
-  \item {Inter-VM Communication}
-  \item {Small TCB}
+	\pause{}
+  \item {non-preemptive kernel} \pause{}
+  \item {low complexity, small footprint and TCB} \pause{}
+  \item {support faithful virtualization} \pause{}
+  \item {inter-VM communication} \pause{}
+  \item {emulated devices: interrupt controller, timer, and UART}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{PHIDIAS Hypervisor}{Supported Features and Implications of Design Principlesss}
-  \begin{itemize}
-  \item {Static configuration tool}
-  \item {Non-Preemptible Kernel}
-  \item {Inter-VM Communication}
-  \item {Small TCB}
-  \item {Guest Device Handling}
+\begin{frame}{PHIDIAS Hypervisor}{Device Handling}
 	\begingroup
 	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/fig-device-handling}
 	\endgroup
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{PHIDIAS Hypervisor}{Implementation on x86}
-  \begin{itemize}
-   \item {Interrupt Controller}
-   \item {Timer as Event Generator}
-   \item {Timer as Clock Source}
-   \item {Serial Interface}
-  \end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~...SECTION...~~~%%%%%%%%%%%%%%%%%
@@ -306,18 +463,30 @@ Environment}
 
 %%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
 \subsection{Experimental Setup}
-\begin{frame}{Experimental Setup}
+\begin{frame}{Experimental Setup} {Virtualization Environment}
   \begin{itemize}
-  \item {Xeon E5-2603v4 mounted on ASUS X99E WS motherboard}
-  \item {6 physical cores, 4GB RAM, 15MB LLC, 64KB L1 and 512KB L2 private caches}
-  \item {support VT-x  and VT-d (APIC-v, posted interrupts, MMU virtualization)}
-  \item {Test Setup: RTOS (preempt\_rt patch) and GPOS (Linux)}
+  \item {Hardware  \pause{}
+	  \begin{itemize}
+	  \item {Xeon E5-2603v4 mounted on ASUS X99E WS motherboard  \pause{}
+				\begin{itemize}
+				\item {6 CPU cores}  \pause{}
+				\item {4GB RAM}  \pause{}
+				\item {private 64KB L1 Cache (separate for code, and data)} \pause{} 
+				\item {private 512KB L2 Cache}  \pause{}
+				\item {shared 15MB L3 Cache}  \pause{}
+				%\item {support VT-x  and VT-d (APIC-v, Posted Interrupts, MMU virtualization)}  \pause{}
+				\end{itemize}
+			}
+     \end{itemize}
+	}
+  \item {PHIDIAS Hypervisor} \pause{}
+  \item {Guests: RTOS (preempt\_rt patch) and GPOS (Linux)}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Experimental Setup} {Measurement Setup}
   \begin{itemize}
-  \item {PCIe device, FPGA board, External PC}
+  \item {PCIe device, FPGA board, External PC}  \pause{}
 	\begingroup
 	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/fig-measure-setup}
@@ -327,68 +496,96 @@ Environment}
 
 %%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
 \subsection{Methodology}
-\begin{frame}[allowframebreaks]{Methodology} {Microbenchmarks}
+\begin{frame}{Methodology}{Strategy}
+    \begin{itemize}
+		%% \item{interrupt source:  \pause{} gpio interrupt  \pause{}
+		%%		\begin{itemize}
+ 		%%		  \item {register gpio IRQ handler in RTOS}   \pause{}
+		%%		  \item {IRQ handler responds by assertion of output gpio}   \pause{}
+		%%		\end{itemize}
+	  	%% 	 }
+		\item{compare gpio interrupt latency in: 
+				\begin{itemize}
+				  \item {native setup} 
+				  \item {virtual setup}
+				\end{itemize}
+            }   \pause{}
+        \item{10k interrupts, frequency $@~2ms$} \pause{}
+        \item{use synthetic benchmarks to increase confidence} \pause{}
+			\begin{itemize}
+				\item {executed in rt-guest}
+			\end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Methodology}{Benchmarks}
 	\begin{table}[!htb]
 	\centering
-	\begin{longtable}{|r|p{6cm}|}  
+	\begin{tabular}{|r|p{6cm}|}  
 	\hline
 	& \\
 	\textbf{Microbenchmark} & \textbf{Description} \\ \hline 
-	\mcachepressure{} & The benchmark processes big arrays of data to add pressure on the caches. The sizes of arrays are bigger than L2 cache.\\ \hline
-	\mforkops{} 	& The benchmark exercises fork operation of Linux kernel from userspace\\ \hline
-	\mfileops{} 	& The benchmark exercises file operation of Linux kernel from userspace \\ \hline
-	\mhackbench{} 	& The benchmark adds load on kernel scheduler. The load was added using hackbench\tablefootnote{hackbench -p -s1024 -l10000}. \\ \hline
-	\mmmapops{} 	& The benchmark exercises memory map operations of Linux kernel from userspace \\ \hline
-	\mstdout{} 		& The benchmark exercises data output operations of Linux kernel on null device from userspace \\ \hline
-	\mthreadops{} 	& The benchmark exercises posix thread operations from userspace. The load was added using cyclictest\tablefootnote{cyclictest -a -t10 -p80 -n -l100000 -i1000 -q}. \\ \hline
+	\mcachepressure{} & processes big data arrays to add pressure on the caches\\ \hline
+	\mforkops{} 	& exercises fork operation from userspace\\ \hline
+	\mfileops{} 	& exercises file operations from userspace \\ \hline
+	\mhackbench{} 	& adds load on kernel scheduler \\ \hline
+                                                                       %\tablefootnote{hackbench -p -s1024 -l10000}. \\ \hline
+	\mmmapops{} 	& exercises memory map operations \\ \hline
+	\mstdout{} 		& exercises data output operations null device\\ \hline
+	\mthreadops{} 	& exercises posix thread operations \\ \hline
+                                                                       %\tablefootnote{cyclictest -a -t10 -p80 -n -l100000 -i1000 -q}. \\ \hline
 	\mnoload{} 	& no load was added \\ \hline
-	%\caption{Microbenchmarks used as synthetic workloads} % needs to go inside longtable environment
-	%\label{microbenchmarks}
-	\end{longtable}
+	\end{tabular}
 	\end{table}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
-\subsection{Results}
-\begin{frame}{Results} {Native Setup for Baseline}
+\subsection{Baseline}
+\begin{frame}{Baseline}{Native Setup}
   	\begingroup
 	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/fig-native}
 	\endgroup
 \end{frame}
 
-\begin{frame}{Results} {Baseline Interrupt Latency}
-  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+\begin{frame}{Baseline} {Interrupt Latency}
+  	%\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/plot-baseline}
-	\endgroup
+	%\endgroup
 \end{frame}
 
-\begin{frame}{Results} {Virtual Setup}
+\subsection{Virtualization Overhead}
+\begin{frame}{Virtualization Overhead} {Virtual Setup}
   	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+	\tikzset{every picture/.style={scale=0.7}, every node/.style={scale=0.7}}	
 	\input{./figures/fig-virtual}
 	\endgroup
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Results} {Virtualization Overhead}
-  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+\begin{frame}[allowframebreaks]{Virtualization Overhead} {Interrupt Latency Overhead}
+  	%\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/plot-native-vs-virtual}
-	\endgroup
+	%\endgroup
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Results} {Virtualization Overhead (CDF)}
-  	\begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
-	\input{./figures/plot-cdf-native-vs-virtual}
-	\endgroup
-\end{frame}
+\begin{frame}{Virtualization Overhead} {Phidias Intervention}
 
-\begin{frame}{Virtualization Overhead} {Phidias Intervension}
-  \begin{itemize}
-   \item {Something}
-  \end{itemize}
+	\begin{table}[H]
+	\centering
+	\begin{tabular}{|r|c|c|}  
+	\hline
+    \textbf{load}	&	\textbf{total exits in $30s$}	&	\textbf{exits in $1ms$} (average) \\ \hline
+	\mcachepressure{}	&		16987	&	1 	\\ \hline
+	\mforkops{}	&			1381087	&	46 		\\ \hline
+	\mfileops{}	&			804448	&	27 		\\ \hline
+	\mhackbench{}	&		3461504	&	\textbf{115} \\ \hline
+	\mmmapops{}	&			174722	&	6		 \\ \hline
+	\mstdout{}	&			937329	&	31 		\\ \hline
+	\mthreadops{}	&		470481	&	16 		\\ \hline
+	\end{tabular}
+	\end{table}
 \end{frame}
 
 \begin{frame} {Virtualization Overhead} {Overhead Components}
@@ -408,106 +605,134 @@ Environment}
 \begin{frame}[allowframebreaks]{Overhead Components} {Phidias Runtime CPI}
 	\begin{table}[H]
 	\centering
-	\begin{longtable}{|c|c|c|c|c|}  
+	\begin{tabular}{|c|c|c|c|c|}  
 	\hline
-					& \multicolumn{2}{|c|}{Phidias run time} & instructions	& CPI \\
-	Benchmark		& average (cc)	&	worst-case (cc)	&	retired &	(WC) \\ \hline 
+							& \multicolumn{2}{|c|}{\textbf{Phidias runtime}} & \textbf{instructions}	& \textbf{CPI} \\
+	\textbf{Benchmark}		& average (cc)	&	worst-case (cc)	&	\textbf{retired} &	(WC) \\ \hline 
 	\mcachepressure{}	& 16548	& 178716 & 2322 & 77 \\ \hline
 	\mforkops{}		& 9263 & 175702 & 2301 & 76.4 \\ \hline
 	\mfileops{}		& 698 & 196490 & 12640 & 15.5 \\ \hline
 	\mhackbench{} 		& 23042 & 176205 & 2301 & 76.6 \\ \hline
-	\mmmapops{} 		& 7604 & 183566 & 2364 & 77.7 \\ \hline
+	\mmmapops{} 		& 7604 & 183566 & 2364 & \textbf{77.7} \\ \hline
 	\mstdout{} 			& 1240 & 186435 & 21429 & 8.7 \\ \hline
 	\mthreadops{} 		& 1265 & 200313 & 19804 & 10.1 \\ \hline
-	%\caption{Phidias worst-case execution time and CPU performance} 
-	%\label{phidias-runtime}
-	\end{longtable}
+	\end{tabular}
 	\end{table}
+
+	\begin{itemize}
+		\item {worst-case CPI is very high}
+		\item {difference in average and worst-case is high}
+	\end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Overhead Components} {Context-Switch time}
-    \begin{table}[H]
+	\begingroup
+	\tikzset{every picture/.style={scale=0.7}, every node/.style={scale=0.7}}	
+	\input{./figures/fig-virt-overhead-all-comp}
+	\endgroup	    
+	\begin{table}[H]
 	\centering
-	\begin{longtable}{|c||c|c|}  
+	\begin{tabular}{|c||c|c|}  
 	\hline
-		Context-switch time	&	average (us)	&	worst-case (us) \\ \hline \hline
-		\mnoload{}				&	1				&		17.2 \\ \hline
-		\mcachepressure{}		&	1				&		86.8 \\ \hline
-	%\caption{Context-switch overhead (hardware time to perform vmexit and vmentry)} 
-	%\label{context-switch-time}
-	\end{longtable}
+		Context-switch time	&	average ($\mu{}s$)	&	worst-case ($\mu{}s$) \\ \hline \hline
+		\mnoload{}				&	1			& 		17.2 \\ \hline
+		\mcachepressure{}		&	1			& \textbf{86.8}\\ \hline
+	\end{tabular}
 	\end{table}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Overhead Components} {Context-Switch time CDF}
-    \begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
-	\input{./figures/plot-cdf-contextswitch}
-	\endgroup
-\end{frame}
+%% \begin{frame}[allowframebreaks]{Overhead Components} {Context-Switch time CDF}
+%%    \begingroup
+%%	\tikzset{every picture/.style={scale=0.9}, every node/.style={scale=0.9}}	
+%%	\input{./figures/plot-cdf-contextswitch}
+%%	\endgroup
+%% \end{frame}
+
+%% \begin{frame}{VT-x Properties and Real-Time Guests} {non-deterministic behavior}
+%%   \begin{itemize}
+%%    \item {big multi-level caches} \pause{}
+%%    \item {big data structures to manage VMs} \pause{}
+%%    \item {unknown instruction behavior (e.g. INVVPID)}
+%%   \end{itemize}
+%% \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~...SECTION...~~~%%%%%%%%%%%%%%%%%
 \section{Latency Reduction Techniques}
 
 \subsection{Direct Interrupt Injection}
 \begin{frame} {Direct Interrupt Injection} {Methodology}
-    \begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
-	\input{./figures/fig-posted-interrupts}
-	\endgroup
+    
+	\begin{itemize}
+      \item {extend Phidias to support DII} \pause {}
+      \item {use DII to route gpio interrupt to rt-guest} \pause {}
+			\begingroup
+			\tikzset{every picture/.style={scale=0.7}, every node/.style={scale=0.7}}	
+			\input{./figures/fig-posted-interrupts}
+			\endgroup
+			\pause {}
+   	  \item {repeat latency measurement experiments} \pause {}
+    \end{itemize}
+    
 \end{frame}
 
 \begin{frame} [allowframebreaks] {Direct Interrupt Injection} {Latency Reduction}
-    \begingroup
-	\tikzset{every picture/.style={scale=0.9}, every node/.style={scale=0.9}}	
+    %\begingroup
+	%\tikzset{every picture/.style={scale=1}, every node/.style={scale=1}}	
 	\input{./figures/plot-dii}
-	\endgroup
+	%\endgroup
 \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
 \subsection{Cache Allocation}
 \begin{frame}{Cache Allocation} {Methodology}
    \begin{itemize}
-   \item {something}
+   \item {extend Phidias to support CAT} \pause {}
+   \item {isolate LLC between guests} \pause {}
+	    \begingroup
+		\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}
+		\input{./figures/fig-vsetup-cat-bitmasks} 
+		\endgroup		
+		\pause
+   \item {keep some part shared for shared memory} \pause {}
+   \item {repeat latency measurement experiments:}
+		  \begin{itemize}
+				\item {gp-guest idle}
+				\item {L3 pollution from gp-guest}
+		  \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Cache Allocation} {Latency Reduction}
-    \begingroup
-	\tikzset{every picture/.style={scale=0.9}, every node/.style={scale=0.9}}	
+    %\begingroup
+	%\tikzset{every picture/.style={scale=1}, every node/.style={scale=1}}	
 	\input{./figures/plot-cat}
-	\endgroup
+	%\endgroup
 \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
-\subsection{TLB Virtualization}
-\begin{frame}{TLB Virtualization} {Methodology}
+\subsection{TLB Partitioning using VPIDs}
+\begin{frame}{TLB Partitioning using VPIDs} {Methodology}
    \begin{itemize}
-   \item {something}
+     \item {extend Phidias to support VPIDs} \pause {}
+     \item {use VPIDs to isolate Phidias TLB cache from rt-guest} \pause {}
+  	 \item {repeat latency measurement experiments}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{TLB Virtualization} {Latency Reduction}
-    \begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+\begin{frame}[allowframebreaks]{TLB Partitioning using VPIDs} {Latency Reduction}
+    %\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/plot-vpid}
-	\endgroup
+	%\endgroup
 \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~SUB SECTION~~~%%%%%%%%%%%%%%%%%
-\subsection{Altogether}
-\begin{frame}{All Optimizations} {Latency Reduction}
-    \begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+\subsection{CAT, DII, and VPID Combined}
+\begin{frame}[allowframebreaks]{CAT, DII, and VPID Combined} {Latency Reduction}
+    %\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
 	\input{./figures/plot-allopt}
-	\endgroup
-\end{frame}
-
-\begin{frame}{All Optimizations} {CDF}
-    \begingroup
-	\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
-	\input{./figures/plot-cdf-native-virtual-optimiz}
-	\endgroup
+	%\endgroup
 \end{frame}
 
 %%%%%%%%%%%%%%%%%~~~...SECTION...~~~%%%%%%%%%%%%%%%%%
@@ -515,14 +740,62 @@ Environment}
 \subsection{Concluding Remarks}
 \begin{frame}{Concluding Remarks}
   \begin{itemize}
-  \item {something}
+  \item {virtualization overhead increased latency twice {from $80\mu{}s$ to $170\mu{}s$}} \pause{}
+  \item {CAT, DII and VPID reduced virtualization overhead significantly}  \pause{}
+		\begin{itemize}
+			\item{worst-case more than $21$\%}  \pause{}
+			\item{average-case more than $39$\%}  \pause{}
+		\end{itemize}
+  \item {virtual setup can meet real-time constraints in the order of $90\mu{}s-110\mu{}s$} \pause{}
+	  	\begin{itemize}
+	     	\item {which is not far from native setup  $20\mu{}s-80\mu{}s$}
+		\end{itemize}
   \end{itemize}
 \end{frame}
 \subsection{Future Work}
 \begin{frame}{Future Work}
   \begin{itemize}
-  \item {something}
+	\item {resource contention: L1/L2 partitioning} \pause{}
+	\item {processor with smaller caches} \pause{}
+    \item {reduce guest traps:} 
+		  \begin{itemize}
+			\item {MSR writes} \pause{}
+			\item {IO access}
+		  \end{itemize}
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \center\LARGE{Thank you!}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Virtualization Overhead} {Cumulative Distribution Function (CDF)}
+  	%\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+	\input{./figures/plot-cdf-native-vs-virtual}
+	%\endgroup
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Overhead Components} {Context-Switch time CDF}
+    \begingroup
+	\tikzset{every picture/.style={scale=0.9}, every node/.style={scale=0.9}}	
+	\input{./figures/plot-cdf-contextswitch}
+	\endgroup
+\end{frame}
+
+\begin{frame}{VT-x Properties and Real-Time Guests} {non-deterministic behavior}
+   \begin{itemize}
+    \item {big multi-level caches} \pause{}
+    \item {big data structures to manage VMs} \pause{}
+    \item {unknown instruction behavior (e.g. INVVPID)}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{CAT, DII, and VPID Combined} {CDF}
+    %\begingroup
+	%\tikzset{every picture/.style={scale=0.8}, every node/.style={scale=0.8}}	
+	\input{./figures/plot-cdf-native-virtual-optimiz}
+	%\endgroup
 \end{frame}
 
 \end{document}

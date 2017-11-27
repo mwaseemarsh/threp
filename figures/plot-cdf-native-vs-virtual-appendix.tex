@@ -1,0 +1,82 @@
+\begin{figure}[!htb]
+\begin{center}
+
+\begin{tikzpicture}
+
+\begin{axis}[name=plot1, height=\figheightVOCDFApp, width=\figwidthVOCDFApp, ymin=0, ymax=1, xmin=0, 		
+		xlabel=latency ($\mu{}s$), 
+		ylabel=probability,
+		title style={yshift=-2ex},
+		legend pos=south east,
+		title=no load,
+		]
+	\addplot [very thick, blue, dashed] table[x=Latency,y=Probability] {./figures/native_noload_10k_cdf.dat};
+	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_noload_10k_cdf.dat};
+	\legend {\small{native (avg 44.2, max 67.6)}, \small{virtual (avg 18.2, max 130.8)}}
+\end{axis}
+
+
+\begin{axis}[name=plot2, \atCmdVOCDFLowerPlotAApp , height=\figheightVOCDFApp, width=\figwidthVOCDFApp, ymin=0, ymax=1, xmin=0, 
+		legend pos=south east,
+		xlabel=latency ($\mu{}s$), 
+		ylabel=probability, 
+		title style={yshift=-2ex},
+		title=load:fileops,
+		]
+	\addplot [very thick, blue, dashed] table[x=Latency,y=Probability] {./figures/native_fileops_cdf.dat};	
+	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_fileops_10k_cdf.dat};
+	\legend {\small{native (avg 6.1, max 24.7)}, \small{virtual (avg 14.3, max 146.4)}}
+\end{axis}
+
+\end{tikzpicture}
+\end{center}
+%\caption{Interrupt latency CDF  comparison for native and virutal setup}
+\label{plot-cdf-native-vs-virtual-appendix1}
+\end{figure}
+	
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}
+
+	\begin{axis}[name=plot1, height=\figheightVOCDFApp, width=\figwidthVOCDFApp, ymin=0, ymax=1, xmin=0, 
+		legend pos=south east,
+		xlabel=latency ($\mu{}s$), 
+		ylabel=probability, 
+		title style={yshift=-2ex},
+		title=load:hackbench,
+		]
+	\addplot [very thick, blue, dashed] table[x=Latency,y=Probability] {./figures/native_hackbench_10k_cdf.dat};	
+	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_hackbench_10k_cdf.dat};
+	\legend {\small{native (avg 4.5, max 9.3)}, \small{virtual (max 10,  106.7)}}
+	\end{axis}
+
+	\begin{axis}[name=plot2, \atCmdVOCDFLowerPlotAApp , height=\figheightVOCDFApp, width=\figwidthVOCDFApp, ymin=0, ymax=1, xmin=0, 
+		legend pos=south east,
+		xlabel=latency ($\mu{}s$), 
+		ylabel=probability, 
+		title style={yshift=-2ex},
+		title=load:mmapops,
+		]
+	\addplot [very thick, blue, dashed] table[x=Latency,y=Probability] {./figures/native_mmapops_cdf.dat};	
+	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_mmapops_10k_cdf.dat};
+	\legend {\small{native (avg 4.4, max 23.4)}, \small{virtual (avg 8.1, max 106.6}}
+	\end{axis}
+
+   	\begin{axis}[name=plot3, \atCmdVOCDFLowerPlotBApp , height=\figheightVOCDFApp, width=\figwidthVOCDFApp, ymin=0, ymax=1, xmin=0, 
+		legend pos=south east,
+		xlabel=latency ($\mu{}s$), 
+		ylabel=probability, 
+		title style={yshift=-2ex},
+		title=load:stdout,
+		]
+	\addplot [very thick, blue, dashed] table[x=Latency,y=Probability] {./figures/native_stdout_cdf.dat};	
+	\addplot [thick, red] table[x=Latency,y=Probability] {./figures/virt_stdout_10k_cdf.dat};
+	\legend {\small{native (avg 6.1, max 25.8)}, \small{virtual (avg 14.9, max 142.7)}}
+	\end{axis}
+
+\end{tikzpicture}
+\end{center}
+
+\caption{Interrupt latency CDF  comparison for native and virtual setup}
+\label{plot-cdf-native-vs-virtual-appendix2}
+\end{figure}

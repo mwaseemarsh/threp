@@ -1,114 +1,198 @@
 \begin{figure}[!htb]
 \begin{center}
-\begin{tikzpicture} % [scale = 1.2]
+\begin{tikzpicture}  [
+						my brace/.style={thick, decorate, decoration={brace, amplitude=4pt, raise=4pt,},},							
+						my label/.style={below right, align=center, rotate=90, inner ysep=10pt, },
+					]
 
-\begin{axis} [name=plot1, height=7cm,  width=14cm, ybar=2pt, enlarge y limits={upper,value=0.3}, %%enlargelimits=0.3, 
-			ymin=0,
-			legend pos=north east, legend columns=-1,
-                       %legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1}, 
-                       ylabel={worst-case latency(us)},
-		       bar width= 24pt,
-       		       %%enlarge x limits={abs=0.8cm},
- 		       %%postaction={pattern=north east lines},
-                       %symbolic x coords={L3 shared, L3 partitioned},
-		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
-                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
-		\addplot [fill=black!50] coordinates {
-                                        (no load,141.3) 
-					(cache pressure,132)	
+		\begin{axis} [ name=plot1, height=\figheight, width=\figwidth, 
+				   enlarge y limits={upper,value=0.3},  enlarge x limits=0.12,
+				   ymin=0,
+		           %axis y line*=left,
+				   ybar=\ybarSep,  
+				   x=\ybarXdist,
+				   bar width=\ybarWidth,
+	   			   ylabel={worst-case  latency ($\mu{}s$)},
+	 		       symbolic x coords={no load, cache\_pressure, forkops, fileops, threadops},
+		           xtick=data,                 
+		            %nodes near coords, 
+					%nodes near coords align={vertical}, 
+					x tick label style={rotate=0, anchor=north}, 
+					xticklabel style={rotate=0,anchor=north, font=\ttfamily\small},
+		            xtick align=inside,
+		            xticklabel pos=left,
+	   			    legend pos=north east, legend columns=-1,
+				]                    
+		\addplot [fill=NavyBlue!50, xshift=\xShiftLatency] coordinates {
+                     (no load,141.3) 
+					(cache\_pressure,132)	
 					(forkops,129.9)
 					(fileops,123.7)
 					(threadops,146.1)
-			      };
+			      }
+					coordinate [pos=0] (a1)
+		            coordinate [pos=0.2] (a2)
+		            coordinate [pos=0.4] (a3)
+		            coordinate [pos=0.8] (a4)
+		            coordinate [pos=1] (a5)
+				  ;
 
-		\addplot [postaction={pattern=north east lines}] coordinates {
-                                        (no load,120.4) 
-					(cache pressure,112.2)	
+		\addplot [fill=ForestGreen!60, xshift=\xShiftLatency, postaction={pattern=crosshatch dots}, pattern color=gray] coordinates {
+                    (no load,120.4) 
+					(cache\_pressure,112.2)	
 					(forkops,108.4)
 					(fileops,106.8)
 					(threadops,116.9)
-			      };
-\legend{LLC shared, LLC partitioned}
-\end{axis}
+			      }				  	
+					coordinate [pos=0] (b1)
+		            coordinate [pos=0.2] (b2)
+		            coordinate [pos=0.4] (b3)
+		            coordinate [pos=0.8] (b4)
+		            coordinate [pos=1] (b5)	
+				  ;
+
+				  \draw [my brace] (a1) -- (b1) node [my label] {\small{$+14.8\%$}};
+				  \draw [my brace] (a2) -- (b2) node [my label] {\small{$+8.8\%$}};
+				  \draw [my brace] (a3) -- (b3) node [my label] {\small{$+16.6\%$}};
+				  \draw [my brace] (a4) -- (b4) node [my label] {\small{$+13.7\%$}};
+				  \draw [my brace] (a5) -- (b5) node [my label] {\small{$+20.0\%$}};
+		\legend{LLC shared, LLC partitioned}
+		\end{axis}
+
+		%%improvement%% 
+		%% \begin{axis} [ name=plot1, height=\figheight, width=\figwidth, ybar,  enlarge y limits={upper,value=0.3},  enlarge x limits=0.12, 					
+		%% 		   ymin=0, ymax=80,
+		%%            axis y line*=right,
+		%% 		   ybar=\ybarSep,  
+		%% 		   x=\ybarXdist,
+		%% 		   bar width=\ybarWidth,
+	   	%% 		   ylabel={improvement \%},
+	 	%% 	       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+		%%            xtick=data,                 
+		%%             nodes near coords, 
+		%% 			nodes near coords align={vertical}, 
+		%% 			x tick label style={rotate=0, anchor=north}, 
+		%% 			xticklabel style={rotate=0,anchor=north},
+		%%             xtick align=inside,
+		%%             xticklabel pos=left,
+	   	%% 		    legend pos=north east, legend columns=-1,
+		%%          ]  
+		%% \addplot [fill=OliveGreen!50, xshift=\xShiftImprove, postaction={pattern=crosshatch dots}] coordinates {
+        %%             (no load, 14.8) 
+		%% 			(cache pressure,8.8)	
+		%% 			(forkops,16.6)
+		%% 			(fileops,13.7)
+		%% 			(threadops,20)
+		%% 	      };
+		%% \legend{improvement}
+		%% \end{axis}
 
 %%%%%%%%%%%%%%%%%%for defense presentation%%%%%%%%%%%%%%%%%%%%
 \ifdefense
+
 \end{tikzpicture}
 \end{center}
 \label{plot-cat1}
 \end{figure}
-
+	
 \begin{figure}[!htb]
 \begin{center}
-\begin{tikzpicture}
-	\begin{axis} [name=plot2, height=7cm,  width=14cm, ybar=2pt, enlarge y limits={upper,value=0.2}, %%enlargelimits=0.3, 
-			ymin=0,
-			legend pos=north east, legend columns=-1,                       
-			%legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1}, 
-                       ylabel={average-case latency (us)}, 
-		       bar width= 24pt,
-       		       %%enlarge x limits={abs=0.8cm},
- 		       %%postaction={pattern=north east lines},
-                       %%symbolic x coords={L3 shared, L3 partitioned},
-			symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
-                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
-		\addplot [fill=black!50] coordinates {
-                                        (no load,19.1) 
-					(cache pressure,28.5)	
+\begin{tikzpicture}  [
+						my brace/.style={thick, decorate, decoration={brace, amplitude=4pt, raise=4pt,},},							
+						my label/.style={below right, align=center, rotate=90, inner ysep=10pt, },
+					]
+
+\fi
+%%%%%%%%%%%%%%%%%%%%%ENDIF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{axis} [ name=plot2, \atCmdLowerPlot, 
+					height=\figheight, width=\figwidth, enlarge y limits={upper,value=0.3},  
+					enlarge x limits=0.12,
+				   ymin=0,
+		           %axis y line*=left,
+				   ybar=\ybarSep,
+				   x=\ybarXdist,
+				   bar width=\ybarWidth,
+	   			   ylabel={average-case latency ($\mu{}s$)},
+	 		       symbolic x coords={no load, cache\_pressure, forkops, fileops, threadops},
+		           xtick=data,                 
+		            %nodes near coords, 
+					%nodes near coords align={vertical}, 
+					x tick label style={rotate=0, anchor=north, font=\ttfamily\small}, 
+					xticklabel style={rotate=0,anchor=north},
+		            xtick align=inside,
+		            xticklabel pos=left,
+	   			    legend pos=north east, legend columns=-1,
+				 ]                    
+		\addplot [fill=NavyBlue!50, xshift=\xShiftLatency] coordinates {
+                    (no load,19.1) 
+					(cache\_pressure,28.5)	
 					(forkops,13.1)
 					(fileops,13.8)
 					(threadops,19.6)			
-			      };
-		\addplot [postaction={pattern=north east lines}] coordinates {
-                                        (no load,15.7) 
-					(cache pressure,15.2)	
+			      }
+					coordinate [pos=0] (a1)
+		            coordinate [pos=0.2] (a2)
+		            coordinate [pos=0.4] (a3)
+		            coordinate [pos=0.8] (a4)
+		            coordinate [pos=1] (a5)
+				  ;
+		\addplot [fill=ForestGreen!60, xshift=\xShiftLatency, postaction={pattern=crosshatch dots}, pattern color=gray] coordinates {
+                     (no load,15.7) 
+					(cache\_pressure,15.2)	
 					(forkops,9.9)
 					(fileops,10)
 					(threadops,12.4)			
-			      };
+			      }				  	
+					coordinate [pos=0] (b1)
+		            coordinate [pos=0.2] (b2)
+		            coordinate [pos=0.4] (b3)
+		            coordinate [pos=0.8] (b4)
+		            coordinate [pos=1] (b5)	
+				  ;
+
+				  \draw [my brace] (a1) -- (b1) node [my label] {\small{$+17.8\%$}};
+				  \draw [my brace] (a2) -- (b2) node [my label] {\small{$+46.6\%$}};
+				  \draw [my brace] (a3) -- (b3) node [my label] {\small{$+24.4\%$}};
+				  \draw [my brace] (a4) -- (b4) node [my label] {\small{$+27.5\%$}};
+				  \draw [my brace] (a5) -- (b5) node [my label] {\small{$+36.7\%$}};
 	\legend{LLC shared, LLC partitioned}
 	\end{axis}
 
-\end{tikzpicture}
-\end{center}
-\label{plot-cat2}
-\end{figure}
-
-\else
-		\begin{axis} [name=plot2, at={($(plot1.west)+(0,-9cm)$)}, height=7cm,  width=14cm, ybar=2pt, enlarge y limits={upper,value=0.2}, %%enlargelimits=0.3, 
-			ymin=0,
-			legend pos=north east, legend columns=-1,                       
-			%legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1}, 
-                       ylabel={average-case latency (us)}, 
-		       bar width= 24pt,
-       		       %%enlarge x limits={abs=0.8cm},
- 		       %%postaction={pattern=north east lines},
-                       %%symbolic x coords={L3 shared, L3 partitioned},
-			symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
-                       xtick=data, nodes near coords, nodes near coords align={vertical}, x tick label style={rotate=0,anchor=north}, ]                    
-		\addplot [fill=black!50] coordinates {
-                                        (no load,19.1) 
-					(cache pressure,28.5)	
-					(forkops,13.1)
-					(fileops,13.8)
-					(threadops,19.6)			
-			      };
-		\addplot [postaction={pattern=north east lines}] coordinates {
-                                        (no load,15.7) 
-					(cache pressure,15.2)	
-					(forkops,9.9)
-					(fileops,10)
-					(threadops,12.4)			
-			      };
-	\legend{LLC shared, LLC partitioned}
-	\end{axis}
+	%%improvement%%
+	%% \begin{axis} [ name=plot2, \atCmdLowerPlot,  height=\figheight, width=\figwidth, ybar,  
+	%% 				enlarge y limits={upper,value=0.3},  enlarge x limits=0.12, ymin=0, ymax=80,
+	%% 	           axis y line*=right,
+	%% 			   ybar=\ybarSep,  
+	%% 			   x=\ybarXdist,             
+	%% 			   bar width=\ybarWidth,
+	%%    			   ylabel={improvement \%},
+	%%  		       symbolic x coords={no load, cache pressure, forkops, fileops, threadops},
+	%% 	           xtick=data,                 
+	%% 	            nodes near coords, 
+	%% 				nodes near coords align={vertical}, 
+	%% 				x tick label style={rotate=0, anchor=north}, 
+	%% 				xticklabel style={rotate=0,anchor=north},
+	%% 	            xtick align=inside,
+	%% 	            xticklabel pos=left,
+	%%    			    legend pos=north east, legend columns=-1,
+	%% 	         ]  
+	%% \addplot [fill=OliveGreen!50, xshift=\xShiftImprove, postaction={pattern=crosshatch dots}] coordinates {
+    %%                 (no load,17.8) 
+	%% 				(cache pressure,46.6)	
+	%% 				(forkops,24.4)
+	%% 				(fileops,27.5)
+	%% 				(threadops,36.7)
+	%% 		      };
+	%% \legend{improvement}
+	%% \end{axis}
 
 \end{tikzpicture}
 \end{center}
 \ifreport
-\caption{Interrupt latency comparison with shared LLC and partitioned LLC}
-\fi
+\caption{Interrupt latency comparison of shared LLC and partitioned LLC}
 \label{plot-cat}
+\else
+\label{plot-cat2}
+\fi
 \end{figure}
 
-\fi

@@ -4,23 +4,25 @@
 
 \newcommand\yh{0.85cm}
 
-\draw[step=1cm, gray, very thin, dotted] (0,0) grid (13,2);
-\draw[black, thick, dotted] (0,0.9) -- (13,0.9) node at (13,0.9) [below] {};
+%\draw[step=1cm, gray, very thin, dotted] (0,0) grid (13,2);
+%\draw[black, thick, dotted] (0,0.9) -- (13,0.9) node at (13,0.9) [below] {};
 
-\node at (0,0) [rectangle, draw=black, thick, fill=black!10, rounded corners, minimum height = \yh, minimum width = 2cm, anchor=south west] (gcbefore) {\small{guest code}};
-\node at (2.1,0) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 1.5cm, anchor=south west] (vmexit) {\small{vmexit}};
-\node at (3.7,0) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 3.5cm, anchor=south west] (phidias) {\small{Hyp. vmexit handler}};
-\node at (7.3,0) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = \yh, minimum width = 1.5cm, anchor=south west] (vmentry) {\small{vmentry}};
+\node at (0,0.5) [rectangle, draw=black, thick, fill=Blue!10, rounded corners, minimum height = \yh, minimum width = 2cm, anchor=south west] (gcbefore) {\small{guest code}};
+\node at (2.1,-0.5) [rectangle, draw=black, thick, fill=Cyan!20, rounded corners, minimum height = \yh, minimum width = 1.5cm, anchor=south west] (vmexit) {\small{vmexit}};
+\node at (3.7,0) [rectangle, draw=black, thick, fill=SpringGreen!30, rounded corners, minimum height = \yh, minimum width = 3.5cm, anchor=south west] (phidias) {\small{Hyp. vmexit handler}};
+\node at (7.3,-0.5) [rectangle, draw=black, thick, fill=Cyan!20, rounded corners, minimum height = \yh, minimum width = 1.5cm, anchor=south west] (vmentry) {\small{vmentry}};
 
-\node at (8.9,0) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = \yh, minimum width = 2cm, text width = 1.7cm, anchor=south west] (rc) {\small{resource\\ contension}};
+\node at (8.9,-0.5) [rectangle, draw=black, thick, fill=red!20, rounded corners, minimum height = \yh, minimum width = 2cm, text width = 1.7cm, anchor=south west] (rc) {\small{resource\\ contension}};
 
-\node at (11.0,0) [rectangle, draw=black, thick, fill=black!10, rounded corners, minimum height = \yh, minimum width = 2cm, anchor=south west] (gcafter) {\small{guest code}};
+\node at (11.0,0.5) [rectangle, draw=black, thick, fill=Blue!10, rounded corners, minimum height = \yh, minimum width = 2cm, anchor=south west] (gcafter) {\small{guest code}};
 
-\draw[black, thick] (2.05,-0.5) -- (2.05, 2.25)  node [above, text width = 4cm] {guest trap: external event or sensitive instr.};
-\draw[black, thick] (10.95,-0.5) -- (10.95, 2.25)  node [above, text width = 4cm] {trap emualte: guest resumes};
+\draw[black, thick, decorate, decoration={random steps,segment length=3pt,amplitude=0.5pt}] (2.05,-0.5) -- (2.05, 2.25)  
+				node [above, align=center, text width = 4cm] {external event\\ or sensitive instr.\\ (trap)};
+\draw[black, thick, decorate, decoration={random steps,segment length=3pt,amplitude=0.5pt}] (10.95,-0.5) -- (10.95, 2.25)  
+				node [above, align=center, text width = 4cm] {guest resumes};
 
-\draw[black, thick] (3.65,-0.5) -- (3.65, 1);
-\draw[black, thick] (7.25,-0.5) -- (7.25, 1);
+\draw[black, thick] (3.65,-0.5) -- (3.65, 0);
+\draw[black, thick] (7.25,-0.5) -- (7.25, 0);
 \draw[black, thick, dotted, <-] (3.65, -0.25) -- (4.25, -0.25); 
 \draw[black, thick, dotted, ->] (6.75, -0.25) -- (7.25, -0.25);
 \node at (5.45, -0.25) {Phidias runtime};

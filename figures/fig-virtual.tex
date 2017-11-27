@@ -4,44 +4,45 @@
 
 %\node at (0,5.625) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 3cm, minimum width = 4cm, text width=2cm, anchor=south west] (rtguest) {};
 
-\node at (0,2.25) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 6cm, minimum width = 5cm, anchor=south west] (rtguest) {};
+\node at (0,2.25) [rectangle, draw=black, thick, fill=LimeGreen!20, rounded corners, minimum height = 6cm, minimum width = 5cm, anchor=south west] (rtguest) {};
 
 %\node[inner sep=0pt, text width=3cm] (rtgtext) at (2, 8) {PREEMPT\_RT guest};
 %\node[inner sep=0pt] (tux) at (3, 7)  {\includegraphics[width=1.5cm]{figures/tux.jpg}};
 \node[below right, inner sep=5pt, text width=2cm] at (rtguest.north west) {PREEMPT\_RT\\ Linux\\ (rt-guest)};
-\node[below left, inner sep=2pt] (tux1) at (rtguest.north east)  {\includegraphics[width=1.8cm]{figures/tux.jpg}};
+\node[below left, inner sep=2pt] (tux1) at (rtguest.north east)  {\includegraphics[width=1.8cm]{Tux}};
 
 
-\node at (0.5,5.1) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 4cm, anchor=south west] (vcpu1) {vCPU};
-\node at (0.5,4.2) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vlapic1) {vLAPIC};
-\node at (2.5,4.2) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 2cm, anchor=south west] (vioapic1) {vIOAPIC};
-\node at (0.5,3.2) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vdevice) {vTimer};
-\node at (2.5,3.2) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 2cm, anchor=south west] (vuart1) {vUART};
+\node at (0.5,5.1) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 4cm, anchor=south west] (vcpu1) {vCPU};
+\node at (0.5,4.2) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vlapic1) {vLAPIC};
+\node at (2.5,4.2) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 2cm, anchor=south west] (vioapic1) {vIOAPIC};
+\node at (0.5,3.2) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vdevice) {vTimer};
+\node at (2.5,3.2) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 2cm, anchor=south west] (vuart1) {vUART};
 
-\node at (0.5,2.25+0.1) [rectangle, draw=black, thick, fill=black!10, rounded corners, minimum height = 0.7cm, minimum width = 4cm, anchor=south west] (vdevice) {\small{PCIe GPIO Device}};
+\node at (0.5,2.25+0.1) [rectangle, draw=black, thick, fill=Green!10, rounded corners, minimum height = 0.7cm, minimum width = 4cm, anchor=south west] (vdevice) {\small{PCIe GPIO Device}};
 
-\node at (0,1) [rectangle, draw=black, thick, fill=black!3, rounded corners, minimum height = 1cm, minimum width = 5cm, anchor=south west] (phidias1) {PHIDIAS};
-\node at (0,0-0.125) [rectangle, draw=black, thick, fill=black!3, rounded corners, minimum height = 1cm, minimum width = 5cm, anchor=south west] (core0) {Core0};
+\node at (0,1) [rectangle, draw=black, thick, fill=Cyan!20, rounded corners, minimum height = 1cm, minimum width = 5cm, anchor=south west] (phidias1) {PHIDIAS};
+\node at (0,0-0.125) [rectangle, draw=black, thick, fill=Melon!20, rounded corners, minimum height = 1cm, minimum width = 5cm, anchor=south west] (core0) {Core0};
 
 
-\draw[black, thick, dashed] (5.25,-0.25) -- (5.25,9); %node at (0,0) [below] {release time};
+\draw [thick, decorate, decoration={random steps,segment length=3pt,amplitude=1pt}] (5.25,-0.25) -- (5.25,9);
+%%\draw[black, thick, dashed] (5.25,-0.25) -- (5.25,9); %node at (0,0) [below] {release time};
 
-\node at (5.5,2.25) [rectangle, draw=black, thick, fill=white, rounded corners, minimum height = 6cm, minimum width = 5cm, anchor=south west] (guest) {};
+\node at (5.5,2.25) [rectangle, draw=black, thick, fill=yellow!20, rounded corners, minimum height = 6cm, minimum width = 5cm, anchor=south west] (guest) {};
 %\node[inner sep=0pt, text width=3cm] (rtgtext) at (7, 8) {guest2};
 %\node[inner sep=0pt] (tux) at (7.5, 7)  {\includegraphics[width=1.5cm]{figures/tux.jpg}};
 
 \node[below right, inner sep=5pt, text width=2cm] at (guest.north west) {Linux\\ (gp-guest)};
-\node[below left, inner sep=2pt] (tux2) at (guest.north east)  {\includegraphics[width=1.8cm]{figures/tux.jpg}};
+\node[below left, inner sep=2pt] (tux2) at (guest.north east)  {\includegraphics[width=1.8cm]{Tux}};
 
-\node at (6,5.1) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 4cm, anchor=south west] (vcpu2) {vCPU};
-\node at (6,4.2) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vlapic2) {vLAPIC};
+\node at (6,5.1) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 4cm, anchor=south west] (vcpu2) {vCPU};
+\node at (6,4.2) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vlapic2) {vLAPIC};
 
-\node at (8,4.2) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 2cm, anchor=south west] (vioapic2) {vIOAPIC};
-\node at (6,3.2) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vdevice) {vTimer};
-\node at (8,3.2) [rectangle, draw=black, thick, fill=black!5, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vuart2) {vUART};
+\node at (8,4.2) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 2cm, anchor=south west] (vioapic2) {vIOAPIC};
+\node at (6,3.2) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vdevice) {vTimer};
+\node at (8,3.2) [rectangle, draw=black, thick, fill=NavyBlue!10, rounded corners, minimum height = 0.8cm, minimum width = 1.9cm, anchor=south west] (vuart2) {vUART};
 
-\node at (5.5,1) [rectangle, draw=black, thick, fill=black!3, rounded corners, minimum height = 1cm, minimum width = 5cm, anchor=south west] (phidias2) {PHIDIAS};
-\node at (5.5,0-0.125) [rectangle, draw=black, thick, fill=black!3, rounded corners, minimum height = 1cm, minimum width = 5cm, anchor=south west] (core1) {Core1};
+\node at (5.5,1) [rectangle, draw=black, thick, fill=Cyan!20, rounded corners, minimum height = 1cm, minimum width = 5cm, anchor=south west] (phidias2) {PHIDIAS};
+\node at (5.5,0-0.125) [rectangle, draw=black, thick, fill=Melon!20, rounded corners, minimum height = 1cm, minimum width = 5cm, anchor=south west] (core1) {Core1};
 
 
 \draw[black, thick, dotted] (-0.25, 2.1) -- (11,2.1);
