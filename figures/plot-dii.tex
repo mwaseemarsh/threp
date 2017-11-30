@@ -1,8 +1,8 @@
 \begin{figure}[!htb]
 \begin{center}
 \begin{tikzpicture} [
-						my brace/.style={thick, decorate, decoration={brace, amplitude=4pt, raise=4pt,},},							
-						my label/.style={below right, align=center, rotate=90, inner ysep=10pt, },
+						my brace/.style={thick, decorate, decoration={brace, amplitude=4pt, raise=10pt,},},							
+						my label/.style={below right, align=center, rotate=90, inner ysep=14pt, },						
 					]
 
 	%%%%%%% worst case %%%%%%%%%%%%%%
@@ -13,7 +13,7 @@
 				   ybar=\ybarSep,  
 				   x=\ybarXdist,
 				   bar width=\ybarWidth,
-	   			   ylabel={worst-case  latency ($\mu{}s$)},
+	   			   ylabel={worst-case interrupt latency ($\mu{}s$)},
 	 		       symbolic x coords={no load, cache\_pressure, forkops, fileops, threadops},
 		           xtick=data,                 
 		            %nodes near coords, 
@@ -25,6 +25,14 @@
 	   			    legend pos=north east, legend columns=-1,
 				]     
                
+	\addplot [fill=yellow!20, postaction={pattern=north east lines}, pattern color=gray] coordinates {
+				(no load, 67.6)				
+				(cache\_pressure, 73.7)
+				(forkops, 25.9)
+				(fileops, 24.7)
+				(threadops, 12.4)
+		      };
+
 	%% absolute values
 	\addplot [fill=NavyBlue!50, xshift=\xShiftLatency] coordinates {
                     (no load,133.9) 
@@ -60,7 +68,7 @@
 				  \draw [my brace] (a4) -- (b4) node [my label] {\small{$+20.7\%$}};
 				  \draw [my brace] (a5) -- (b5) node [my label] {\small{$+24.1\%$}};
 
-	\legend{virtual interrupt, direct interrupt}
+	\legend{native, virtual interrupt, direct interrupt}
 	\end{axis}
 
 	%%improvement%%
@@ -104,8 +112,9 @@
 \begin{figure}[!htb]
 \begin{center}
 \begin{tikzpicture} [
-						my brace/.style={thick, decorate, decoration={brace, amplitude=4pt, raise=4pt,},},							
-						my label/.style={below right, align=center, rotate=90, inner ysep=10pt, },
+						my brace/.style={thick, decorate, decoration={brace, amplitude=4pt, raise=10pt,},},							
+						my label/.style={below right, align=center, rotate=90, inner ysep=14pt, },
+						label2/.style={below right, align=center, rotate=90, inner ysep=8pt, },
 					]
 %%%%%%%%%%%%%%%%%%%%%ENDIF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \fi
@@ -115,7 +124,7 @@
 			   ybar=\ybarSep,
 			   x=\ybarXdist,
 		       bar width=\ybarWidth,
-   			   ylabel={average-case latency ($\mu{}s$)},
+   			   ylabel={average-case interrupt latency ($\mu{}s$)},
  		       symbolic x coords={no load, cache\_pressure, forkops, fileops, threadops},
                xtick=data,                 
                 %nodes near coords, 
@@ -125,7 +134,15 @@
                 xtick align=inside,
                 xticklabel pos=left,
    			    legend pos=north east, legend columns=-1,
-			]                    
+			]
+	\addplot [fill=yellow!20, postaction={pattern=north east lines}, pattern color=gray] coordinates {
+				(no load, 44.2)				
+				(cache\_pressure, 43.1)
+				(forkops, 6.1)
+				(fileops, 6.1)
+				(threadops, 5)
+			   };  
+              
 	\addplot [fill=NavyBlue!50, xshift=\xShiftLatency] coordinates {
                     (no load,19.6) 
 					(cache\_pressure,19.4)	
@@ -157,9 +174,9 @@
 				  \draw [my brace] (a2) -- (b2) node [my label] {\small{$+41.2\%$}};
 				  \draw [my brace] (a3) -- (b3) node [my label] {\small{$+42.9\%$}};
 				  \draw [my brace] (a4) -- (b4) node [my label] {\small{$+47\%$}};
-				  \draw [thick, |-|] ([xshift=4pt]a5) -- ([xshift=4pt]b5) node [my label] {\small{$+5\%$}};
+				  \draw [thick, |-|] ([xshift=12pt]a5) -- ([xshift=12pt]b5) node [xshift=-8pt, my label] {\small{$+5\%$}};
 
-	\legend{virtual interrupt, direct interrupt}
+	\legend{native, virtual interrupt, direct interrupt}
 	\end{axis}
 
 	%%improvement%%
@@ -193,7 +210,7 @@
 \end{tikzpicture}
 \end{center}
 \ifreport
-\caption{Interrupt Latency comparison for virtual and direct interrupt injection}
+\caption{Interrupt Latency comparison for native, virtual and direct interrupt injection}
 \label{plot-dii}
 \else
 \label{plot-dii2}

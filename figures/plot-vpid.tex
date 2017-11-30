@@ -1,9 +1,9 @@
 \begin{figure}[!htb]
 \begin{center}
 \begin{tikzpicture}  [
-						my brace/.style={thick, decorate, decoration={brace, amplitude=3pt, raise=4pt,},},							
-						my label/.style={below right, align=center, rotate=90, inner ysep=10pt, },
-						another label/.style={below right, align=center, rotate=90, inner ysep=5pt, },
+						my brace/.style={thick, decorate, decoration={brace, amplitude=1pt, raise=10pt,},},							
+						my label/.style={below right, align=center, rotate=90, inner ysep=14pt, },
+						another label/.style={below right, align=center, rotate=90, inner ysep=3pt, },
 					]
 
 	\begin{axis} [ name=plot1, height=\figheight, width=\figwidth, 
@@ -13,7 +13,7 @@
 				   ybar=\ybarSep,  
 				   x=\ybarXdist,
 				   bar width=\ybarWidth,
-	   			   ylabel={worst-case  latency ($\mu{}s$)},
+	   			   ylabel={worst-case interrupt latency ($\mu{}s$)},
 	 		       symbolic x coords={no load, cache\_pressure, forkops, fileops, threadops},
 		           xtick=data,                 
 		            %nodes near coords, 
@@ -23,7 +23,15 @@
 		            xtick align=inside,
 		            xticklabel pos=left,
 	   			    legend pos=north east, legend columns=-1,
-				 ]                    
+				 ]
+	\addplot [fill=yellow!20, postaction={pattern=north east lines}, pattern color=gray] coordinates {
+				(no load, 67.6)				
+				(cache\_pressure, 73.7)
+				(forkops, 25.9)
+				(fileops, 24.7)
+				(threadops, 12.4)
+		      };
+          
 	\addplot [fill=NavyBlue!50, xshift=\xShiftLatency] coordinates {
                     (no load,129.5) 
 					(cache\_pressure,145.6)	
@@ -52,12 +60,12 @@
 		            coordinate [pos=1] (b5)	
 				  ;
 
-				  \draw [thick, |-|] ([xshift=4pt]a1) -- ([xshift=4pt]b1) node [another label] {\small{$-0.8\%$}};
-				  \draw [thick, |-|] ([xshift=4pt]a2) -- ([xshift=4pt]b2) node [another label] {\small{$+9.5\%$}};
-				  \draw [thick, |-|] ([xshift=4pt]a3) -- ([xshift=4pt]b3) node [another label] {\small{$+2.6\%$}};
-				  \draw [thick, |-|] ([xshift=4pt]a4) -- ([xshift=4pt]b4) node [another label] {\small{$+2.7\%$}};
+				  \draw [thick, |-|] ([xshift=14pt]a1) -- ([xshift=14pt]b1) node [another label] {\small{$-0.8\%$}};
+				  \draw [thick, |-|] ([xshift=14pt]a2) -- ([xshift=14pt]b2) node [another label] {\small{$+9.5\%$}};
+				  \draw [thick, |-|] ([xshift=14pt]a3) -- ([xshift=14pt]b3) node [another label] {\small{$+2.6\%$}};
+				  \draw [thick, |-|] ([xshift=14pt]a4) -- ([xshift=14pt]b4) node [another label] {\small{$+2.7\%$}};
 				  \draw [my brace] (a5) -- (b5) node [my label] {\small{$+12.2\%$}};
-	\legend{shared TLB, isolated TLB}
+	\legend{native, shared TLB, isolated TLB}
 	\end{axis}
 
 	%%improvement%%
@@ -98,22 +106,22 @@
 \begin{figure}[!htb]
 \begin{center}
 \begin{tikzpicture} [
-						my brace/.style={thick, decorate, decoration={brace, amplitude=3pt, raise=4pt,},},							
-						my label/.style={below right, align=center, rotate=90, inner ysep=10pt, },
+						my brace/.style={thick, decorate, decoration={brace, amplitude=1pt, raise=10pt,},},							
+						my label/.style={below right, align=center, rotate=90, inner ysep=14pt, },
 					]
 
 \fi
 %%%%%%%%%%%%%%%%%%%%%ENDIF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 		\begin{axis} [	 name=plot2, \atCmdLowerPlot, 
-					height=\figheight, width=\figwidth, enlarge y limits={upper,value=0.3},  
+					height=\figheight, width=\figwidth, enlarge y limits={upper,value=0.01},  
 					enlarge x limits=0.12,
-				   ymin=10,
+				   ymin=0, ymax=45,
 		           %axis y line*=left,
 				   ybar=\ybarSep,
 				   x=\ybarXdist,
 				   bar width=\ybarWidth,
-	   			   ylabel={average-case latency ($\mu{}s$)},
+	   			   ylabel={average-case interrupt latency ($\mu{}s$)},
 	 		       symbolic x coords={no load, cache\_pressure, forkops, fileops, threadops},
 		           xtick=data,                 
 		            %nodes near coords, 
@@ -123,7 +131,16 @@
 		            xtick align=inside,
 		            xticklabel pos=left,
 	   			    legend pos=north east, legend columns=-1,
-					]                    
+					] 
+
+		\addplot [fill=yellow!20, postaction={pattern=north east lines}, pattern color=gray] coordinates {
+				(no load, 44.2)				
+				(cache\_pressure, 43.1)
+				(forkops, 6.1)
+				(fileops, 6.1)
+				(threadops, 5)
+			   };  
+               
 		\addplot [fill=NavyBlue!50, xshift=\xShiftLatency] coordinates {
                     (no load,18.2) 
 					(cache\_pressure,18.1)	
@@ -156,7 +173,7 @@
 				  \draw [my brace] (a3) -- (b3) node [my label] {\small{$+7.9\%$}};
 				  \draw [my brace] (a4) -- (b4) node [my label] {\small{$+7.5\%$}};
 				  \draw [my brace] (a5) -- (b5) node [my label] {\small{$+9.4\%$}};
-		\legend{shared TLB, isolated TLB}
+		\legend{native, shared TLB, isolated TLB}
 		\end{axis}
 
 	%%improvement%%

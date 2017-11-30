@@ -1,8 +1,8 @@
 \begin{figure}[!htb]
 \begin{center}
 \begin{tikzpicture}  [
-						my brace/.style={thick, decorate, decoration={brace, amplitude=4pt, raise=4pt,},},							
-						my label/.style={below right, align=center, rotate=90, inner ysep=10pt, },
+						my brace/.style={thick, decorate, decoration={brace, amplitude=2pt, raise=10pt,},},							
+						my label/.style={below right, align=center, rotate=90, inner ysep=14pt, },
 					]
 
 		\begin{axis} [ name=plot1, height=\figheight, width=\figwidth, 
@@ -12,7 +12,7 @@
 				   ybar=\ybarSep,  
 				   x=\ybarXdist,
 				   bar width=\ybarWidth,
-	   			   ylabel={worst-case  latency ($\mu{}s$)},
+	   			   ylabel={worst-case interrupt latency ($\mu{}s$)},
 	 		       symbolic x coords={no load, cache\_pressure, forkops, fileops, threadops},
 		           xtick=data,                 
 		            %nodes near coords, 
@@ -22,7 +22,15 @@
 		            xtick align=inside,
 		            xticklabel pos=left,
 	   			    legend pos=north east, legend columns=-1,
-				]                    
+				] 
+		\addplot [fill=yellow!20, postaction={pattern=north east lines}, pattern color=gray] coordinates {
+				(no load, 67.6)				
+				(cache\_pressure, 73.7)
+				(forkops, 25.9)
+				(fileops, 24.7)
+				(threadops, 12.4)
+		      };                  
+
 		\addplot [fill=NavyBlue!50, xshift=\xShiftLatency] coordinates {
                      (no load,141.3) 
 					(cache\_pressure,132)	
@@ -56,7 +64,7 @@
 				  \draw [my brace] (a3) -- (b3) node [my label] {\small{$+16.6\%$}};
 				  \draw [my brace] (a4) -- (b4) node [my label] {\small{$+13.7\%$}};
 				  \draw [my brace] (a5) -- (b5) node [my label] {\small{$+20.0\%$}};
-		\legend{LLC shared, LLC partitioned}
+		\legend{native, LLC shared, LLC partitioned}
 		\end{axis}
 
 		%%improvement%% 
@@ -98,8 +106,8 @@
 \begin{figure}[!htb]
 \begin{center}
 \begin{tikzpicture}  [
-						my brace/.style={thick, decorate, decoration={brace, amplitude=4pt, raise=4pt,},},							
-						my label/.style={below right, align=center, rotate=90, inner ysep=10pt, },
+						my brace/.style={thick, decorate, decoration={brace, amplitude=2pt, raise=10pt,},},							
+						my label/.style={below right, align=center, rotate=90, inner ysep=14pt, },
 					]
 
 \fi
@@ -112,7 +120,7 @@
 				   ybar=\ybarSep,
 				   x=\ybarXdist,
 				   bar width=\ybarWidth,
-	   			   ylabel={average-case latency ($\mu{}s$)},
+	   			   ylabel={average-case interrupt latency ($\mu{}s$)},
 	 		       symbolic x coords={no load, cache\_pressure, forkops, fileops, threadops},
 		           xtick=data,                 
 		            %nodes near coords, 
@@ -122,7 +130,15 @@
 		            xtick align=inside,
 		            xticklabel pos=left,
 	   			    legend pos=north east, legend columns=-1,
-				 ]                    
+				 ] 
+		\addplot [fill=yellow!20, postaction={pattern=north east lines}, pattern color=gray] coordinates {
+				(no load, 44.2)				
+				(cache\_pressure, 43.1)
+				(forkops, 6.1)
+				(fileops, 6.1)
+				(threadops, 5)
+			   };  
+                   
 		\addplot [fill=NavyBlue!50, xshift=\xShiftLatency] coordinates {
                     (no load,19.1) 
 					(cache\_pressure,28.5)	
@@ -155,7 +171,7 @@
 				  \draw [my brace] (a3) -- (b3) node [my label] {\small{$+24.4\%$}};
 				  \draw [my brace] (a4) -- (b4) node [my label] {\small{$+27.5\%$}};
 				  \draw [my brace] (a5) -- (b5) node [my label] {\small{$+36.7\%$}};
-	\legend{LLC shared, LLC partitioned}
+	\legend{native, LLC shared, LLC partitioned}
 	\end{axis}
 
 	%%improvement%%

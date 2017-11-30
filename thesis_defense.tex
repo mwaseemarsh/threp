@@ -83,7 +83,7 @@ Environment}
 % A subtitle is optional and this may be deleted
 \subtitle{Master Thesis}
 
-\author{Muhammad Waseem Arshad\inst{1} \\ Student ID: 387428 \\ ICT Innovation}
+\author{Muhammad Waseem Arshad\inst{1} \\ \scriptsize{m.arshad@campus.tu-berlin.de} \\ \scriptsize{Student ID: 387428} \\ \scriptsize{ICT Innovation}}
 % - Give the names in the same order as the appear in the paper.
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
@@ -146,7 +146,7 @@ Environment}
 \section{Problem Statement and Proposed Solution}
 \begin{frame}{Embedded Systems}{role and challenges}
   \begin{itemize}
-  \item {Role of Embedded Systems: \pause{}
+  \item {role: quality of life, \pause{} productivity\pause{} 
 			\begin{itemize}
 			  \item {production}
 			  \item {automotive}
@@ -196,8 +196,13 @@ Environment}
 
 \begin{frame}{Proposed Solution}{aims and objectives}
   \begin{itemize}
-  \item {PHIDIAS Hypervisor: \pause{} designed for real-time embedded systems}  \pause{}
-  \item {aims and objectives: \pause{}
+  \item {PHIDIAS Hypervisor:  \pause{}
+		  \begin{itemize}
+				\item{principle of staticity, microkernel model} \pause{}
+				\item{real-time capabilities are unknown} \pause{}
+		  \end{itemize}
+		}
+  \item {objectives: \pause{}
 	        \begin{itemize}
         	   \item {measure virtualization overhead on x86 platform}  \pause{} 
 			   \item {latency reduction: \pause{} CAT, \pause{} DII, \pause{} VPID}  \pause{}
@@ -227,7 +232,7 @@ Environment}
 	\input{./figures/fig-latency-jitter}
 	\endgroup
     \pause{}
-  \item {deterministic response time} 
+  \item {predictable response time} \pause{}
   \item {soft versus hard real-time}
   \end{itemize}
 \end{frame}
@@ -302,7 +307,7 @@ Environment}
 			\item{industry specific: Xtratum for safety-critical applications} \pause{}
 			\item{custom designed: WindRiver hypervisor for VxWorks} \pause{}
 			\item{real-time extensions: \pause{}RT-Xen (Xen with real-time framework), \pause{}KVM with PREEMPT\_RT patch} \pause{}
-			\item{microkernel based: OKL4} \pause{}
+			\item{microkernel based: OKL4 Microvisor} \pause{}
 			\item{resource partitioning: Quest-V}
 		\end{itemize}  
   \end{itemize}
@@ -329,7 +334,7 @@ Environment}
 		\begin{longtable}{|r|c|c|} 
 		\hline
 			\textbf{CPU operation mode}	&	{\textbf{VMX non-root}} 	&	{\textbf{VMX root}} \\ \hline \hline
-			Instruction set		&	sensitive instructions 		&  new instruction added \\
+			Instruction set		&	privileged instructions 		&  new instruction added \\
 				                &	are restricted (e.g. out	&  to manage VMs \\ 
 				                &	instruction cause trap to   & (e.g. VMLAUNCH,  \\ 
 				                &	VMX root mode)              & VMREAD, VMWRITE) \\ \hline
@@ -356,7 +361,7 @@ Environment}
 	\endgroup
 \end{frame}
 
-\begin{frame}{Features for Efficient Virtualization} {TLB Virtualization}
+\begin{frame}{Features for Efficient Virtualization} {TLB Partitioning}
 	\begin{itemize}
 		\item {VPID (Virtual Process Identifiers) allow hypervisor to separate address translations}
 	\end{itemize}
@@ -435,7 +440,7 @@ Environment}
 	\pause{}
   \item {non-preemptive kernel} \pause{}
   \item {low complexity, small footprint and TCB} \pause{}
-  \item {support faithful virtualization} \pause{}
+  \item {support faithful virtualization (x86: VT-x)} \pause{}
   \item {inter-VM communication} \pause{}
   \item {emulated devices: interrupt controller, timer, and UART}
   \end{itemize}
@@ -608,7 +613,7 @@ Environment}
 	\begin{tabular}{|c|c|c|c|c|}  
 	\hline
 							& \multicolumn{2}{|c|}{\textbf{Phidias runtime}} & \textbf{instructions}	& \textbf{CPI} \\
-	\textbf{Benchmark}		& average (cc)	&	worst-case (cc)	&	\textbf{retired} &	(WC) \\ \hline 
+	\textbf{Benchmark}		& average (cc)	&	worst-case (cc)	&	\textbf{retired} (WC) &	(WC) \\ \hline 
 	\mcachepressure{}	& 16548	& 178716 & 2322 & 77 \\ \hline
 	\mforkops{}		& 9263 & 175702 & 2301 & 76.4 \\ \hline
 	\mfileops{}		& 698 & 196490 & 12640 & 15.5 \\ \hline
@@ -741,7 +746,7 @@ Environment}
 \begin{frame}{Concluding Remarks}
   \begin{itemize}
   \item {virtualization overhead increased latency twice {from $80\mu{}s$ to $170\mu{}s$}} \pause{}
-  \item {CAT, DII and VPID reduced virtualization overhead significantly}  \pause{}
+  \item {CAT, DII and VPID reduced virtualization overhead}  \pause{}
 		\begin{itemize}
 			\item{worst-case more than $21$\%}  \pause{}
 			\item{average-case more than $39$\%}  \pause{}
